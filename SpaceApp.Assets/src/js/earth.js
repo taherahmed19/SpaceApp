@@ -35,6 +35,17 @@ export default function renderEarthViewer(data) {
         )
     });
 
+    // Wait for globe to load then zoom out     
+    let initialized = false;
+    viewer.scene.globe.tileLoadProgressEvent.addEventListener(() => {
+        if (!initialized && viewer.scene.globe.tilesLoaded === true) {
+            viewer.clock.shouldAnimate = true;
+            initialized = true;
+            viewer.scene.camera.zoomOut(7000000);
+            removeLoadingSpinner()
+        }
+    });
+
     window.setInterval(function () {
         updatePosition(point, data)
     }, 1000);
@@ -65,4 +76,15 @@ function getPosition(tleLine1, tleLine2) {
         latitude: position.latitude,
         height: position.height,
     }
+}
+
+function removeLoadingSpinner() {
+    const loadingSpinner = document.querySelector(".loading-spinner");
+    const cesiumContainer = document.querySelector("#cesiumContainer");
+    
+    if (loadingSpinner && cesiumContainer) {
+        loadingSpinner.style.display = "none";
+        cesiumContainer.style.display = "block"
+    }
+
 }

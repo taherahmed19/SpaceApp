@@ -2,3 +2,4 @@
 import api from './api/fetch-api';
 
 api.makeApiCall("IssTles", renderEarthViewer);
+api.makeApiCall("NearEarthObjects", callback);

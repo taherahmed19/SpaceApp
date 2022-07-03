@@ -7610,8 +7610,6 @@ a.text-purple:hover, a.text-purple:focus {
   #main-wrapper[data-layout="vertical"][data-header-position="fixed"] .topbar {
     position: fixed;
     width: 100%; }
-  #main-wrapper[data-layout="vertical"][data-header-position="fixed"] .page-wrapper {
-    padding-top: 80px; }
   #main-wrapper[data-layout="vertical"][data-boxed-layout="boxed"] {
     max-width: 1200px;
     margin: 0 auto;

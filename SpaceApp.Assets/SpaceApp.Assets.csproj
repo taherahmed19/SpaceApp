@@ -290,6 +290,7 @@
     <Content Include="src\css\icons\themify-icons\fonts\themify.ttf" />
     <Content Include="src\css\icons\themify-icons\fonts\themify.woff" />
     <Content Include="src\css\icons\themify-icons\themify-icons.less" />
+    <Content Include="src\css\custom\components\_cesium.scss" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

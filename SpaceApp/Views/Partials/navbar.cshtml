@@ -5,27 +5,27 @@
         <nav class="sidebar-nav">
             <ul id="sidebarnav">
                 <li class="sidebar-item">
-                    <a class="sidebar-link sidebar-link" href="index.html" aria-expanded="false">
+                    <a class="sidebar-link sidebar-link" href="@Url.Action("Index", "Home")" aria-expanded="false">
                         <i class="bi bi-house"></i>
                         <span class="hide-menu">Home</span>
                     </a>
                 </li>
                 <li class="list-divider"></li>
-                <li class="nav-small-cap"><span class="hide-menu">Commerce</span></li>
+                <li class="nav-small-cap"><span class="hide-menu">Space</span></li>
 
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="/commerce/product-list/index.html" aria-expanded="false">
+                    <a class="sidebar-link" href="@Url.Action("Index", "SpaceStationTracker")" aria-expanded="false">
                         <i class="bi bi-box"></i>
                         <span class="hide-menu">
-                            Your Products
+                            ISS Live Tracker
                         </span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link sidebar-link" href="app-chat.html" aria-expanded="false">
+                    <a class="sidebar-link sidebar-link" href="@Url.Action("Index", "NearbyAsteroids")" aria-expanded="false">
                         <i class="bi bi-book"></i>
                         <span class="hide-menu">
-                            All Products
+                            Nearby Asteroids
                         </span>
                     </a>
                 </li>

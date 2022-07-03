@@ -15,11 +15,11 @@ class Api {
 
     async request(endpoint = {}, callback = () => { }) {
         try {
-            const response = await fetch(endpoint.resource, {
+            const response = await fetch(endpoint?.resource, {
                 'method': endpoint?.method,
                 'body': endpoint?.body ? JSON.stringify(endpoint.body) : null,
-                'accept': endpoint.accept,
-                'content-type': endpoint.contentType ? endpoint.contentType : null,
+                'accept': endpoint?.accept,
+                'content-type': endpoint?.contentType ? endpoint.contentType : null,
             });
             
             const data = await response.json();
