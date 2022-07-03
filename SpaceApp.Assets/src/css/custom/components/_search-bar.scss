@@ -1,0 +1,12 @@
+﻿.search-bar {
+    width: 30rem;
+    padding: .75rem 2.5rem .75rem 1.75rem;
+    color: #b8c3d5;
+    display: inline-block;
+    line-height: 13px;
+
+    +i {
+        position: absolute;
+        right: 1rem;
+    }
+}
