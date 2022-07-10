@@ -1,7 +1,70 @@
-﻿
-@{
-    ViewBag.Title = "Nearby Asteroids";
+﻿@using SpaceApp.Models.ViewModels
+@using SpaceApp.Models.Models.Asteroid
+@model NearbyAsteroids
+
+<div class="page-wrapper">
+    <div class="page-breadcrumb">
+        <div class="row">
+            <div class="col-12 align-self-center">
+                <h1 class="page-title text-truncate text-dark font-weight-medium">Nearby Asteroid Tracker</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                @*<div class="loading-spinner">
+                        <h1>Loading...</h1>
+                    </div>*@
+                @*<div id="main-container"></div>*@
+
+                @{
+                    if (Model.Asteroids != null)
+                    {
+                        @renderNearbyAsteroidsTable(Model.Asteroids);
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="http://spaceappassets-local.co.uk/js/asteroid.js" defer></script>
+
+
+@helper renderNearbyAsteroidsTable(List<Asteroid> asteroids)
+{
+    <div class="table-responsive">
+        <table class="table">
+            <thead class="bg-primary text-white">
+                <tr>
+                    <th>Name</th>
+                    <th>Absolute Magnitude</th>
+                    <th>Estimated Diameter (KM)</th>
+                    <th>Is Hazardous</th>
+                    <th>Orbit Class</th>
+                    <th>Is Sentry Object</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var asteroid in asteroids)
+                {
+                    <tr>
+                        <td>@asteroid.name</td>
+                        <td>@asteroid.absolute_magnitude_h</td>
+                        <td>
+                            Min @asteroid.estimated_diameter.kilometers.estimated_diameter_min<br />
+                            Max @asteroid.estimated_diameter.kilometers.estimated_diameter_max
+                        </td>
+                        <td>@asteroid.is_potentially_hazardous_asteroid</td>
+                        <td>@asteroid.orbital_data.orbit_class.orbit_class_type</td>
+                        <td>@asteroid.is_sentry_object</td>
+                        <td>@Html.ActionLink("View More", "Asteroid", "NearbyAsteroids", new { asteroid_id = asteroid.id }, null)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
-
-<h2>Index</h2>
-

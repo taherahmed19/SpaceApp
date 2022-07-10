@@ -45,6 +45,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net, Version=2.0.14.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.14\lib\net45\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -165,6 +168,7 @@
     <Content Include="Views\Partials\Navbar.cshtml" />
     <Content Include="Views\SpaceStationTracker\Index.cshtml" />
     <Content Include="Views\NearbyAsteroids\Index.cshtml" />
+    <Content Include="Views\NearbyAsteroids\Asteroid.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -184,6 +188,10 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SpaceApp.Helpers\SpaceApp.Helpers.csproj">
+      <Project>{297C6B99-2E42-45D7-AB8E-E0239C829F98}</Project>
+      <Name>SpaceApp.Helpers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SpaceApp.Models\SpaceApp.Models.csproj">
       <Project>{23667906-5fb4-4e0b-b337-578f111b6120}</Project>
       <Name>SpaceApp.Models</Name>

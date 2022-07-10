@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceApp.Assets", "SpaceApp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceApp.Models", "SpaceApp.Models\SpaceApp.Models.csproj", "{23667906-5FB4-4E0B-B337-578F111B6120}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceApp.Services", "SpaceApp.Services\SpaceApp.Services.csproj", "{A4F073E9-BE5D-4136-8910-21F0716AE7DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceApp.Helpers", "SpaceApp.Helpers\SpaceApp.Helpers.csproj", "{297C6B99-2E42-45D7-AB8E-E0239C829F98}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{23667906-5FB4-4E0B-B337-578F111B6120}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23667906-5FB4-4E0B-B337-578F111B6120}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{23667906-5FB4-4E0B-B337-578F111B6120}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4F073E9-BE5D-4136-8910-21F0716AE7DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4F073E9-BE5D-4136-8910-21F0716AE7DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4F073E9-BE5D-4136-8910-21F0716AE7DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4F073E9-BE5D-4136-8910-21F0716AE7DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{297C6B99-2E42-45D7-AB8E-E0239C829F98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{297C6B99-2E42-45D7-AB8E-E0239C829F98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{297C6B99-2E42-45D7-AB8E-E0239C829F98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{297C6B99-2E42-45D7-AB8E-E0239C829F98}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

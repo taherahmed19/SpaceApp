@@ -1,10 +1,17 @@
 ﻿const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-	entry: ['/src/css/main.scss', '/src/js/main.js'],
+	mode: process.env.NODE_ENV,
+	entry: {
+		main: ['/src/css/main.scss', '/src/js/main.js'],
+		app: ['/src/js/app.js',],
+		earth: ['/src/js/earth.js'],
+		asteroid: ['/src/js/asteroid.js'],
+	},
 	output: {
 		path: path.resolve(__dirname + "/dist"),
-		filename: 'js/main.js',
+		filename: 'js/[name].js',
 	},
 	module: {
 		rules: [
@@ -31,10 +38,15 @@ module.exports = {
 					},
 					{
 						loader: 'sass-loader'
-					
+
 					}
 				]
 			}
 		]
-	}
+	},
+	plugins: [
+		new MiniCssExtractPlugin({
+		  filename: '[name].css',
+		}),
+	  ],
 };

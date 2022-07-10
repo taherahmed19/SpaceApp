@@ -1,6 +1,10 @@
-﻿const heightBuffer = 1000;
+﻿import api from './api/fetch-api';
 
-export default function renderEarthViewer(data) {
+const heightBuffer = 1000;
+
+api.makeApiCall("IssTles", renderEarthViewer);
+
+function renderEarthViewer(data) {
     // Initialize the Cesium viewer.
     const viewer = new Cesium.Viewer('cesiumContainer', {
         imageryProvider: new Cesium.TileMapServiceImageryProvider({
@@ -24,7 +28,15 @@ export default function renderEarthViewer(data) {
     // Visualize the satellite at this location with a red dot.
     const point = viewer.entities.add({
         position: pointPosition,
-        point: { pixelSize: 10, color: Cesium.Color.RED }
+        point: { pixelSize: 10, color: Cesium.Color.RED },
+        label : {
+            text : 'ISS',
+            font : '14pt sans-serif',
+            style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+            outlineWidth : 2,
+            verticalOrigin : Cesium.VerticalOrigin.BOTTOM,
+            pixelOffset : new Cesium.Cartesian2(0, -9)
+        }
     });
 
     viewer.camera.setView({
@@ -81,7 +93,7 @@ function getPosition(tleLine1, tleLine2) {
 function removeLoadingSpinner() {
     const loadingSpinner = document.querySelector(".loading-spinner");
     const cesiumContainer = document.querySelector("#cesiumContainer");
-    
+
     if (loadingSpinner && cesiumContainer) {
         loadingSpinner.style.display = "none";
         cesiumContainer.style.display = "block"

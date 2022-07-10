@@ -104,6 +104,7 @@
     <Content Include="src\js\api\api-endpoints.js" />
     <Content Include="src\js\api\fetch-api.js" />
     <Content Include="src\js\app.js" />
+    <Content Include="src\js\asteroid.js" />
     <Content Include="src\js\earth.js" />
     <Content Include="src\js\main.js" />
     <Content Include="Web.config" />
