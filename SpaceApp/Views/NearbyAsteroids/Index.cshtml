@@ -1,6 +1,6 @@
 ﻿@using SpaceApp.Models.ViewModels
 @using SpaceApp.Models.Models.Asteroid
-@model NearbyAsteroids
+@model NearbyAsteroidsViewModel
 
 <div class="page-wrapper">
     <div class="page-breadcrumb">
@@ -61,7 +61,7 @@
                         <td>@asteroid.is_potentially_hazardous_asteroid</td>
                         <td>@asteroid.orbital_data.orbit_class.orbit_class_type</td>
                         <td>@asteroid.is_sentry_object</td>
-                        <td>@Html.ActionLink("View More", "Asteroid", "NearbyAsteroids", new { asteroid_id = asteroid.id }, null)</td>
+                        <td>@Html.ActionLink("Orbit Viewer", "Asteroid", "NearbyAsteroids", new { id = asteroid.id }, null)</td>
                     </tr>
                 }
             </tbody>

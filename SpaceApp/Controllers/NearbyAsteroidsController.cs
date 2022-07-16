@@ -23,15 +23,22 @@ namespace SpaceApp.Controllers
             string nasaAsteroidsEndpoint = AppSettingsHelper.NasaAsteroidsEndpoint;
             HttpResponseMessage response = await HttpHelper.MakeApiRequest(nasaAsteroidsEndpoint);
 
-            var asteroids = JsonConvert.DeserializeObject<List<Asteroid>>(response.Content.ContentToString());
-            var nearByAsteroidsViewModel = new NearbyAsteroids { Asteroids = asteroids };
+            var nearByAsteroidsViewModel = new NearbyAsteroidsViewModel();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var asteroids = JsonConvert.DeserializeObject<List<Asteroid>>(response.Content.ContentToString());
+                nearByAsteroidsViewModel.Asteroids = asteroids;
+            }
 
             return View(nearByAsteroidsViewModel);
         }
 
-        public ActionResult Asteroid()
+        public ActionResult Asteroid(int id)
         {
-            return View();
+            AsteroidViewModel asteroidViewModel = new AsteroidViewModel { AsteroidId = id };
+
+            return View(asteroidViewModel);
         }
     }
 }

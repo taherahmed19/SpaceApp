@@ -1,7 +1,187 @@
-﻿
+﻿@using SpaceApp.Models.ViewModels
+@model AsteroidViewModel
+
 @{
     ViewBag.Title = "Asteroid!";
+
 }
 
-<h2>Asteroid</h2>
+<div class="page-wrapper">
+    <div class="page-breadcrumb">
+        <div class="row">
+            <div class="col-12 align-self-center">
+                <h1 class="page-title text-truncate text-dark font-weight-medium">Asteroid</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body p-0">
+                        @*<div class="loading-spinner">
+                                <h1>Loading...</h1>
+                            </div>*@
+                        @if (Model != null && Model.AsteroidId != 0)
+                        {
+                            <div id="main-container" data-id="@Model.AsteroidId"></div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body" id="asteroid-details">
+                        <h4 class="card-title">Advanced Details</h4>
+                        @*<ul class="nav nav-tabs mb-3">
+                            <li class="nav-item">
+                                <a data-tabs-source="orbit-parameters" class="nav-link active">
+                                    <i class="mdi mdi-home-variant d-lg-none d-block mr-1"></i>
+                                    <span class="d-none d-lg-block">Orbit Parameters</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a data-tabs-source="physical-parameters" class="nav-link">
+                                    <i class="mdi mdi-account-circle d-lg-none d-block mr-1"></i>
+                                    <span class="d-none d-lg-block">Physical Parameters</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a data-tabs-source="close-approach-data" class="nav-link">
+                                    <i class="mdi mdi-account-circle d-lg-none d-block mr-1"></i>
+                                    <span class="d-none d-lg-block">Close Approach Data</span>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active" data-tabs-target="orbit-parameters">
+                                <table class="table mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th class="border-top-0" scope="col">Element</th>
+                                            <th class="border-top-0" scope="col">Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row">Eccentricity</th>
+                                            <td>Mark</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Semi-major axis</th>
+                                            <td>Jacob</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Perihelion distance</th>
+                                            <td>Larry</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Inclination</th>
+                                            <td>Larry</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Ascending node longitude</th>
+                                            <td>Larry</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Mean anomaly</th>
+                                            <td>Larry</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Time of perihelion passage</th>
+                                            <td>Larry</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Sidereal orbital period</th>
+                                            <td>Larry</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Mean motion</th>
+                                            <td>Larry</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Aphelion distance</th>
+                                            <td>Larry</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="tab-pane" data-tabs-target="physical-parameters">
+                                <table class="table mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th class="border-top-0" scope="col">#</th>
+                                            <th class="border-top-0" scope="col">First</th>
+                                            <th class="border-top-0" scope="col">Last</th>
+                                            <th class="border-top-0" scope="col">Handle</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row">1</th>
+                                            <td>Mark1</td>
+                                            <td>Otto</td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">2</th>
+                                            <td>Jacob</td>
+                                            <td>Thornton</td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">3</th>
+                                            <td>Larry</td>
+                                            <td>the Bird</td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                            <div class="tab-pane" data-tabs-target="close-approach-data">
+                                <table class="table mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th class="border-top-0" scope="col">#</th>
+                                            <th class="border-top-0" scope="col">First</th>
+                                            <th class="border-top-0" scope="col">Last</th>
+                                            <th class="border-top-0" scope="col">Handle</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row">1</th>
+                                            <td>Mark2</td>
+                                            <td>Otto</td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">2</th>
+                                            <td>Jacob</td>
+                                            <td>Thornton</td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">3</th>
+                                            <td>Larry</td>
+                                            <td>the Bird</td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="http://spaceappassets-local.co.uk/js/asteroid.js" defer></script>
 

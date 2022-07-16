@@ -5,28 +5,32 @@ class Api {
         this.endpoints = applicationEndpoints;
     }
 
-    makeApiCall(method = "", callback) {
+    makeApiCall(method = "", callback, params = {}, body = {}) {
         const endpoint = this.endpoints[method];
         if (endpoint) {
-            const apiCall = endpoint();
+            const apiCall = endpoint(params, body);
             return this.request(apiCall, callback);
         }
     };
 
     async request(endpoint = {}, callback = () => { }) {
         try {
-            const response = await fetch(endpoint?.resource, {
-                'method': endpoint?.method,
-                'body': endpoint?.body ? JSON.stringify(endpoint.body) : null,
-                'accept': endpoint?.accept,
-                'content-type': endpoint?.contentType ? endpoint.contentType : null,
-            });
-            
-            const data = await response.json();
+            if (endpoint) {
+                let url = `${endpoint.resource}${endpoint.method == "GET" && endpoint.params ? '?' + (new URLSearchParams(endpoint.params)).toString() : ''}`;
 
-            callback(data);
-            
-            return await data;
+                fetch(url, {
+                    'method': endpoint.method,
+                    'body': endpoint.body ? JSON.stringify(endpoint.body) : null,
+                    'accept': endpoint.accept,
+                    'content-type': endpoint.contentType ? endpoint.contentType : null,
+                }).then(async (response) => {
+                    const data = await response.json();
+                    callback(data);
+                    return data;
+                }).catch((error) => {
+                    return error;
+                });
+            }
         } catch (error) {
             console.error(error)
             return error;

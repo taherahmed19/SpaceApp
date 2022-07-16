@@ -94,7 +94,8 @@
     <Compile Include="Models\Asteroids\Asteroids.cs" />
     <Compile Include="Models\CustomRazorViewEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModels\NearbyAsteroids.cs" />
+    <Compile Include="ViewModels\AsteroidViewModel.cs" />
+    <Compile Include="ViewModels\NearbyAsteroidsViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

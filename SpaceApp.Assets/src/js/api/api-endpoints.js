@@ -28,5 +28,15 @@
             contentType: null,
             body: null,
         }
+    },
+    Asteroid: (params, body) => {
+        return {
+            method: 'GET',
+            resource: `http://spaceappapi-local.co.uk/api/space/GetAsteroid`,
+            params: params ? params : null,
+            accept: "application/json",
+            contentType: null,
+            body: body ? body : null,
+        }
     }
 }

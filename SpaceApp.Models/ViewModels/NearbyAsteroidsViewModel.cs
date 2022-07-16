@@ -6,7 +6,7 @@ using System.Web;
 
 namespace SpaceApp.Models.ViewModels
 {
-    public class NearbyAsteroids
+    public class NearbyAsteroidsViewModel
     {
         public List<Asteroid> Asteroids { get; set; }
     }

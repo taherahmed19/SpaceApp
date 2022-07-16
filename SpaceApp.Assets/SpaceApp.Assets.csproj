@@ -105,8 +105,11 @@
     <Content Include="src\js\api\fetch-api.js" />
     <Content Include="src\js\app.js" />
     <Content Include="src\js\asteroid.js" />
+    <Content Include="src\js\data\asteroid.js" />
     <Content Include="src\js\earth.js" />
     <Content Include="src\js\main.js" />
+    <Content Include="src\js\milkyway.js" />
+    <Content Include="src\js\ui-functionality\tabs.js" />
     <Content Include="Web.config" />
     <Content Include="webpack.config.js" />
   </ItemGroup>
