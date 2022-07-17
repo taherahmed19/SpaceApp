@@ -25,7 +25,6 @@ function generateAsteroidData(asteroid) {
 }
 
 function generateSpaceModel(asteroid) {
-    console.log(asteroid)
     // Init object to main container
     const viz = new Spacekit.Simulation(document.querySelector('.space-viewer'), {
         basePath: 'https://typpo.github.io/spacekit/src',
@@ -53,32 +52,51 @@ function generateSpaceModel(asteroid) {
         );
     })
 
-    const label = asteroid.name ? asteroid.name : '';
+    const label = asteroid.name;
+    const orbitalData = asteroid["orbital_data"];
 
-    const asteroidObject = viz.createObject('spaceman', {
-        labelText: label,
-        ecliptic: {
-            displayLines: true,
-            lineColor: 0x333333,
-        },
-        ephem: new Spacekit.Ephem({
-            // These parameters define orbit shape.
-            a: .758624972466197, //semi_major_axis
-            e: .3586130156934444, //eccentricity
-            i: 33.43752567920985, //inclination
+    if (label && orbitalData) {
+        const eccentricity = parseFloat(orbitalData["eccentricity"]);
+        const semiMajorAxis = parseFloat(orbitalData["semi_major_axis"]);
+        const inclination = parseFloat(orbitalData["inclination"]);
+        const ascendingNodeLongitude = parseFloat(orbitalData["ascending_node_longitude"]);
+        const perihelionArguement = parseFloat(orbitalData["perihelion_argument"]);
+        const meanAnomaly = parseFloat(orbitalData["mean_anomaly"]);
+        const epochOsculation = parseFloat(orbitalData["epoch_osculation"]);
 
-            // These parameters define the orientation of the orbit.
-            om: 281.8812466845817, //ascending_node_longitude
-            w: 201.4705339910219, //perihelion_argument
-            ma: 26.53022026723202,
+        let asteroidObject = null;
 
-            // Where the object is in its orbit.
-            epoch: 2459600.5,
-        }, 'deg'),
-        particleSize: 20,
-    });
+        try {
+            asteroidObject = viz.createObject('spaceman', {
+                labelText: label,
+                ecliptic: {
+                    displayLines: true,
+                    lineColor: 0x333333,
+                },
+                ephem: new Spacekit.Ephem(
+                    {
+                        a: semiMajorAxis,
+                        e: eccentricity,
+                        i: inclination,
 
-    //viz.getViewer().followObject(asteroidObject, [-0.01, -0.01, 0.01]);
+                        om: ascendingNodeLongitude,
+                        w: perihelionArguement,
+                        ma: meanAnomaly,
+
+                        epoch: epochOsculation,
+                    },
+                    'deg',
+                ),
+                particleSize: 20,
+            });
+
+            if (asteroidObject) {
+                //viz.getViewer().followObject(asteroidObject, [-0.01, -0.01, 0.01]);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
 }
 
 function renderAsteroidTitle(asteroid) {
@@ -369,7 +387,7 @@ function generateMiscTable(miscData) {
     const orbitalData = miscData["orbital_data"];
     const orbitDeterminationDate = orbitalData["orbit_determination_date"]
     const firstDeterminationDate = orbitalData["first_observation_date"]
-    const lastDeterminationDate = orbitalData["last_observation_date"]
+    const lastObservationDate = orbitalData["last_observation_date"]
     const dataArcInDays = orbitalData["data_arc_in_days"]
     const observationsUsed = orbitalData["observations_used"]
     const orbitUncertainty = orbitalData["orbit_uncertainty"]
@@ -380,7 +398,7 @@ function generateMiscTable(miscData) {
     const orbitClassDescription = orbitalData["orbit_class"]?.["orbit_class_description"]
     const orbitClassRange = orbitalData["orbit_class"]?.["orbit_class_range"]
 
-    if (orbitDeterminationDate && firstDeterminationDate && lastDeterminationDate && dataArcInDays && observationsUsed
+    if (orbitDeterminationDate && firstDeterminationDate && lastObservationDate && dataArcInDays && observationsUsed
         && orbitUncertainty && minimumOrbitIntersection && jupiterTisserandInvariant
         && orbitClassType && orbitClassDescription && orbitClassRange) {
 
@@ -423,8 +441,8 @@ function generateMiscTable(miscData) {
                        <td>${firstDeterminationDate}</td>
                     </tr>
                     <tr>
-                       <th scope="row">Last Determination Date</th>
-                       <td>${lastDeterminationDate}</td>
+                       <th scope="row">Last Observation Date</th>
+                       <td>${lastObservationDate}</td>
                     </tr>
                     <tr>
                        <th scope="row">Data Arc In Days</th>
