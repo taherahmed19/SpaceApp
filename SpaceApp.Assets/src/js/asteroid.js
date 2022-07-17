@@ -1,8 +1,6 @@
 ﻿import api from './api/fetch-api';
-import addSolarSystemObjects from './milkyway';
+import planets from './data/milkyway';
 import addTabsEventListeners from './ui-functionality/tabs';
-//Make api call for individual asteroid and render 3d model
-//Table is rendered through .NET 
 
 renderAsteroid();
 
@@ -22,25 +20,47 @@ function generateAsteroidData(asteroid) {
     if (asteroid) {
         generateSpaceModel(asteroid);
         renderDetailsTableMarkup(asteroid);
+        renderAsteroidTitle(asteroid);
     }
 }
 
 function generateSpaceModel(asteroid) {
+    console.log(asteroid)
     // Init object to main container
-    const viz = new Spacekit.Simulation(document.getElementById('main-container'), {
+    const viz = new Spacekit.Simulation(document.querySelector('.space-viewer'), {
         basePath: 'https://typpo.github.io/spacekit/src',
+        unitsPerAu: 5.0,
+        jd: 2443568.0,
+        jdPerSecond: 20,
+        camera: {
+            enableDrift: true,
+        },
     });
 
     // Create a background 
     viz.createSkybox(Spacekit.SkyboxPresets.NASA_TYCHO);
 
-    addSolarSystemObjects(viz);
+    // Create our first object - the sun - using a preset space object.
+    viz.createObject('sun', Spacekit.SpaceObjectPresets.SUN);
 
+    //create solar system objects
+    planets.forEach(planet => {
+        viz.createObject(
+            planet,
+            Object.assign(Spacekit.SpaceObjectPresets[planet.toLocaleUpperCase()], {
+                labelText: planet.charAt(0).toUpperCase() + planet.slice(1),
+            }),
+        );
+    })
 
     const label = asteroid.name ? asteroid.name : '';
 
-    viz.createObject('spaceman', {
+    const asteroidObject = viz.createObject('spaceman', {
         labelText: label,
+        ecliptic: {
+            displayLines: true,
+            lineColor: 0x333333,
+        },
         ephem: new Spacekit.Ephem({
             // These parameters define orbit shape.
             a: .758624972466197, //semi_major_axis
@@ -55,7 +75,19 @@ function generateSpaceModel(asteroid) {
             // Where the object is in its orbit.
             epoch: 2459600.5,
         }, 'deg'),
+        particleSize: 20,
     });
+
+    //viz.getViewer().followObject(asteroidObject, [-0.01, -0.01, 0.01]);
+}
+
+function renderAsteroidTitle(asteroid) {
+    const pageTitle = document.querySelector('h1.page-title');
+    const asteroidName = asteroid.name;
+
+    if (pageTitle && asteroidName) {
+        pageTitle.insertAdjacentText("beforeend", asteroidName);
+    }
 }
 
 function renderDetailsTableMarkup(asteroid) {
@@ -98,28 +130,43 @@ function generateTabs() {
                 <span class="d-none d-lg-block">Close Approach Data</span>
             </a>
         </li>
+        <li class="nav-item">
+            <a data-tabs-source="miscellaneous-data" class="nav-link">
+                <i class="mdi mdi-account-circle d-lg-none d-block mr-1"></i>
+                <span class="d-none d-lg-block">Miscellaneous Data</span>
+            </a>
+        </li>
     `;
 }
 
 function generateTables(asteroid) {
     let markup = '';
-    const orbitalData = asteroid["orbital_data"] ? asteroid["orbital_data"] : null;
 
+    //Orbital Data table
+    const orbitalData = asteroid["orbital_data"]
     if (orbitalData) {
         markup += generateOrbitParamTable(orbitalData);
     }
 
-    const absoluteMagnitudeH = asteroid["absolute_magnitude_h"] ? asteroid["absolute_magnitude_h"] : null;
-    const estimatedDiameter = asteroid["estimated_diameter"] ? asteroid["estimated_diameter"] : null;
-
+    //Physical Data table
+    const absoluteMagnitudeH = asteroid["absolute_magnitude_h"]
+    const estimatedDiameter = asteroid["estimated_diameter"]
     if (absoluteMagnitudeH && estimatedDiameter) {
         markup += generatePhysicalParamsTable({ 'absolute_magnitude_h': absoluteMagnitudeH, 'estimated_diameter': estimatedDiameter })
     }
 
+    //Close Approach Data table
     const closeApproachData = asteroid["close_approach_data"] ? asteroid["close_approach_data"] : null;
-
     if (closeApproachData) {
         markup += generateCloseApproachTable(closeApproachData);
+    }
+
+    //Miscellaneous Data table is_sentry_object
+    const isHazardous = asteroid["is_potentially_hazardous_asteroid"]
+    const isSentryObject = asteroid["is_sentry_object"]
+
+    if (isHazardous != null && isSentryObject != null && orbitalData) {
+        markup += generateMiscTable({ 'is_potentially_hazardous_asteroid': isHazardous, 'is_sentry_object': isSentryObject, 'orbital_data': orbitalData });
     }
 
     return markup;
@@ -309,6 +356,105 @@ function generateCloseApproachTableRows(closeApproachData) {
             </tr>
         `;
     })
+
+    return markup;
+}
+
+function generateMiscTable(miscData) {
+    let markup = ''
+
+    const isHazardous = miscData["is_potentially_hazardous_asteroid"];
+    const isSentryObject = miscData["is_sentry_object"];
+
+    const orbitalData = miscData["orbital_data"];
+    const orbitDeterminationDate = orbitalData["orbit_determination_date"]
+    const firstDeterminationDate = orbitalData["first_observation_date"]
+    const lastDeterminationDate = orbitalData["last_observation_date"]
+    const dataArcInDays = orbitalData["data_arc_in_days"]
+    const observationsUsed = orbitalData["observations_used"]
+    const orbitUncertainty = orbitalData["orbit_uncertainty"]
+    const minimumOrbitIntersection = orbitalData["minimum_orbit_intersection"]
+    const jupiterTisserandInvariant = orbitalData["jupiter_tisserand_invariant"]
+    const equinox = orbitalData["equinox"]
+    const orbitClassType = orbitalData["orbit_class"]?.["orbit_class_type"]
+    const orbitClassDescription = orbitalData["orbit_class"]?.["orbit_class_description"]
+    const orbitClassRange = orbitalData["orbit_class"]?.["orbit_class_range"]
+
+    if (orbitDeterminationDate && firstDeterminationDate && lastDeterminationDate && dataArcInDays && observationsUsed
+        && orbitUncertainty && minimumOrbitIntersection && jupiterTisserandInvariant
+        && orbitClassType && orbitClassDescription && orbitClassRange) {
+
+        markup += `
+            <div class="tab-pane" data-tabs-target="miscellaneous-data">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th class="border-top-0" scope="col">Element</th>
+                            <th class="border-top-0" scope="col">Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th scope="row">Is Potentially Hazardous Asteroid</th>
+                        <td>${isHazardous}</td>
+                    </tr>
+                    <tr>
+                    <th scope="row">Is Sentry Object</th>
+                        <td>${isSentryObject}</td>
+                    </tr>
+                    <tr>
+                       <th scope="row">Orbit Class Type</th>
+                       <td>${orbitClassType}</td>
+                    </tr>
+                    <tr>
+                       <th scope="row">Orbit Class Description</th>
+                       <td>${orbitClassDescription}</td>
+                    </tr>
+                    <tr>
+                       <th scope="row">Orbit Class Range</th>
+                       <td>${orbitClassRange}</td>
+                    </tr>
+                    <tr>
+                       <th scope="row">Orbit Determination Date</th>
+                       <td>${orbitDeterminationDate}</td>
+                    </tr>
+                    <tr>
+                       <th scope="row">First Determination Date</th>
+                       <td>${firstDeterminationDate}</td>
+                    </tr>
+                    <tr>
+                       <th scope="row">Last Determination Date</th>
+                       <td>${lastDeterminationDate}</td>
+                    </tr>
+                    <tr>
+                       <th scope="row">Data Arc In Days</th>
+                       <td>${dataArcInDays}</td>
+                    </tr>
+                    <tr>
+                       <th scope="row">Observations Used</th>
+                       <td>${observationsUsed}</td>
+                    </tr>
+                    <tr>
+                       <th scope="row">Orbit Uncertainty</th>
+                       <td>${orbitUncertainty}</td>
+                    </tr>
+                    <tr>
+                       <th scope="row">Minimum Orbit Intersection</th>
+                       <td>${minimumOrbitIntersection}</td>
+                    </tr>
+                    <tr>
+                       <th scope="row">Jupiter Tisser and Invariant</th>
+                       <td>${jupiterTisserandInvariant}</td>
+                    </tr>
+                    <tr>
+                       <th scope="row">Equinox</th>
+                       <td>${equinox}</td>
+                    </tr>
+                 </tbody>
+                </table>
+            </div>
+            `;
+    }
 
     return markup;
 }

@@ -107,7 +107,8 @@
     <Content Include="src\js\asteroid.js" />
     <Content Include="src\js\earth.js" />
     <Content Include="src\js\main.js" />
-    <Content Include="src\js\milkyway.js" />
+    <Content Include="src\js\data\milkyway.js" />
+    <Content Include="src\js\ui-functionality\space-viewer-controls.js" />
     <Content Include="src\js\ui-functionality\tabs.js" />
     <Content Include="Web.config" />
     <Content Include="webpack.config.js" />
@@ -294,6 +295,7 @@
     <Content Include="src\css\icons\themify-icons\fonts\themify.woff" />
     <Content Include="src\css\icons\themify-icons\themify-icons.less" />
     <Content Include="src\css\custom\components\_cesium.scss" />
+    <Content Include="src\css\custom\components\_space-viewer.scss" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -301,9 +303,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="src\js\data\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

@@ -1,0 +1,5 @@
+2022-07-16 11:08:11,696 [101] DEBUG SpaceApp.Controllers.NearbyAsteroidsController [(null)] - False
+2022-07-16 11:08:11,713 [101] DEBUG SpaceApp.Controllers.NearbyAsteroidsController [(null)] - {"Message":"No HTTP resource was found that matches the request URI 'http://spaceappapi-local.co.uk/api/space/GetNearEarthObjects'.","MessageDetail":"No action was found on the controller 'Space' that matches the request."}
+2022-07-16 11:08:38,554 [97] DEBUG SpaceApp.Controllers.NearbyAsteroidsController [(null)] - http://spaceappapi-local.co.uk/api/space/GetNearEarthObjects
+2022-07-16 11:08:51,150 [68] DEBUG SpaceApp.Controllers.NearbyAsteroidsController [(null)] - http://spaceappapi-local.co.uk/api/space/GetNearEarthObjects
+2022-07-16 11:09:20,104 [89] DEBUG SpaceApp.Controllers.NearbyAsteroidsController [(null)] - http://spaceappapi-local.co.uk/api/space/GetNearEarthObjects
