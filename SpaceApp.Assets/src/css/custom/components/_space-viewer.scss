@@ -19,13 +19,23 @@
         border: none;
         cursor: pointer;
         outline: none !important;
-        
+
         i {
             color: #c8c3bc;
         }
+
+        &:hover {
+            i {
+                color: #fff
+            }
+        }
     }
 
-    canvas{
+    &__item.hide{
+        display: none;
+    }
+
+    canvas {
         max-width: 100%;
     }
 }

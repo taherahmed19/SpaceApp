@@ -1,6 +1,7 @@
 ﻿import api from './api/fetch-api';
 import planets from './data/milkyway';
 import addTabsEventListeners from './ui-functionality/tabs';
+import { configureControls } from './ui-functionality/space-viewer-controls';
 
 renderAsteroid();
 
@@ -28,13 +29,14 @@ function generateSpaceModel(asteroid) {
     // Init object to main container
     const viz = new Spacekit.Simulation(document.querySelector('.space-viewer'), {
         basePath: 'https://typpo.github.io/spacekit/src',
-        unitsPerAu: 5.0,
         jd: 2443568.0,
         jdPerSecond: 20,
         camera: {
             enableDrift: true,
         },
     });
+
+    //viz.stop();
 
     // Create a background 
     viz.createSkybox(Spacekit.SkyboxPresets.NASA_TYCHO);
@@ -78,25 +80,26 @@ function generateSpaceModel(asteroid) {
                         a: semiMajorAxis,
                         e: eccentricity,
                         i: inclination,
-
                         om: ascendingNodeLongitude,
                         w: perihelionArguement,
                         ma: meanAnomaly,
-
                         epoch: epochOsculation,
                     },
                     'deg',
                 ),
-                particleSize: 20,
             });
 
             if (asteroidObject) {
                 //viz.getViewer().followObject(asteroidObject, [-0.01, -0.01, 0.01]);
+                viz.zoomToFit(asteroidObject, 0.3);
+
             }
         } catch (error) {
             console.error(error);
         }
     }
+
+    configureControls(viz);
 }
 
 function renderAsteroidTitle(asteroid) {

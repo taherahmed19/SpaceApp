@@ -7,6 +7,7 @@
  * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
  */
 /******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
 /***/ "./src/js/app.js":
@@ -15,18 +16,7 @@
   \***********************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _ui_functionality_tabs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ui-functionality/tabs */ \"./src/js/ui-functionality/tabs.js\");\n/* harmony import */ var _ui_functionality_space_viewer_controls__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ui-functionality/space-viewer-controls */ \"./src/js/ui-functionality/space-viewer-controls.js\");\n/* harmony import */ var _ui_functionality_space_viewer_controls__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_ui_functionality_space_viewer_controls__WEBPACK_IMPORTED_MODULE_1__);\n﻿\r\n\n\n//# sourceURL=webpack://asp.net/./src/js/app.js?");
-
-/***/ }),
-
-/***/ "./src/js/ui-functionality/space-viewer-controls.js":
-/*!**********************************************************!*\
-  !*** ./src/js/ui-functionality/space-viewer-controls.js ***!
-  \**********************************************************/
-/***/ (() => {
-
-eval("﻿const spaceViewer = document.querySelector('.space-viewer');\r\n\r\nif (spaceViewer) {\r\n    const fullScreenButton = spaceViewer.querySelector('.space-viewer__item--fullscreen');\r\n\r\n    fullScreenButton.addEventListener(\"click\", () => {\r\n        if (document.fullscreenElement == null) {\r\n            if (spaceViewer.requestFullscreen) {\r\n                spaceViewer.requestFullscreen();\r\n            } else if (spaceViewer.webkitRequestFullscreen) { /* Safari */\r\n                spaceViewer.webkitRequestFullscreen();\r\n            }\r\n        } else {\r\n            if (document.exitFullscreen) {\r\n                document.exitFullscreen();\r\n            } else if (document.webkitExitFullscreen) { /* Safari */\r\n                document.webkitExitFullscreen();\r\n            }\r\n        }\r\n    })\r\n}\r\n\n\n//# sourceURL=webpack://asp.net/./src/js/ui-functionality/space-viewer-controls.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _ui_functionality_tabs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ui-functionality/tabs */ \"./src/js/ui-functionality/tabs.js\");\n﻿\n\n//# sourceURL=webpack://asp.net/./src/js/app.js?");
 
 /***/ }),
 
@@ -36,7 +26,6 @@ eval("﻿const spaceViewer = document.querySelector('.space-viewer');\r\n\r\nif 
   \*****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ addTabsEventListeners)\n/* harmony export */ });\n﻿function addTabsEventListeners() {\r\n    const tabs = document.querySelectorAll('[data-tabs-source]');\r\n    const tabPanes = document.querySelectorAll('[data-tabs-target]');\r\n    \r\n    if (tabs && tabPanes) {\r\n        tabs.forEach(tab => {\r\n            tab.addEventListener(\"click\", () => {\r\n                const tabId = tab.getAttribute(\"data-tabs-source\");\r\n                const itemToShow = tabId && document.querySelector(`[data-tabs-target='${tabId}']`);\r\n    \r\n                if (itemToShow) {\r\n                    tabs.forEach(tab => { tab.classList.remove('active') });\r\n                    tab.classList.add('active');\r\n    \r\n                    tabPanes.forEach(tabPane => { tabPane.classList.remove('active') });\r\n                    itemToShow.classList.add('active');\r\n                }\r\n            })\r\n        })\r\n    }\r\n}\r\n\r\naddTabsEventListeners();\n\n//# sourceURL=webpack://asp.net/./src/js/ui-functionality/tabs.js?");
 
 /***/ })
@@ -68,18 +57,6 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__webpack_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
 /******/ 		// define getter functions for harmony exports

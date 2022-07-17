@@ -8518,6 +8518,10 @@ strong {
     outline: none !important; }
     .space-viewer__item i {
       color: #c8c3bc; }
+    .space-viewer__item:hover i {
+      color: #fff; }
+  .space-viewer__item.hide {
+    display: none; }
   .space-viewer canvas {
     max-width: 100%; }
 
