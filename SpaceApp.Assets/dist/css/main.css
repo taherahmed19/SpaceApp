@@ -8512,7 +8512,10 @@ strong {
     right: 1rem;
     bottom: 5rem; }
   .space-viewer__item {
-    background: #181a1b; }
+    background: #181a1b;
+    border: none;
+    cursor: pointer;
+    outline: none !important; }
     .space-viewer__item i {
       color: #c8c3bc; }
   .space-viewer canvas {

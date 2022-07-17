@@ -71,7 +71,7 @@ function generateSpaceModel(asteroid) {
                 labelText: label,
                 ecliptic: {
                     displayLines: true,
-                    lineColor: 0x333333,
+                    lineColor: 0xff0000,
                 },
                 ephem: new Spacekit.Ephem(
                     {

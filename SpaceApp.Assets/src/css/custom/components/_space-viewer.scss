@@ -16,7 +16,10 @@
 
     &__item {
         background: #181a1b;
-
+        border: none;
+        cursor: pointer;
+        outline: none !important;
+        
         i {
             color: #c8c3bc;
         }
