@@ -2,10 +2,34 @@
 
 export function configureControls(viz) {
     if (spaceViewer) {
+        configureLayersButton();
         configureFullScreenButton();
         configurePlayButton(viz);
         configurePauseButton(viz);
+        //configureZoomAsteroidButton(viz);
     }
+}
+
+function configureLayersButton() {
+    const layersButton = spaceViewer.querySelector('.space-viewer__item--layers');
+    const layersPanel = spaceViewer.querySelector('.space-viewer__layers');
+    const controls = spaceViewer.querySelector('.space-viewer__controls')
+
+    if (layersButton && layersPanel) {
+        layersButton.addEventListener("click", () => {
+            layersPanel.classList.toggle('active');
+            controls.style.display = "none";
+        })
+    }
+
+    const layersCloseButton = spaceViewer.querySelector('.space-viewer__close');
+    if (layersCloseButton && controls) {
+        layersCloseButton.addEventListener("click", () => {
+            controls.style.display = "flex";
+            layersPanel.classList.toggle('active');
+        })
+    }
+
 }
 
 function configureFullScreenButton() {
@@ -52,6 +76,23 @@ function configurePauseButton(viz) {
             playButton.classList.remove('hide');
             pauseButton.classList.add('hide');
             viz.stop();
+        })
+    }
+}
+
+function configureZoomAsteroidButton(viz) {
+    const zoomToAsteroidButton = document.querySelector('.space-viewer__item--hide-planets');
+
+    if (zoomToAsteroidButton) {
+        zoomToAsteroidButton.addEventListener("click", (e) => {
+            let asteroidObjectPos = asteroidObject.getOrbit().getPositionAtTime(jd, false)
+            console.log(asteroidObject.getOrbit());
+
+            viz
+                .getViewer()
+                .get3jsCamera()
+                .position.set(asteroidObjectPos[0], asteroidObjectPos[1], asteroidObjectPos[2]);
+
         })
     }
 }

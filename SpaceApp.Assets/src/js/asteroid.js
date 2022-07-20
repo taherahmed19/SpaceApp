@@ -26,17 +26,23 @@ function generateAsteroidData(asteroid) {
 }
 
 function generateSpaceModel(asteroid) {
+    const jd = 2443568.0;
+    const unitsPerAu = 1.0;
+    const jdPerSecond = 20;
+    const cameraEnableDrift = false;
     // Init object to main container
     const viz = new Spacekit.Simulation(document.querySelector('.space-viewer'), {
         basePath: 'https://typpo.github.io/spacekit/src',
-        jd: 2443568.0,
-        jdPerSecond: 20,
+        unitsPerAu: unitsPerAu,
+        jd: jd,
+        jdPerSecond: jdPerSecond,
         camera: {
-            enableDrift: true,
+            enableDrift: cameraEnableDrift,
         },
     });
 
-    //viz.stop();
+    // Install scroll listener that stop animation while visualization is outside of viewport.
+    viz.renderOnlyInViewport();
 
     // Create a background 
     viz.createSkybox(Spacekit.SkyboxPresets.NASA_TYCHO);
@@ -69,7 +75,7 @@ function generateSpaceModel(asteroid) {
         let asteroidObject = null;
 
         try {
-            asteroidObject = viz.createObject('spaceman', {
+            asteroidObject = viz.createShape('spaceman', {
                 labelText: label,
                 ecliptic: {
                     displayLines: true,
@@ -87,12 +93,31 @@ function generateSpaceModel(asteroid) {
                     },
                     'deg',
                 ),
+                atmosphere: {
+                    enable: true,
+                    color: 0xc7c1a8,
+                },
+                shape: {
+                    shapeUrl:
+                        'https://raw.githubusercontent.com/typpo/spacekit/master/examples/asteroid_shape_from_earth/A1046.M1863.obj',
+                },
+                rotation: {
+                    lambdaDeg: 251,
+                    betaDeg: -63,
+                    period: 3.755067,
+                    yorp: 1.9e-8,
+                    phi0: 0,
+                    jd0: 2443568.0,
+                },
             });
 
             if (asteroidObject) {
-                //viz.getViewer().followObject(asteroidObject, [-0.01, -0.01, 0.01]);
-                viz.zoomToFit(asteroidObject, 0.3);
+                asteroidObject.initRotation();
+                asteroidObject.startRotation();
 
+                viz.createLight([0, 0, 0]);
+                viz.createAmbientLight();
+                viz.getViewer().followObject(asteroidObject, [-1, -0.01, 0.01]);
             }
         } catch (error) {
             console.error(error);

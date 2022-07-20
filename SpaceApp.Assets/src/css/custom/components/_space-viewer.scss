@@ -6,6 +6,19 @@
     background-color: black;
     position: relative;
 
+    &__layers {
+        display: none;
+        flex-direction: column;
+        padding: 2rem;
+        position: absolute;
+        right: 0;
+        bottom: 5rem;
+    }
+
+    &__layers.active{
+        display: flex;
+    }
+    
     &__controls {
         display: flex;
         flex-direction: column;
@@ -31,7 +44,7 @@
         }
     }
 
-    &__item.hide{
+    &__item.hide {
         display: none;
     }
 

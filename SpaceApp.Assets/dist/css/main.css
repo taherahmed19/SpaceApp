@@ -8505,6 +8505,15 @@ strong {
   max-height: 500px;
   background-color: black;
   position: relative; }
+  .space-viewer__layers {
+    display: none;
+    flex-direction: column;
+    padding: 2rem;
+    position: absolute;
+    right: 0;
+    bottom: 5rem; }
+  .space-viewer__layers.active {
+    display: flex; }
   .space-viewer__controls {
     display: flex;
     flex-direction: column;
