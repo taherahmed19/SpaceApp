@@ -1,12 +1,13 @@
 ﻿const spaceViewer = document.querySelector('.space-viewer');
 
-export function configureControls(viz) {
+export function configureControls(viz, asteroidObject, planetObjects) {
     if (spaceViewer) {
         configureLayersButton();
         configureFullScreenButton();
         configurePlayButton(viz);
         configurePauseButton(viz);
-        //configureZoomAsteroidButton(viz);
+        configureOrbitPathFilterButton(asteroidObject, planetObjects);
+        configureLabelFilterButton(asteroidObject, planetObjects)
     }
 }
 
@@ -80,19 +81,35 @@ function configurePauseButton(viz) {
     }
 }
 
-function configureZoomAsteroidButton(viz) {
-    const zoomToAsteroidButton = document.querySelector('.space-viewer__item--hide-planets');
+function configureOrbitPathFilterButton(asteroidObject, planetObjects) {
+    const orbitPathFilterButton = document.querySelector('#filter-orbits');
 
-    if (zoomToAsteroidButton) {
-        zoomToAsteroidButton.addEventListener("click", (e) => {
-            let asteroidObjectPos = asteroidObject.getOrbit().getPositionAtTime(jd, false)
-            console.log(asteroidObject.getOrbit());
+    if (orbitPathFilterButton) {
+        orbitPathFilterButton.addEventListener("click", () => {
+            const visibility = asteroidObject.getOrbit().getVisibility();
 
-            viz
-                .getViewer()
-                .get3jsCamera()
-                .position.set(asteroidObjectPos[0], asteroidObjectPos[1], asteroidObjectPos[2]);
+            asteroidObject.getOrbit().getLinesToEcliptic().visible = !visibility
+            asteroidObject.getOrbit().getOrbitShape().visible = !visibility
 
+            planetObjects.forEach(planet => {
+                planet.getOrbit().getOrbitShape().visible = !visibility
+            })
+        })
+    }
+}
+
+function configureLabelFilterButton(asteroidObject, planetObjects) {
+    const orbitPathFilterButton = document.querySelector('#filter-labels');
+
+    if (orbitPathFilterButton) {
+        orbitPathFilterButton.addEventListener("click", () => {
+            const visibility = asteroidObject.getLabelVisibility();
+
+            asteroidObject.setLabelVisibility(!visibility)
+
+            planetObjects.forEach(planet => {
+                planet.setLabelVisibility(!visibility)
+            })
         })
     }
 }

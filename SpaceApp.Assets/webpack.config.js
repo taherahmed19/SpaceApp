@@ -1,5 +1,6 @@
 ﻿const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const copyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
 	mode: process.env.NODE_ENV,
@@ -46,7 +47,12 @@ module.exports = {
 	},
 	plugins: [
 		new MiniCssExtractPlugin({
-		  filename: '[name].css',
+			filename: '[name].css',
 		}),
-	  ],
+		new copyPlugin({
+			patterns: [
+				{ from: "./src/models/", to: "./models" },
+			],
+		}),
+	],
 };

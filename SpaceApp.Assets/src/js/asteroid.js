@@ -51,13 +51,16 @@ function generateSpaceModel(asteroid) {
     viz.createObject('sun', Spacekit.SpaceObjectPresets.SUN);
 
     //create solar system objects
+    let planetObjects = []
     planets.forEach(planet => {
-        viz.createObject(
+        let object = viz.createObject(
             planet,
             Object.assign(Spacekit.SpaceObjectPresets[planet.toLocaleUpperCase()], {
                 labelText: planet.charAt(0).toUpperCase() + planet.slice(1),
             }),
         );
+
+        planetObjects.push(object)
     })
 
     const label = asteroid.name;
@@ -119,12 +122,13 @@ function generateSpaceModel(asteroid) {
                 viz.createAmbientLight();
                 viz.getViewer().followObject(asteroidObject, [-1, -0.01, 0.01]);
             }
+
+            configureControls(viz, asteroidObject, planetObjects);
         } catch (error) {
             console.error(error);
         }
     }
 
-    configureControls(viz);
 }
 
 function renderAsteroidTitle(asteroid) {

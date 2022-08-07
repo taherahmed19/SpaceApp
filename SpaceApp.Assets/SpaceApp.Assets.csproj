@@ -101,6 +101,10 @@
     <Content Include="src\css\icons\themify-icons\ie7\ie7.css" />
     <Content Include="src\css\icons\themify-icons\ie7\ie7.js" />
     <Content Include="src\css\icons\themify-icons\themify-icons.css" />
+    <Content Include="src\images\2d.svg" />
+    <Content Include="src\images\columbus-view.svg" />
+    <Content Include="src\images\fullscreen.svg" />
+    <Content Include="src\images\globe.svg" />
     <Content Include="src\js\api\api-endpoints.js" />
     <Content Include="src\js\api\fetch-api.js" />
     <Content Include="src\js\app.js" />
@@ -108,8 +112,10 @@
     <Content Include="src\js\earth.js" />
     <Content Include="src\js\main.js" />
     <Content Include="src\js\data\milkyway.js" />
+    <Content Include="src\js\ui-functionality\iss-space-viewer-controls.js" />
     <Content Include="src\js\ui-functionality\space-viewer-controls.js" />
     <Content Include="src\js\ui-functionality\tabs.js" />
+    <Content Include="src\js\ui-functionality\utils.js" />
     <Content Include="Web.config" />
     <Content Include="webpack.config.js" />
   </ItemGroup>
@@ -296,6 +302,7 @@
     <Content Include="src\css\icons\themify-icons\themify-icons.less" />
     <Content Include="src\css\custom\components\_cesium.scss" />
     <Content Include="src\css\custom\components\_space-viewer.scss" />
+    <Content Include="src\models\ISS.glb" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
