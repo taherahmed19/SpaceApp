@@ -38,8 +38,9 @@ function renderEarthViewer(data) {
             minimumPixelSize: 8000,
             maximumScale: 8000,
         },
+        viewFrom: new Cesium.Cartesian3(0.0, -Cesium.Math.PI_OVER_TWO, viewer.scene.camera.position.z)
     });
-
+    
     viewer.camera.setView({
         destination: Cesium.Cartesian3.fromRadians(
             position.longitude,
@@ -52,9 +53,9 @@ function renderEarthViewer(data) {
     let initialized = false;
     viewer.scene.globe.tileLoadProgressEvent.addEventListener(() => {
         if (!initialized && viewer.scene.globe.tilesLoaded === true) {
-            viewer.clock.shouldAnimate = true;
+            // viewer.clock.shouldAnimate = true;
             initialized = true;
-            viewer.scene.camera.zoomOut(7000000);
+            //viewer.scene.camera.zoomOut(7000000);
             removeLoadingSpinner()
         }
     });

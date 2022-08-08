@@ -79,12 +79,7 @@ function configureFollowSatelliteButton(viewer, satellite) {
 
     if (followSatelliteButton) {
         followSatelliteButton.addEventListener("click", () => {
-            if (viewer.trackedEntity) {
-                viewer.trackedEntity = undefined;
-                pointCameraToSatellite(viewer);
-            } else {
-                viewer.trackedEntity = satellite;
-            }
+            viewer.trackedEntity = satellite;
         })
     }
 }
