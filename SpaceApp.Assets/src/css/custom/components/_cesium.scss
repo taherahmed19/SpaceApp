@@ -1,17 +1,5 @@
 ﻿#cesiumContainer {
     position: relative;
-    max-height: 609px;
-    max-width: 1206px;
-}
-
-.cesium-viewer canvas{
-    height: 609px;
-    width: 1206px;
-}
-
-.cesium-viewer, .cesium-viewer-cesiumWidgetContainer, .cesium-widget{
-    max-height: 609px;
-    max-width: 1206px;
 }
 
 .loading-spinner {

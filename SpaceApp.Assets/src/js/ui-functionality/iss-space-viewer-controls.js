@@ -2,10 +2,11 @@
 
 const cesiumContainer = document.querySelector('#cesiumContainer');
 
-export default function configureControls(viewer) {
+export default function configureControls(viewer, satellite) {
     if (cesiumContainer && viewer) {
         configureSceneModeButton(viewer)
         configureFullScreenButton()
+        configureFollowSatelliteButton(viewer, satellite)
     }
 }
 
@@ -43,6 +44,7 @@ function configureSceneModeButton(viewer) {
                     case '2d-globe':
                         globe2dImage.classList.add('active');
                         viewer.scene.mode = Cesium.SceneMode.SCENE2D;
+                        viewer.camera.flyHome(2)
                         break;
                     case 'columbus-view':
                         columbusViewImage.classList.add('active');
@@ -53,18 +55,7 @@ function configureSceneModeButton(viewer) {
                         globe3dImage.classList.add('active');
                         viewer.scene.mode = Cesium.SceneMode.SCENE3D;
 
-                        let position = null;
-                        try {
-                            position = JSON.parse(sessionStorage.getItem("IssPosition"))
-                        } catch (err) {
-                            console.error(err);
-                        }
-
-                        if (position) {
-                            viewer.camera.flyTo({
-                                destination: Cesium.Cartesian3.fromRadians(position.longitude, position.latitude, viewer.camera.positionCartographic.height),
-                            });
-                        }
+                        pointCameraToSatellite(viewer)
 
                         break;
                 }
@@ -79,5 +70,36 @@ function configureFullScreenButton() {
         fullscreenButton.addEventListener("click", () => {
             applyFullscreen(cesiumContainer)
         })
+    }
+}
+
+//js-cesium-follow-satellite
+function configureFollowSatelliteButton(viewer, satellite) {
+    const followSatelliteButton = cesiumContainer.querySelector('.js-cesium-follow-satellite');
+
+    if (followSatelliteButton) {
+        followSatelliteButton.addEventListener("click", () => {
+            if (viewer.trackedEntity) {
+                viewer.trackedEntity = undefined;
+                pointCameraToSatellite(viewer);
+            } else {
+                viewer.trackedEntity = satellite;
+            }
+        })
+    }
+}
+
+function pointCameraToSatellite(viewer) {
+    let position = null;
+    try {
+        position = JSON.parse(sessionStorage.getItem("IssPosition"))
+    } catch (err) {
+        console.error(err);
+    }
+
+    if (position) {
+        viewer.camera.flyTo({
+            destination: Cesium.Cartesian3.fromRadians(position.longitude, position.latitude, 10000000),//set height to initial height
+        });
     }
 }

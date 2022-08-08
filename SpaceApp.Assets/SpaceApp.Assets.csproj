@@ -105,6 +105,7 @@
     <Content Include="src\images\columbus-view.svg" />
     <Content Include="src\images\fullscreen.svg" />
     <Content Include="src\images\globe.svg" />
+    <Content Include="src\images\magnifying-glass.svg" />
     <Content Include="src\js\api\api-endpoints.js" />
     <Content Include="src\js\api\fetch-api.js" />
     <Content Include="src\js\app.js" />

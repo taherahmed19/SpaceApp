@@ -31,13 +31,13 @@ function renderEarthViewer(data) {
     );
 
     // Visualize the satellite at this location with a red dot.
-    const point = viewer.entities.add({
+    const satellite = viewer.entities.add({
         position: pointPosition,
         model: {
             uri: '/assets/models/ISS.glb',
             minimumPixelSize: 8000,
             maximumScale: 8000,
-        }
+        },
     });
 
     viewer.camera.setView({
@@ -60,11 +60,11 @@ function renderEarthViewer(data) {
     });
 
     window.setInterval(function () {
-        updatePosition(point, data)
-    }, 1000);
+        updatePosition(satellite, data)
+    }, 500);
 
     //Configure controls
-    configureControls(viewer);
+    configureControls(viewer, satellite);
 }
 
 /**
