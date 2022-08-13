@@ -73,13 +73,42 @@ function configureFullScreenButton() {
     }
 }
 
+function toRadians(degrees) {
+    var TAU = 2 * Math.PI;
+    return degrees * TAU / 360;
+}
+
 //js-cesium-follow-satellite
 function configureFollowSatelliteButton(viewer, satellite) {
     const followSatelliteButton = cesiumContainer.querySelector('.js-cesium-follow-satellite');
 
     if (followSatelliteButton) {
         followSatelliteButton.addEventListener("click", () => {
-            viewer.trackedEntity = satellite;
+            const position = JSON.parse(sessionStorage.getItem("IssPosition"))
+
+            try {
+                if (!viewer.trackedEntity) {
+                    viewer.camera.flyTo({
+                        destination: new Cesium.Cartesian3.fromRadians(position.longitude, position.latitude, 3702340.5336036095),
+                        duration: 5,
+                        easingFunction: Cesium.EasingFunction.QUADRATIC_IN_OUT,
+                        complete: function () {
+                            viewer.trackedEntity = satellite;
+                        },
+                    });
+                } else {
+                    viewer.camera.flyTo({
+                        destination: Cesium.Cartesian3.fromRadians(
+                            position.longitude,
+                            position.latitude,
+                            6000000
+                        ),
+                    });
+                    viewer.trackedEntity = null
+                }
+            } catch (err) {
+                console.error(err)
+            }
         })
     }
 }

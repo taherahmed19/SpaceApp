@@ -30,7 +30,6 @@ function renderEarthViewer(data) {
         position.longitude, position.latitude, position.height * heightBuffer
     );
 
-    // Visualize the satellite at this location with a red dot.
     const satellite = viewer.entities.add({
         position: pointPosition,
         model: {
@@ -38,9 +37,9 @@ function renderEarthViewer(data) {
             minimumPixelSize: 8000,
             maximumScale: 8000,
         },
-        viewFrom: new Cesium.Cartesian3(0.0, -Cesium.Math.PI_OVER_TWO, viewer.scene.camera.position.z)
+        viewFrom: new Cesium.Cartesian3(-1200000, -700000, 600000),
     });
-    
+
     viewer.camera.setView({
         destination: Cesium.Cartesian3.fromRadians(
             position.longitude,
