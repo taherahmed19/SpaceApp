@@ -7,8 +7,9 @@ const cesiumContainer = document.querySelector('#cesiumContainer');
 export default function configureControls(viewer, satellite) {
     if (cesiumContainer && viewer) {
         const flyToDurationGlobeView = 5;
-        const flyToDuration2DView = 0;
-        const flyToDurationColumbusView = 0;
+        const flyToDuration2DView = 2;
+        const flyToDurationColumbusView = 2;
+        const flyToDurationReset = 0;
 
         function configureSceneModeButton() {
             const sceneModeButton = cesiumContainer.querySelector('.js-cesium-3d-globe');
@@ -44,17 +45,17 @@ export default function configureControls(viewer, satellite) {
                             case '2d-globe':
                                 globe2dImage.classList.add('active');
                                 viewer.scene.mode = Cesium.SceneMode.SCENE2D;
-                                pointCameraToSatellite(flyToDuration2DView)
+                                pointCameraToSatellite(flyToDurationReset)
                                 break;
                             case 'columbus-view':
                                 columbusViewImage.classList.add('active');
                                 viewer.scene.mode = Cesium.SceneMode.COLUMBUS_VIEW;
-                                pointCameraToSatellite(flyToDurationColumbusView)
+                                pointCameraToSatellite(flyToDurationReset)
                                 break;
                             default:
                                 globe3dImage.classList.add('active');
                                 viewer.scene.mode = Cesium.SceneMode.SCENE3D;
-                                pointCameraToSatellite(flyToDurationGlobeView)
+                                pointCameraToSatellite(flyToDurationReset)
                                 break;
                         }
                     }
@@ -80,12 +81,13 @@ export default function configureControls(viewer, satellite) {
 
                         switch (viewer.scene.mode) {
                             case 1: //columbus view
+                                handleCameraColumbusView()
                                 break;
                             case 2: //2d view
-                                handleCamera2DView(flyToDuration2DView)
+                                handleCamera2DView()
                                 break;
                             case 3: //globe view
-                                handleCameraGlobeView(flyToDurationGlobeView)
+                                handleCameraGlobeView()
                                 break;
                         }
                     } else {
@@ -94,61 +96,33 @@ export default function configureControls(viewer, satellite) {
                 })
             }
 
-            function handleCamera2DView(duration) {
-                let position = null;
-
-                try {
-                    position = JSON.parse(sessionStorage.getItem("IssPosition"))
-                } catch (err) {
-                    console.error(err)
-                }
-
-                viewer.camera.flyTo({
-                    destination: Cesium.Cartesian3.fromRadians(
-                        position.longitude,
-                        position.latitude,
-                        cameraHeight
-                    ),
-                    duration: duration,
-                    complete: function () {
-                        followSatelliteButton.classList.remove("js-disabled")
-                    }
+            function handleCameraColumbusView() {
+                pointCameraToSatellite(flyToDurationColumbusView, function () {
+                    followSatelliteButton.classList.remove("js-disabled")
                 });
             }
 
-            function handleCameraGlobeView(duration) {
+            function handleCamera2DView() {
+                pointCameraToSatellite(flyToDuration2DView, function () {
+                    followSatelliteButton.classList.remove("js-disabled")
+                });
+            }
+
+            function handleCameraGlobeView() {
                 if (!viewer.trackedEntity) {
                     viewer.trackedEntity = satellite;
                 } else {
-                    let position = null;
+                    followSatelliteButton.classList.add("js-disabled")
 
-                    try {
-                        position = JSON.parse(sessionStorage.getItem("IssPosition"))
-                    } catch (err) {
-                        console.error(err)
-                    }
-
-                    if (position) {
-                        followSatelliteButton.classList.add("js-disabled")
-
-                        viewer.camera.flyTo({
-                            destination: Cesium.Cartesian3.fromRadians(
-                                position.longitude,
-                                position.latitude,
-                                cameraHeight
-                            ),
-                            duration: duration,
-                            complete: function () {
-                                followSatelliteButton.classList.remove("js-disabled")
-                            }
-                        });
-                        viewer.trackedEntity = null
-                    }
+                    pointCameraToSatellite(flyToDurationGlobeView, function () {
+                        followSatelliteButton.classList.remove("js-disabled")
+                    });
+                    viewer.trackedEntity = null
                 }
             }
         }
 
-        function pointCameraToSatellite(duration) {
+        function pointCameraToSatellite(duration, completeFunction) {
             let position = null;
             try {
                 position = JSON.parse(sessionStorage.getItem("IssPosition"))
@@ -158,14 +132,18 @@ export default function configureControls(viewer, satellite) {
 
             if (position) {
                 viewer.camera.flyTo({
-                    destination: Cesium.Cartesian3.fromRadians(position.longitude, position.latitude, cameraHeight),
-                    duration: duration
+                    destination: Cesium.Cartesian3.fromRadians(
+                        position.longitude,
+                        position.latitude,
+                        cameraHeight),
+                    duration: duration,
+                    complete: completeFunction
                 });
             }
         }
 
         configureSceneModeButton()
         configureFullScreenButton()
-        configureFollowSatelliteButton(viewer, satellite)
+        configureFollowSatelliteButton()
     }
 }
