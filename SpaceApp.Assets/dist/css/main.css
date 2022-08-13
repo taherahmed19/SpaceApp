@@ -8591,6 +8591,66 @@ strong {
   .space-viewer-controls__layers.active {
     display: flex; }
 
+/**
+    Overrides 
+    notification--error
+    notification--success
+    notification--info
+*/
+.notification {
+  position: relative;
+  margin-bottom: 1rem;
+  display: flex;
+  width: 100%;
+  min-width: 18rem;
+  max-width: 18rem;
+  height: auto;
+  min-height: 3rem;
+  flex-wrap: wrap;
+  color: #ffffff;
+  z-index: 1;
+  border-left: 3px solid #fa4d56;
+  background: #fa4d56;
+  padding: 0.9375rem; }
+  .notification__text-wrapper {
+    display: flex;
+    flex-wrap: wrap; }
+  .notification__title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.28572;
+    letter-spacing: 0.16px;
+    margin: 0 0.25rem 0 0; }
+  .notification__close-btn {
+    outline: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    width: 3rem;
+    min-width: 3rem;
+    max-width: 3rem;
+    height: 3rem;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer; }
+    .notification__close-btn:focus {
+      outline: none; }
+
+.notification--error {
+  background: #fa4d56; }
+
+.notification-wrapper {
+  position: absolute;
+  right: 1rem;
+  top: 2rem;
+  display: flex;
+  flex-direction: column; }
+
 .sidebar-link i {
   height: 100% !important;
   display: flex !important;

@@ -1,6 +1,8 @@
 ﻿import api from './api/fetch-api';
 import configureControls from './ui-functionality/iss-space-viewer-controls'
+
 const heightBuffer = 1000;
+const cameraHeight = 26203203.255770896;
 
 api.makeApiCall("IssTles", renderEarthViewer);
 
@@ -19,51 +21,72 @@ function renderEarthViewer(data) {
         navigationHelpButton: false, sceneModePicker: false, fullscreenButton: false,
     });
 
-    viewer.scene.globe.enableLighting = false;
-    //Hide UI elements 
-    viewer.animation.container.style.visibility = 'hidden';
-    viewer.timeline.container.style.visibility = 'hidden';
-    viewer.forceResize();
+    function setViewerWindowSettings() {
+        viewer.scene.globe.enableLighting = false;
+        //Hide UI elements 
+        viewer.animation.container.style.visibility = 'hidden';
+        viewer.timeline.container.style.visibility = 'hidden';
+        viewer.forceResize();
+    }
 
-    var position = getPosition(data.line1.trim(), data.line2.trim())
-    var pointPosition = new Cesium.Cartesian3.fromRadians(
-        position.longitude, position.latitude, position.height * heightBuffer
-    );
+    function addSatelliteEntity(position) {
+        const pointPosition = new Cesium.Cartesian3.fromRadians(
+            position.longitude, position.latitude, position.height * heightBuffer
+        );
 
-    const satellite = viewer.entities.add({
-        position: pointPosition,
-        model: {
-            uri: '/assets/models/ISS.glb',
-            minimumPixelSize: 8000,
-            maximumScale: 8000,
-        },
-        viewFrom: new Cesium.Cartesian3(-1200000, -700000, 600000),
-    });
+        const xOffset = -1200000;
+        const yOffset = -700000;
+        const zOffset = 600000;
 
-    viewer.camera.setView({
-        destination: Cesium.Cartesian3.fromRadians(
-            position.longitude,
-            position.latitude,
-            Cesium.Ellipsoid.WGS84.cartesianToCartographic(viewer.camera.position).height
-        )
-    });
+        const satellite = viewer.entities.add({
+            position: pointPosition,
+            model: {
+                uri: '/assets/models/ISS.glb',
+                minimumPixelSize: 8000,
+                maximumScale: 8000,
+            },
+            viewFrom: new Cesium.Cartesian3(xOffset, yOffset, zOffset),
+        });
 
-    // Wait for globe to load then zoom out     
-    let initialized = false;
-    viewer.scene.globe.tileLoadProgressEvent.addEventListener(() => {
-        if (!initialized && viewer.scene.globe.tilesLoaded === true) {
-            // viewer.clock.shouldAnimate = true;
-            initialized = true;
-            //viewer.scene.camera.zoomOut(7000000);
-            removeLoadingSpinner()
-        }
-    });
+        return satellite;
+    }
 
-    window.setInterval(function () {
-        updatePosition(satellite, data)
-    }, 500);
+    function setCameraView(position) {
+        viewer.camera.setView({
+            destination: Cesium.Cartesian3.fromRadians(
+                position.longitude,
+                position.latitude,
+                cameraHeight
+            )
+        });
+    }
 
-    //Configure controls
+
+    function setTileProgressEvent() {
+        // Wait for globe to load then zoom out     
+        let initialized = false;
+        viewer.scene.globe.tileLoadProgressEvent.addEventListener(() => {
+            if (!initialized && viewer.scene.globe.tilesLoaded === true) {
+                // viewer.clock.shouldAnimate = true;
+                initialized = true;
+                //viewer.scene.camera.zoomOut(7000000);
+                removeLoadingSpinner()
+            }
+        });
+    }
+
+    function setSatellitePositionInterval() {
+        window.setInterval(function () {
+            updatePosition(satellite, data)
+        }, 100);
+    }
+
+    const position = getPosition(data.line1.trim(), data.line2.trim())
+    const satellite = addSatelliteEntity(position);
+    setViewerWindowSettings()
+    setCameraView(position)
+    setTileProgressEvent()
+    setSatellitePositionInterval()
     configureControls(viewer, satellite);
 }
 
@@ -124,3 +147,5 @@ function removeLoadingSpinner() {
     }
 
 }
+
+export { cameraHeight };
