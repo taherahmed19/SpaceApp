@@ -2,9 +2,9 @@
 import { cameraHeight } from '../earth';
 import { showErrorNotification } from './notifications';
 
-const cesiumContainer = document.querySelector('#cesiumContainer');
-
 export default function configureControls(viewer, satellite) {
+    const cesiumContainer = document.querySelector('#cesiumContainer');
+
     if (cesiumContainer && viewer) {
         const flyToDurationGlobeView = 5;
         const flyToDuration2DView = 2;
@@ -97,12 +97,16 @@ export default function configureControls(viewer, satellite) {
             }
 
             function handleCameraColumbusView() {
+                followSatelliteButton.classList.add("js-disabled")
+
                 pointCameraToSatellite(flyToDurationColumbusView, function () {
                     followSatelliteButton.classList.remove("js-disabled")
                 });
             }
 
             function handleCamera2DView() {
+                followSatelliteButton.classList.add("js-disabled")
+
                 pointCameraToSatellite(flyToDuration2DView, function () {
                     followSatelliteButton.classList.remove("js-disabled")
                 });

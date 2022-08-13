@@ -1,24 +1,5 @@
 ﻿const notificationDisplayTime = 4000 //ms
 
-function configureCloseButton(notificationId, notificationTimeout) {
-    const closeBtn = document.querySelector('.js-notification-close');
-
-    if (closeBtn) {
-        closeBtn.addEventListener("click", () => {
-            const notificationElement = closeBtn.closest(`[data-notification-id='${notificationId}']`);
-
-            if (notificationElement) {
-                const textElement = notificationElement.querySelector('.notification__title');
-
-                if (textElement && !notificationElement.classList.contains('d-none')) {
-                    notificationElement.remove();
-                    clearTimeout(notificationTimeout)
-                }
-            }
-        })
-    }
-}
-
 export function showErrorNotification(message, notificationId, container) {
     if (container) {
         const notificationWrapper = container.querySelector('.notification-wrapper');
@@ -57,4 +38,23 @@ export function showErrorNotification(message, notificationId, container) {
 
 export function showInfoNotification() {
 
+}
+
+function configureCloseButton(notificationId, notificationTimeout) {
+    const closeBtn = document.querySelector('.js-notification-close');
+
+    if (closeBtn) {
+        closeBtn.addEventListener("click", () => {
+            const notificationElement = closeBtn.closest(`[data-notification-id='${notificationId}']`);
+
+            if (notificationElement) {
+                const textElement = notificationElement.querySelector('.notification__title');
+
+                if (textElement && !notificationElement.classList.contains('d-none')) {
+                    notificationElement.remove();
+                    clearTimeout(notificationTimeout)
+                }
+            }
+        })
+    }
 }

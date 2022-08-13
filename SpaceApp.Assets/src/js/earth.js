@@ -11,15 +11,32 @@ api.makeApiCall("IssTles", renderEarthViewer);
  * @param {*} data 
  */
 function renderEarthViewer(data) {
+    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1YjhlOGFjMC1hYjQwLTRkN2QtYmIwYy0wMTUxNDJiZjMxOGIiLCJpZCI6MTA0NjM4LCJpYXQiOjE2NjA0MTQwNTh9.2gD9ETM4SVSm4lHrS3jOA9E7DHRSQhYlqQAOBtTLy6U';
+
     // Initialize the Cesium viewer.
     const viewer = new Cesium.Viewer('cesiumContainer', {
         sceneMode: Cesium.SceneMode.SCENE3D,
-        imageryProvider: new Cesium.TileMapServiceImageryProvider({
-            url: Cesium.buildModuleUrl("Assets/Textures/NaturalEarthII"),
+        terrainProvider: Cesium.createWorldTerrain({
+            requestVertexNormals: true,
+            requestWaterMask: true
         }),
+        // imageryProvider: new Cesium.TileMapServiceImageryProvider({
+        //     url: Cesium.buildModuleUrl("Assets/Textures/NaturalEarthII"),
+        // }),
         baseLayerPicker: false, geocoder: false, homeButton: false, infoBox: false,
         navigationHelpButton: false, sceneModePicker: false, fullscreenButton: false,
     });
+
+    var layers = viewer.scene.imageryLayers;
+    // var blackMarble = layers.addImageryProvider(new Cesium.TileMapServiceImageryProvider({
+    //     url: Cesium.buildModuleUrl("Assets/Textures/NaturalEarthII"),
+    // }));
+    console.log(layers._layers[0])
+    try{
+        layers._layers[0].alpha = 1 // 0.0 is transparent.  1.0 is opaque.
+    }catch(err){
+        console.error(err)
+    }
 
     function setViewerWindowSettings() {
         viewer.scene.globe.enableLighting = false;
