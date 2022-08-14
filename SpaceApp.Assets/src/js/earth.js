@@ -2,8 +2,8 @@
 import configureControls from './ui-functionality/iss-space-viewer-controls'
 
 const heightBuffer = 1000;
-const cameraHeight = 26203203.255770896;
-let citiesData = {
+const cameraHeight = 20203203;
+const citiesData = {
     cities: null,
 };
 
