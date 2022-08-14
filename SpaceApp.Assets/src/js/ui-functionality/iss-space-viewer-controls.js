@@ -78,23 +78,23 @@ export default function configureControls(viewer, satellite) {
 
             const scenePanelCloseButton = cityLabelsPanel.querySelector('.space-viewer-controls__close');
             const showCityLabelsCheckbox = cityLabelsPanel.querySelector('.js-cesium-show-city-labels');
+            const labels = viewer.scene.primitives.add(new Cesium.LabelCollection());
+
             if (scenePanelCloseButton && showCityLabelsCheckbox) {
                 scenePanelCloseButton.addEventListener("click", () => {
                     controls.style.display = "flex";
                     cityLabelsPanel.classList.toggle('active');
 
                     if (showCityLabelsCheckbox.checked) {
+                        labels.show = true;
                         if (citiesData.cities == null) {
                             //make api call for city data
-                            try {
-                                api.makeApiCall("CityLocations", renderCityNames);
-                            } catch (err) {
-                                console.error(err);
-                            }
+                            api.makeApiCall("CityLocations", renderCityNames);
                         }
                     } else {
                         console.log("labels...")
                         console.log(viewer.scene.primitives)
+                        labels.show = false;
                     }
                 })
             }
@@ -102,7 +102,6 @@ export default function configureControls(viewer, satellite) {
             //TODO: Break out into earth.js
             function renderCityNames(cities) {
                 if (cities && citiesData) {
-                    const labels = viewer.scene.primitives.add(new Cesium.LabelCollection());
 
                     citiesData.cities = cities;
 
@@ -115,7 +114,11 @@ export default function configureControls(viewer, satellite) {
                             labels.add({
                                 position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 1000),
                                 text: name,
-                                font: '15px Helvetica',
+                                font: '30px Helvetica',
+                                fillColor: Cesium.Color.WHITE,
+                                style: Cesium.LabelStyle.FILL,
+                                pixelOffset: new Cesium.Cartesian2(20, 20),
+                                scale: 0.5
                                 //rotation: Cesium.Math.toRadians(-45)
                             });
                         }

@@ -35,8 +35,8 @@ function renderEarthViewer(data) {
     });
 
     function setViewerWindowSettings() {
-        viewer.scene.globe.enableLighting = false;
-        //Hide UI elements 
+        viewer.scene.skyAtmosphere.show = false;
+        viewer.scene.globe.enableLighting = true;
         viewer.animation.container.style.visibility = 'hidden';
         viewer.timeline.container.style.visibility = 'hidden';
         viewer.forceResize();
@@ -54,8 +54,8 @@ function renderEarthViewer(data) {
         );
 
         const xOffset = -1200000;
-        const yOffset = -700000;
-        const zOffset = 600000;
+        const yOffset = -600000;
+        const zOffset = 950000;
 
         const satellite = viewer.entities.add({
             position: pointPosition,
@@ -86,9 +86,7 @@ function renderEarthViewer(data) {
         let initialized = false;
         viewer.scene.globe.tileLoadProgressEvent.addEventListener(() => {
             if (!initialized && viewer.scene.globe.tilesLoaded === true) {
-                // viewer.clock.shouldAnimate = true;
                 initialized = true;
-                //viewer.scene.camera.zoomOut(7000000);
                 removeLoadingSpinner()
             }
         });

@@ -81,16 +81,30 @@
                     <div class="space-viewer-controls__layers js-cesium-city-labels-panel">
                         <div class="space-viewer-controls__title">
                             <button class="space-viewer-controls__close">
-                                Display city names
+                                Settings
                                 <i class="fa-solid fa-chevron-right"></i>
                             </button>
                         </div>
                         <ul class="space-viewer-controls__filter">
                             <li class="space-viewer-controls__filter-item space-viewer-controls__filter-item--checkbox">
-                                <input class="js-cesium-show-city-labels" id="filter-city-labels" type="checkbox" name="scene-mode" value="show-city-labels"/>
+                                <input class="js-cesium-show-city-labels" id="filter-city-labels" type="checkbox" name="show-city-labels" value="show-city-labels" />
                                 <div class="checkbox-indicator"></div>
                                 <label for="filter-city-labels">
                                     <span>Show City Labels</span>
+                                </label>
+                            </li>
+                            <li class="space-viewer-controls__filter-item space-viewer-controls__filter-item--checkbox">
+                                <input class="js-cesium-show-city-labels" id="filter-atmopshere" type="checkbox" name="show-atmosphere" value="" />
+                                <div class="checkbox-indicator"></div>
+                                <label for="filter-atmopshere">
+                                    <span>Show Atmosphere</span>
+                                </label>
+                            </li>
+                            <li class="space-viewer-controls__filter-item space-viewer-controls__filter-item--checkbox">
+                                <input class="js-cesium-show-city-labels" id="filter-lighting" type="checkbox" name="" value="show-lighting" />
+                                <div class="checkbox-indicator"></div>
+                                <label for="filter-lighting">
+                                    <span>Enable lighting</span>
                                 </label>
                             </li>
                         </ul>
