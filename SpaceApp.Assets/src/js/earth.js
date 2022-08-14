@@ -3,6 +3,9 @@ import configureControls from './ui-functionality/iss-space-viewer-controls'
 
 const heightBuffer = 1000;
 const cameraHeight = 26203203.255770896;
+let citiesData = {
+    cities: null,
+};
 
 api.makeApiCall("IssTles", renderEarthViewer);
 
@@ -16,27 +19,20 @@ function renderEarthViewer(data) {
     // Initialize the Cesium viewer.
     const viewer = new Cesium.Viewer('cesiumContainer', {
         sceneMode: Cesium.SceneMode.SCENE3D,
-        terrainProvider: Cesium.createWorldTerrain({
-            requestVertexNormals: true,
-            requestWaterMask: true
-        }),
+        // terrainProvider: Cesium.createWorldTerrain({
+        //     // requestVertexNormals: true,
+        //     // requestWaterMask: true
+        // }),
         // imageryProvider: new Cesium.TileMapServiceImageryProvider({
         //     url: Cesium.buildModuleUrl("Assets/Textures/NaturalEarthII"),
         // }),
+        imageryProvider: new Cesium.SingleTileImageryProvider({
+            url: "/assets/images/earth-map-tiles.jpg",
+            style: Cesium.IonWorldImageryStyle.AERIAL_WITH_LABELS
+        }),
         baseLayerPicker: false, geocoder: false, homeButton: false, infoBox: false,
         navigationHelpButton: false, sceneModePicker: false, fullscreenButton: false,
     });
-
-    var layers = viewer.scene.imageryLayers;
-    // var blackMarble = layers.addImageryProvider(new Cesium.TileMapServiceImageryProvider({
-    //     url: Cesium.buildModuleUrl("Assets/Textures/NaturalEarthII"),
-    // }));
-    console.log(layers._layers[0])
-    try{
-        layers._layers[0].alpha = 1 // 0.0 is transparent.  1.0 is opaque.
-    }catch(err){
-        console.error(err)
-    }
 
     function setViewerWindowSettings() {
         viewer.scene.globe.enableLighting = false;
@@ -44,6 +40,12 @@ function renderEarthViewer(data) {
         viewer.animation.container.style.visibility = 'hidden';
         viewer.timeline.container.style.visibility = 'hidden';
         viewer.forceResize();
+    }
+
+    function setGlobeTextureSettings() {
+        const layers = viewer.scene.imageryLayers;
+        const imageLayer = layers._layers[0];
+        imageLayer.brightness = 0.6;
     }
 
     function addSatelliteEntity(position) {
@@ -101,6 +103,7 @@ function renderEarthViewer(data) {
     const position = getPosition(data.line1.trim(), data.line2.trim())
     const satellite = addSatelliteEntity(position);
     setViewerWindowSettings()
+    setGlobeTextureSettings()
     setCameraView(position)
     setTileProgressEvent()
     setSatellitePositionInterval()
@@ -165,4 +168,4 @@ function removeLoadingSpinner() {
 
 }
 
-export { cameraHeight };
+export { cameraHeight, citiesData };

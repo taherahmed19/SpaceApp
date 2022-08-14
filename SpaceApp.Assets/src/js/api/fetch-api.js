@@ -28,6 +28,7 @@ class Api {
                     callback(data);
                     return data;
                 }).catch((error) => {
+                    console.error(error)
                     return error;
                 });
             }

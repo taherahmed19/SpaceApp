@@ -53,7 +53,7 @@
 .space-viewer-controls__layers {
     display: none;
     flex-direction: column;
-    padding: 1rem .75rem;
+    padding: 1rem 1.2rem;
     position: absolute;
     right: 0;
     bottom: 5rem;
@@ -64,10 +64,10 @@
         list-style-type: none;
         padding: 0;
 
-        li {
+        &-item {
+            position: relative;
             display: flex;
             align-items: center;
-            padding: .5rem;
             cursor: pointer;
 
             label {
@@ -82,7 +82,7 @@
                 align-items: center;
                 border: 1px solid transparent;
 
-                span{
+                span {
                     margin-left: 1rem;
                 }
             }
@@ -97,10 +97,47 @@
                     border: 1px solid white;
                 }
             }
-        }
 
-        &-item--globe {
-            display: none;
+            &--globe input {
+                display: none;
+            }
+
+            &--checkbox {
+                .checkbox-indicator {
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    left: 0;
+                    height: 20px;
+                    width: 20px;
+                    background: #e6e6e6;
+
+                    &:after {
+                        content: '';
+                        position: absolute;
+                        display: none;
+                        left: 8px;
+                        top: 4px;
+                        width: 3px;
+                        height: 8px;
+                        border: solid #fff;
+                        border-width: 0 2px 2px 0;
+                        transform: rotate(45deg);
+                    }
+                }
+
+                input {
+                    display: none;
+
+                    &:checked+.checkbox-indicator {
+                        background-color: #2aa1c0;
+
+                        &:after {
+                            display: block;
+                        }
+                    }
+                }
+            }
         }
 
         &-icon {

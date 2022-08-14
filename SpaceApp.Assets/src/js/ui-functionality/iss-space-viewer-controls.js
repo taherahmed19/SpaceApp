@@ -1,6 +1,7 @@
 ﻿import { applyFullscreen } from './utils';
-import { cameraHeight } from '../earth';
+import { cameraHeight, citiesData } from '../earth';
 import { showErrorNotification } from './notifications';
+import api from '../api/fetch-api';
 
 export default function configureControls(viewer, satellite) {
     const cesiumContainer = document.querySelector('#cesiumContainer');
@@ -23,7 +24,7 @@ export default function configureControls(viewer, satellite) {
                 })
             }
 
-            const scenePanelCloseButton = cesiumContainer.querySelector('.space-viewer-controls__close');
+            const scenePanelCloseButton = scenesPanel.querySelector('.space-viewer-controls__close');
             const globeImages = cesiumContainer.querySelectorAll('.space-viewer-controls__icon--globe-icon');
             const globe3dImage = cesiumContainer.querySelector('.space-viewer-controls__icon--3d-globe');
             const globe2dImage = cesiumContainer.querySelector('.space-viewer-controls__icon--2d-globe');
@@ -60,6 +61,67 @@ export default function configureControls(viewer, satellite) {
                         }
                     }
                 });
+            }
+        }
+
+        function configureCityLabelsButton() {
+            const cityLabelsButton = cesiumContainer.querySelector('.js-cesium-city-labels');
+            const cityLabelsPanel = cesiumContainer.querySelector('.js-cesium-city-labels-panel');
+            const controls = cesiumContainer.querySelector('.space-viewer-controls')
+
+            if (cityLabelsButton && cityLabelsPanel && controls) {
+                cityLabelsButton.addEventListener("click", () => {
+                    cityLabelsPanel.classList.toggle("active")
+                    controls.style.display = "none";
+                })
+            }
+
+            const scenePanelCloseButton = cityLabelsPanel.querySelector('.space-viewer-controls__close');
+            const showCityLabelsCheckbox = cityLabelsPanel.querySelector('.js-cesium-show-city-labels');
+            if (scenePanelCloseButton && showCityLabelsCheckbox) {
+                scenePanelCloseButton.addEventListener("click", () => {
+                    controls.style.display = "flex";
+                    cityLabelsPanel.classList.toggle('active');
+
+                    if (showCityLabelsCheckbox.checked) {
+                        if (citiesData.cities == null) {
+                            //make api call for city data
+                            try {
+                                api.makeApiCall("CityLocations", renderCityNames);
+                            } catch (err) {
+                                console.error(err);
+                            }
+                        }
+                    } else {
+                        console.log("labels...")
+                        console.log(viewer.scene.primitives)
+                    }
+                })
+            }
+
+            //TODO: Break out into earth.js
+            function renderCityNames(cities) {
+                if (cities && citiesData) {
+                    const labels = viewer.scene.primitives.add(new Cesium.LabelCollection());
+
+                    citiesData.cities = cities;
+
+                    cities.forEach(city => {
+                        const latitude = city["CapitalLatitude"];
+                        const longitude = city["CapitalLongitude"];
+                        const name = city["CapitalName"];
+
+                        if (latitude && longitude && name) {
+                            labels.add({
+                                position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 1000),
+                                text: name,
+                                font: '15px Helvetica',
+                                //rotation: Cesium.Math.toRadians(-45)
+                            });
+                        }
+                    })
+                }
+
             }
         }
 
@@ -126,6 +188,7 @@ export default function configureControls(viewer, satellite) {
             }
         }
 
+        //TODO: Break out into earth.js
         function pointCameraToSatellite(duration, completeFunction) {
             let position = null;
             try {
@@ -147,6 +210,7 @@ export default function configureControls(viewer, satellite) {
         }
 
         configureSceneModeButton()
+        configureCityLabelsButton()
         configureFullScreenButton()
         configureFollowSatelliteButton()
     }

@@ -14,23 +14,23 @@
                     <!--Keep one element for info, error and success-->
                     <div class="notification-wrapper">
                         @*<div class="notification" data-notification-id="">
-                            <div class="notification__text-wrapper">
-                                <p class="notification__title">Cannot click during animation</p>
+                                <div class="notification__text-wrapper">
+                                    <p class="notification__title">Cannot click during animation</p>
+                                </div>
+                                <button class="notification__close-btn js-notification-close" type="button">
+                                    <img src="/assets/images/close.svg" />
+                                </button>
                             </div>
-                            <button class="notification__close-btn js-notification-close" type="button">
-                                <img src="/assets/images/close.svg" />
-                            </button>
-                        </div>
-                        <div class="notification" data-notification-id="">
-                            <div class="notification__text-wrapper">
-                                <p class="notification__title">Cannot click during animation</p>
-                            </div>
-                            <button class="notification__close-btn js-notification-close" type="button">
-                                <img src="/assets/images/close.svg" />
-                            </button>
-                        </div>*@
+                            <div class="notification" data-notification-id="">
+                                <div class="notification__text-wrapper">
+                                    <p class="notification__title">Cannot click during animation</p>
+                                </div>
+                                <button class="notification__close-btn js-notification-close" type="button">
+                                    <img src="/assets/images/close.svg" />
+                                </button>
+                            </div>*@
                     </div>
-                    
+
                     <div class="space-viewer-controls">
                         <button class="space-viewer-controls__item js-cesium-fullscreen" title="Toggle fullScreen">
                             <img class="space-viewer-controls__icon" src="/assets/images/fullscreen.svg" />
@@ -43,6 +43,9 @@
                         <button class="space-viewer-controls__item js-cesium-follow-satellite" title="Follow Satellite">
                             <img class="space-viewer-controls__icon" src="/assets/images/magnifying-glass.svg" />
                         </button>
+                        <button class="space-viewer-controls__item js-cesium-city-labels" title="Enable labels">
+                            <img class="space-viewer-controls__icon" src="/assets/images/location-pin.svg" />
+                        </button>
                     </div>
                     <div class="space-viewer-controls__layers js-cesium-scenes-panel">
                         <div class="space-viewer-controls__title">
@@ -52,25 +55,42 @@
                             </button>
                         </div>
                         <ul class="space-viewer-controls__filter">
-                            <li>
-                                <input class="space-viewer-controls__filter-item space-viewer-controls__filter-item--globe" id="filter-3d-globe" type="radio" name="scene-mode" value="3d-globe" checked />
+                            <li class="space-viewer-controls__filter-item space-viewer-controls__filter-item--globe">
+                                <input id="filter-3d-globe" type="radio" name="scene-mode" value="3d-globe" checked />
                                 <label for="filter-3d-globe">
                                     <img class="space-viewer-controls__filter-icon" src="/assets/images/globe.svg" />
                                     <span>3D Globe</span>
                                 </label>
                             </li>
-                            <li>
-                                <input class="space-viewer-controls__filter-item space-viewer-controls__filter-item--globe" id="filter-2d-globe" type="radio" name="scene-mode" value="2d-globe" />
+                            <li class="space-viewer-controls__filter-item space-viewer-controls__filter-item--globe">
+                                <input id="filter-2d-globe" type="radio" name="scene-mode" value="2d-globe" />
                                 <label for="filter-2d-globe">
                                     <img class="space-viewer-controls__filter-icon" src="/assets/images/2d.svg" />
                                     <span>2D Globe</span>
                                 </label>
                             </li>
-                            <li>
-                                <input class="space-viewer-controls__filter-item space-viewer-controls__filter-item--globe" id="filter-columbus-view" type="radio" name="scene-mode" value="columbus-view" />
+                            <li class="space-viewer-controls__filter-item space-viewer-controls__filter-item--globe">
+                                <input id="filter-columbus-view" type="radio" name="scene-mode" value="columbus-view" />
                                 <label for="filter-columbus-view">
                                     <img class="space-viewer-controls__filter-icon" src="/assets/images/columbus-view.svg" />
                                     <span>Columbus View</span>
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="space-viewer-controls__layers js-cesium-city-labels-panel">
+                        <div class="space-viewer-controls__title">
+                            <button class="space-viewer-controls__close">
+                                Display city names
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        <ul class="space-viewer-controls__filter">
+                            <li class="space-viewer-controls__filter-item space-viewer-controls__filter-item--checkbox">
+                                <input class="js-cesium-show-city-labels" id="filter-city-labels" type="checkbox" name="scene-mode" value="show-city-labels"/>
+                                <div class="checkbox-indicator"></div>
+                                <label for="filter-city-labels">
+                                    <span>Show City Labels</span>
                                 </label>
                             </li>
                         </ul>

@@ -29,14 +29,24 @@
             body: null,
         }
     },
-    Asteroid: (params, body) => {
+    Asteroid: (params) => {
         return {
             method: 'GET',
             resource: `http://spaceappapi-local.co.uk/api/space/GetAsteroid`,
             params: params ? params : null,
             accept: "application/json",
             contentType: null,
-            body: body ? body : null,
+            body: null,
+        }
+    },
+    CityLocations: (params) => {
+        return {
+            method: 'GET',
+            resource: `http://spaceappapi-local.co.uk/api/space/getcitylocations`,
+            params: params ? params : null,
+            accept: "application/json",
+            contentType: null,
+            body: null,
         }
     }
 }
