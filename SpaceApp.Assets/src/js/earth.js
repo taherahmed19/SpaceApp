@@ -34,16 +34,20 @@ function renderEarthViewer(data) {
         navigationHelpButton: false, sceneModePicker: false, fullscreenButton: false,
     });
 
+    const scene = viewer.scene;
+
     function setViewerWindowSettings() {
-        viewer.scene.skyAtmosphere.show = false;
-        viewer.scene.globe.enableLighting = true;
+        scene.skyAtmosphere.show = false;
+        scene.globe.enableLighting = false;
         viewer.animation.container.style.visibility = 'hidden';
         viewer.timeline.container.style.visibility = 'hidden';
+        //viewer.resolutionScale = window.devicePixelRatio; //can cause issues as needs to be updated when window resized
+        viewer.useBrowserRecommendedResolution = false;
         viewer.forceResize();
     }
 
     function setGlobeTextureSettings() {
-        const layers = viewer.scene.imageryLayers;
+        const layers = scene.imageryLayers;
         const imageLayer = layers._layers[0];
         imageLayer.brightness = 0.6;
     }
@@ -84,8 +88,8 @@ function renderEarthViewer(data) {
     function setTileProgressEvent() {
         // Wait for globe to load then zoom out     
         let initialized = false;
-        viewer.scene.globe.tileLoadProgressEvent.addEventListener(() => {
-            if (!initialized && viewer.scene.globe.tilesLoaded === true) {
+        scene.globe.tileLoadProgressEvent.addEventListener(() => {
+            if (!initialized && scene.globe.tilesLoaded === true) {
                 initialized = true;
                 removeLoadingSpinner()
             }
@@ -105,7 +109,7 @@ function renderEarthViewer(data) {
     setCameraView(position)
     setTileProgressEvent()
     setSatellitePositionInterval()
-    configureControls(viewer, satellite);
+    configureControls(viewer, scene, satellite);
 }
 
 /**

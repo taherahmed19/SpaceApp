@@ -43,8 +43,8 @@
                         <button class="space-viewer-controls__item js-cesium-follow-satellite" title="Follow Satellite">
                             <img class="space-viewer-controls__icon" src="/assets/images/magnifying-glass.svg" />
                         </button>
-                        <button class="space-viewer-controls__item js-cesium-city-labels" title="Enable labels">
-                            <img class="space-viewer-controls__icon" src="/assets/images/location-pin.svg" />
+                        <button class="space-viewer-controls__item js-cesium-settings" title="Settings">
+                            <img class="space-viewer-controls__icon" src="/assets/images/filter.svg" />
                         </button>
                     </div>
                     <div class="space-viewer-controls__layers js-cesium-scenes-panel">
@@ -78,7 +78,7 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="space-viewer-controls__layers js-cesium-city-labels-panel">
+                    <div class="space-viewer-controls__layers js-cesium-settings-panel">
                         <div class="space-viewer-controls__title">
                             <button class="space-viewer-controls__close">
                                 Settings
@@ -87,21 +87,21 @@
                         </div>
                         <ul class="space-viewer-controls__filter">
                             <li class="space-viewer-controls__filter-item space-viewer-controls__filter-item--checkbox">
-                                <input class="js-cesium-show-city-labels" id="filter-city-labels" type="checkbox" name="show-city-labels" value="show-city-labels" />
+                                <input id="filter-city-labels" type="checkbox" name="show-city-labels" value="show-city-labels" />
                                 <div class="checkbox-indicator"></div>
                                 <label for="filter-city-labels">
                                     <span>Show City Labels</span>
                                 </label>
                             </li>
                             <li class="space-viewer-controls__filter-item space-viewer-controls__filter-item--checkbox">
-                                <input class="js-cesium-show-city-labels" id="filter-atmopshere" type="checkbox" name="show-atmosphere" value="" />
+                                <input id="filter-atmopshere" type="checkbox" name="show-atmosphere" value="" />
                                 <div class="checkbox-indicator"></div>
                                 <label for="filter-atmopshere">
-                                    <span>Show Atmosphere</span>
+                                    <span>Enable Atmosphere</span>
                                 </label>
                             </li>
                             <li class="space-viewer-controls__filter-item space-viewer-controls__filter-item--checkbox">
-                                <input class="js-cesium-show-city-labels" id="filter-lighting" type="checkbox" name="" value="show-lighting" />
+                                <input id="filter-lighting" type="checkbox" name="" value="show-lighting" />
                                 <div class="checkbox-indicator"></div>
                                 <label for="filter-lighting">
                                     <span>Enable lighting</span>

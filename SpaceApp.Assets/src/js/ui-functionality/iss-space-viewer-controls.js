@@ -3,7 +3,7 @@ import { cameraHeight, citiesData } from '../earth';
 import { showErrorNotification } from './notifications';
 import api from '../api/fetch-api';
 
-export default function configureControls(viewer, satellite) {
+export default function configureControls(viewer, scene, satellite) {
     const cesiumContainer = document.querySelector('#cesiumContainer');
 
     if (cesiumContainer && viewer) {
@@ -39,23 +39,23 @@ export default function configureControls(viewer, satellite) {
 
                     const selectedScene = cesiumContainer.querySelector('[name="scene-mode"]:checked');
                     if (selectedScene) {
-                        const scene = selectedScene.value;
+                        const selectedSceneValue = selectedScene.value;
 
                         //configure 3d globe buttons
-                        switch (scene) {
+                        switch (selectedSceneValue) {
                             case '2d-globe':
                                 globe2dImage.classList.add('active');
-                                viewer.scene.mode = Cesium.SceneMode.SCENE2D;
+                                scene.mode = Cesium.SceneMode.SCENE2D;
                                 pointCameraToSatellite(flyToDurationReset)
                                 break;
                             case 'columbus-view':
                                 columbusViewImage.classList.add('active');
-                                viewer.scene.mode = Cesium.SceneMode.COLUMBUS_VIEW;
+                                scene.mode = Cesium.SceneMode.COLUMBUS_VIEW;
                                 pointCameraToSatellite(flyToDurationReset)
                                 break;
                             default:
                                 globe3dImage.classList.add('active');
-                                viewer.scene.mode = Cesium.SceneMode.SCENE3D;
+                                scene.mode = Cesium.SceneMode.SCENE3D;
                                 pointCameraToSatellite(flyToDurationReset)
                                 break;
                         }
@@ -64,37 +64,51 @@ export default function configureControls(viewer, satellite) {
             }
         }
 
-        function configureCityLabelsButton() {
-            const cityLabelsButton = cesiumContainer.querySelector('.js-cesium-city-labels');
-            const cityLabelsPanel = cesiumContainer.querySelector('.js-cesium-city-labels-panel');
+        function configureSettingsButton() {
+            const settingsButton = cesiumContainer.querySelector('.js-cesium-settings');
+            const cityLabelsPanel = cesiumContainer.querySelector('.js-cesium-settings-panel');
             const controls = cesiumContainer.querySelector('.space-viewer-controls')
 
-            if (cityLabelsButton && cityLabelsPanel && controls) {
-                cityLabelsButton.addEventListener("click", () => {
+            if (settingsButton && cityLabelsPanel && controls) {
+                settingsButton.addEventListener("click", () => {
                     cityLabelsPanel.classList.toggle("active")
                     controls.style.display = "none";
                 })
             }
 
             const scenePanelCloseButton = cityLabelsPanel.querySelector('.space-viewer-controls__close');
-            const showCityLabelsCheckbox = cityLabelsPanel.querySelector('.js-cesium-show-city-labels');
-            const labels = viewer.scene.primitives.add(new Cesium.LabelCollection());
+            const showCityLabelsCheckbox = cityLabelsPanel.querySelector('#filter-city-labels');
+            const showAtmosphereCheckbox = cityLabelsPanel.querySelector('#filter-atmopshere');
+            const showLightingCheckbox = cityLabelsPanel.querySelector('#filter-lighting');
+            const labels = scene.primitives.add(new Cesium.LabelCollection());
 
-            if (scenePanelCloseButton && showCityLabelsCheckbox) {
+            if (scenePanelCloseButton && showCityLabelsCheckbox && showAtmosphereCheckbox && showLightingCheckbox) {
                 scenePanelCloseButton.addEventListener("click", () => {
                     controls.style.display = "flex";
                     cityLabelsPanel.classList.toggle('active');
 
+                    //configure city labels
                     if (showCityLabelsCheckbox.checked) {
                         labels.show = true;
                         if (citiesData.cities == null) {
-                            //make api call for city data
-                            api.makeApiCall("CityLocations", renderCityNames);
+                            api.makeApiCall("CityLocations", renderCityNames); //make api call for city data
                         }
                     } else {
-                        console.log("labels...")
-                        console.log(viewer.scene.primitives)
                         labels.show = false;
+                    }
+
+                    //configure atmosphere
+                    if (showAtmosphereCheckbox.checked) {
+                        scene.skyAtmosphere.show = true;
+                    } else {
+                        scene.skyAtmosphere.show = false;
+                    }
+
+                    //configure lighting
+                    if (showLightingCheckbox.checked) {
+                        scene.globe.enableLighting = true;
+                    } else {
+                        scene.globe.enableLighting = false;
                     }
                 })
             }
@@ -112,14 +126,15 @@ export default function configureControls(viewer, satellite) {
 
                         if (latitude && longitude && name) {
                             labels.add({
-                                position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 1000),
+                                position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 10),
                                 text: name,
                                 font: '30px Helvetica',
                                 fillColor: Cesium.Color.WHITE,
                                 style: Cesium.LabelStyle.FILL,
-                                pixelOffset: new Cesium.Cartesian2(20, 20),
-                                scale: 0.5
+                                //pixelOffset: new Cesium.Cartesian2(20, 20),//adding height to label in globe view
+                                scale: 0.5,
                                 //rotation: Cesium.Math.toRadians(-45)
+                                translucencyByDistance: new Cesium.NearFarScalar(6.0e7, 1.0, 7.0e7, 0.0),
                             });
                         }
                     })
@@ -144,7 +159,7 @@ export default function configureControls(viewer, satellite) {
                 followSatelliteButton.addEventListener("click", () => {
                     if (!followSatelliteButton.classList.contains('js-disabled')) {
 
-                        switch (viewer.scene.mode) {
+                        switch (scene.mode) {
                             case 1: //columbus view
                                 handleCameraColumbusView()
                                 break;
@@ -213,7 +228,7 @@ export default function configureControls(viewer, satellite) {
         }
 
         configureSceneModeButton()
-        configureCityLabelsButton()
+        configureSettingsButton()
         configureFullScreenButton()
         configureFollowSatelliteButton()
     }
