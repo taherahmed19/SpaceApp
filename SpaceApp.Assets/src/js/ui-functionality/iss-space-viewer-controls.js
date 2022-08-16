@@ -115,11 +115,17 @@ export default function configureControls(viewer, scene, satellite) {
 
             //TODO: Break out into earth.js
             function renderCityNames(cities) {
-                if (cities && citiesData) {
 
+                if (cities && citiesData) {
                     citiesData.cities = cities;
 
-                    cities.forEach(city => {
+                    const highestCityLocations = cities.HighestCityLocations;
+                    const medianCityLocations = cities.MedianCityLocations;
+                    const lowestCityLocations = cities.LowestCityLocations;
+
+                    const highestTranslucencyByDistance = new Cesium.NearFarScalar(1.0e7, 1.0, 1.01e7, 0.0);
+
+                    highestCityLocations.forEach(city => {
                         const latitude = city["CapitalLatitude"];
                         const longitude = city["CapitalLongitude"];
                         const name = city["CapitalName"];
@@ -134,10 +140,71 @@ export default function configureControls(viewer, scene, satellite) {
                                 //pixelOffset: new Cesium.Cartesian2(20, 20),//adding height to label in globe view
                                 scale: 0.5,
                                 //rotation: Cesium.Math.toRadians(-45)
-                                translucencyByDistance: new Cesium.NearFarScalar(6.0e7, 1.0, 7.0e7, 0.0),
+                               // translucencyByDistance : highestTranslucencyByDistance//Apply this for minor capital cities
                             });
                         }
                     })
+
+                    medianCityLocations.forEach(city => {
+                        const latitude = city["CapitalLatitude"];
+                        const longitude = city["CapitalLongitude"];
+                        const name = city["CapitalName"];
+
+                        if (latitude && longitude && name) {
+                            labels.add({
+                                position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 10),
+                                text: name,
+                                font: '30px Helvetica',
+                                fillColor: Cesium.Color.GREEN,
+                                style: Cesium.LabelStyle.FILL,
+                                //pixelOffset: new Cesium.Cartesian2(20, 20),//adding height to label in globe view
+                                scale: 0.5,
+                                //rotation: Cesium.Math.toRadians(-45)
+                                translucencyByDistance : highestTranslucencyByDistance//Apply this for minor capital cities
+                            });
+                        }
+                    })
+
+                    lowestCityLocations.forEach(city => {
+                        const latitude = city["CapitalLatitude"];
+                        const longitude = city["CapitalLongitude"];
+                        const name = city["CapitalName"];
+
+                        if (latitude && longitude && name) {
+                            labels.add({
+                                position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 10),
+                                text: name,
+                                font: '30px Helvetica',
+                                fillColor: Cesium.Color.RED,
+                                style: Cesium.LabelStyle.FILL,
+                                //pixelOffset: new Cesium.Cartesian2(20, 20),//adding height to label in globe view
+                                scale: 0.5,
+                                //rotation: Cesium.Math.toRadians(-45)
+                                translucencyByDistance : highestTranslucencyByDistance//Apply this for minor capital cities
+                            });
+                        }
+                    })
+
+
+                    // cities.forEach(city => {
+                    //     const latitude = city["CapitalLatitude"];
+                    //     const longitude = city["CapitalLongitude"];
+                    //     const name = city["CapitalName"];
+
+                    //     if (latitude && longitude && name) {
+                    //         labels.add({
+                    //             position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 10),
+                    //             text: name,
+                    //             font: '30px Helvetica',
+                    //             fillColor: Cesium.Color.WHITE,
+                    //             style: Cesium.LabelStyle.FILL,
+                    //             //pixelOffset: new Cesium.Cartesian2(20, 20),//adding height to label in globe view
+                    //             scale: 0.5,
+                    //             //rotation: Cesium.Math.toRadians(-45)
+                    //             translucencyByDistance : new Cesium.NearFarScalar(1.0e7, 1.0, 1.01e7, 0.0)//Apply this for minor capital cities
+                    //         });
+                    //     }
+                    // })
                 }
 
             }
