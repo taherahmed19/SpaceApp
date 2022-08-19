@@ -4,14 +4,25 @@ import { showErrorNotification } from './notifications';
 import api from '../api/fetch-api';
 
 export default function configureControls(viewer, scene, satellite) {
+    const flyToDurationGlobeView = 5;
+    const flyToDuration2DView = 2;
+    const flyToDurationColumbusView = 2;
+    const flyToDurationReset = 0;
+
+    const labelStyle = {
+        font: '31px sans-serif',
+        fillColor: Cesium.Color.WHITE,
+        outlineWidth: 2,
+        outlineColor: Cesium.Color.BLACK,
+        style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+        scale: 0.5,
+    }
+
+    console.log(Cesium.Color.WHITE)
+
     const cesiumContainer = document.querySelector('#cesiumContainer');
 
     if (cesiumContainer && viewer) {
-        const flyToDurationGlobeView = 5;
-        const flyToDuration2DView = 2;
-        const flyToDurationColumbusView = 2;
-        const flyToDurationReset = 0;
-
         function configureSceneModeButton() {
             const sceneModeButton = cesiumContainer.querySelector('.js-cesium-3d-globe');
             const scenesPanel = cesiumContainer.querySelector('.js-cesium-scenes-panel');
@@ -65,6 +76,7 @@ export default function configureControls(viewer, scene, satellite) {
         }
 
         function configureSettingsButton() {
+            let isCityDataRetrieved = false;
             const settingsButton = cesiumContainer.querySelector('.js-cesium-settings');
             const cityLabelsPanel = cesiumContainer.querySelector('.js-cesium-settings-panel');
             const controls = cesiumContainer.querySelector('.space-viewer-controls')
@@ -123,7 +135,9 @@ export default function configureControls(viewer, scene, satellite) {
                     const medianCityLocations = cities.MedianCityLocations;
                     const lowestCityLocations = cities.LowestCityLocations;
 
-                    const highestTranslucencyByDistance = new Cesium.NearFarScalar(1.0e7, 1.0, 1.01e7, 0.0);
+                    const highestCitiesTranslucencyByDistance = undefined
+                    const medianCitiesTranslucencyByDistance = new Cesium.NearFarScalar(1.0e7, 1.0, 1.01e7, 0.0);
+                    const lowestCitiesTranslucencyByDistance = new Cesium.NearFarScalar(0.2e7, 1.0, 0.21e7, 0.0);
 
                     highestCityLocations.forEach(city => {
                         const latitude = city["CapitalLatitude"];
@@ -132,15 +146,10 @@ export default function configureControls(viewer, scene, satellite) {
 
                         if (latitude && longitude && name) {
                             labels.add({
-                                position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 10),
+                                position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 0),
                                 text: name,
-                                font: '30px Helvetica',
-                                fillColor: Cesium.Color.WHITE,
-                                style: Cesium.LabelStyle.FILL,
-                                //pixelOffset: new Cesium.Cartesian2(20, 20),//adding height to label in globe view
-                                scale: 0.5,
-                                //rotation: Cesium.Math.toRadians(-45)
-                               // translucencyByDistance : highestTranslucencyByDistance//Apply this for minor capital cities
+                                ...labelStyle,
+                                translucencyByDistance: highestCitiesTranslucencyByDistance,
                             });
                         }
                     })
@@ -154,13 +163,8 @@ export default function configureControls(viewer, scene, satellite) {
                             labels.add({
                                 position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 10),
                                 text: name,
-                                font: '30px Helvetica',
-                                fillColor: Cesium.Color.GREEN,
-                                style: Cesium.LabelStyle.FILL,
-                                //pixelOffset: new Cesium.Cartesian2(20, 20),//adding height to label in globe view
-                                scale: 0.5,
-                                //rotation: Cesium.Math.toRadians(-45)
-                                translucencyByDistance : highestTranslucencyByDistance//Apply this for minor capital cities
+                                ...labelStyle,
+                                translucencyByDistance: medianCitiesTranslucencyByDistance
                             });
                         }
                     })
@@ -174,39 +178,12 @@ export default function configureControls(viewer, scene, satellite) {
                             labels.add({
                                 position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 10),
                                 text: name,
-                                font: '30px Helvetica',
-                                fillColor: Cesium.Color.RED,
-                                style: Cesium.LabelStyle.FILL,
-                                //pixelOffset: new Cesium.Cartesian2(20, 20),//adding height to label in globe view
-                                scale: 0.5,
-                                //rotation: Cesium.Math.toRadians(-45)
-                                translucencyByDistance : highestTranslucencyByDistance//Apply this for minor capital cities
+                                ...labelStyle,
+                                translucencyByDistance: lowestCitiesTranslucencyByDistance
                             });
                         }
                     })
-
-
-                    // cities.forEach(city => {
-                    //     const latitude = city["CapitalLatitude"];
-                    //     const longitude = city["CapitalLongitude"];
-                    //     const name = city["CapitalName"];
-
-                    //     if (latitude && longitude && name) {
-                    //         labels.add({
-                    //             position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 10),
-                    //             text: name,
-                    //             font: '30px Helvetica',
-                    //             fillColor: Cesium.Color.WHITE,
-                    //             style: Cesium.LabelStyle.FILL,
-                    //             //pixelOffset: new Cesium.Cartesian2(20, 20),//adding height to label in globe view
-                    //             scale: 0.5,
-                    //             //rotation: Cesium.Math.toRadians(-45)
-                    //             translucencyByDistance : new Cesium.NearFarScalar(1.0e7, 1.0, 1.01e7, 0.0)//Apply this for minor capital cities
-                    //         });
-                    //     }
-                    // })
                 }
-
             }
         }
 

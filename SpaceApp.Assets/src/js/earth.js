@@ -8,24 +8,19 @@ const citiesData = {
 };
 
 api.makeApiCall("IssTles", renderEarthViewer);
+console.log(cityData)
 
 /**
  * 
  * @param {*} data 
  */
 function renderEarthViewer(data) {
+    console.log(cityData)
     Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1YjhlOGFjMC1hYjQwLTRkN2QtYmIwYy0wMTUxNDJiZjMxOGIiLCJpZCI6MTA0NjM4LCJpYXQiOjE2NjA0MTQwNTh9.2gD9ETM4SVSm4lHrS3jOA9E7DHRSQhYlqQAOBtTLy6U';
 
     // Initialize the Cesium viewer.
     const viewer = new Cesium.Viewer('cesiumContainer', {
         sceneMode: Cesium.SceneMode.SCENE3D,
-        // terrainProvider: Cesium.createWorldTerrain({
-        //     // requestVertexNormals: true,
-        //     // requestWaterMask: true
-        // }),
-        // imageryProvider: new Cesium.TileMapServiceImageryProvider({
-        //     url: Cesium.buildModuleUrl("Assets/Textures/NaturalEarthII"),
-        // }),
         imageryProvider: new Cesium.SingleTileImageryProvider({
             url: "/assets/images/earth-map-tiles.jpg",
             style: Cesium.IonWorldImageryStyle.AERIAL_WITH_LABELS
@@ -41,8 +36,10 @@ function renderEarthViewer(data) {
         scene.globe.enableLighting = false;
         viewer.animation.container.style.visibility = 'hidden';
         viewer.timeline.container.style.visibility = 'hidden';
-        //viewer.resolutionScale = window.devicePixelRatio; //can cause issues as needs to be updated when window resized
         viewer.useBrowserRecommendedResolution = false;
+        scene.screenSpaceCameraController.minimumZoomDistance = 250000;
+        scene.screenSpaceCameraController.maximumZoomDistance = 20000000;
+        scene.screenSpaceCameraController._minimumZoomRate = 350000;
         viewer.forceResize();
     }
 
