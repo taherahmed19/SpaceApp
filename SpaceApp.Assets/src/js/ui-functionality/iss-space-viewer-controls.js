@@ -229,7 +229,7 @@ export default function configureControls(viewer, scene, satellite) {
                         }
 
                     } else {
-                        showErrorNotification("Cannot click during animation", "animation", cesiumContainer)
+                        showErrorNotification("animationInProgress", cesiumContainer)
                     }
                 })
             }
