@@ -57,39 +57,45 @@ export default function configureControls(viewer, scene, satellite) {
             const globe3dImage = cesiumContainer.querySelector('.space-viewer-controls__icon--3d-globe');
             const globe2dImage = cesiumContainer.querySelector('.space-viewer-controls__icon--2d-globe');
             const columbusViewImage = cesiumContainer.querySelector('.space-viewer-controls__icon--columbus-view');
+            const followSatelliteButton = cesiumContainer.querySelector('.js-cesium-follow-satellite');
 
-            if (scenePanelCloseButton && controls && globeImages && globe3dImage && globe2dImage && columbusViewImage) {
+            if (scenePanelCloseButton && controls && globeImages && globe3dImage && globe2dImage && columbusViewImage && followSatelliteButton) {
                 //configure scene panel close button
                 scenePanelCloseButton.addEventListener("click", () => {
                     controls.style.display = "flex";
                     scenesPanel.classList.toggle('active');
-                    globeImages.forEach(globeImage => { globeImage.classList.remove('active'); })
 
                     const selectedScene = cesiumContainer.querySelector('[name="scene-mode"]:checked');
                     if (selectedScene) {
-                        const selectedSceneValue = selectedScene.value;
+                        const selectedSceneValue = Number(selectedScene.value);
 
-                        //configure view buttons
-                        switch (selectedSceneValue) {
-                            case '2d-globe':
-                                globe2dImage.classList.add('active');
-                                scene.mode = Cesium.SceneMode.SCENE2D;
-                                setZoomSettings(scene, flatViewMinimumZoomDistance, flatViewMaximumZoomDistance, flatViewMinimumZoomRate)
-                                pointCameraToSatellite(flyToDurationReset);
-                                break;
-                            case 'columbus-view':
-                                columbusViewImage.classList.add('active');
-                                scene.mode = Cesium.SceneMode.COLUMBUS_VIEW;
-                                setZoomSettings(scene, columbusViewMinimumZoomDistance, columbusViewMaximumZoomDistance, columbusViewMinimumZoomRate);
-                                pointCameraToSatellite(flyToDurationReset)
-                                break;
-                            default:
-                                globe3dImage.classList.add('active');
-                                scene.mode = Cesium.SceneMode.SCENE3D;
-                                setZoomSettings(scene, globeMinimumZoomDistance, globeMaximumZoomDistance, globeMinimumZoomRate)
-                                pointCameraToSatellite(flyToDurationReset)
-                                break;
+                        if (selectedSceneValue !== scene.mode) {
+                            globeImages.forEach(globeImage => { globeImage.classList.remove('active'); })
+                            followSatelliteButton.classList.remove("js-disabled")
+
+                            //configure view buttons
+                            switch (selectedSceneValue) {
+                                case scenes.flatView:
+                                    globe2dImage.classList.add('active');
+                                    scene.mode = Cesium.SceneMode.SCENE2D;
+                                    setZoomSettings(scene, flatViewMinimumZoomDistance, flatViewMaximumZoomDistance, flatViewMinimumZoomRate)
+                                    pointCameraToSatellite(flyToDurationReset);
+                                    break;
+                                case scenes.columbusView:
+                                    columbusViewImage.classList.add('active');
+                                    scene.mode = Cesium.SceneMode.COLUMBUS_VIEW;
+                                    setZoomSettings(scene, columbusViewMinimumZoomDistance, columbusViewMaximumZoomDistance, columbusViewMinimumZoomRate);
+                                    pointCameraToSatellite(flyToDurationReset)
+                                    break;
+                                default:
+                                    globe3dImage.classList.add('active');
+                                    scene.mode = Cesium.SceneMode.SCENE3D;
+                                    setZoomSettings(scene, globeMinimumZoomDistance, globeMaximumZoomDistance, globeMinimumZoomRate)
+                                    pointCameraToSatellite(flyToDurationReset)
+                                    break;
+                            }
                         }
+
                     }
                 });
             }
