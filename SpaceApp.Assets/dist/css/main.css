@@ -8634,9 +8634,12 @@ strong {
   flex-wrap: wrap;
   color: #ffffff;
   z-index: 1;
-  border-left: 3px solid #fa4d56;
-  background: #fa4d56;
+  background: #ffffff;
   padding: 0.9375rem; }
+  .notification--error {
+    background-color: #fa4d56; }
+  .notification--info {
+    background-color: #29B6F6; }
   .notification__text-wrapper {
     display: flex;
     flex-wrap: wrap; }

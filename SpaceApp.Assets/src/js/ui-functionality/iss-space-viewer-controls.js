@@ -1,7 +1,19 @@
 ﻿import { applyFullscreen } from './utils';
-import { cameraHeight, citiesData } from '../earth';
-import { showErrorNotification } from './notifications';
+import { showErrorNotification, showInfoNotification } from './notifications';
 import api from '../api/fetch-api';
+import {
+    setZoomSettings,
+    cameraHeight,
+    globeMinimumZoomDistance,
+    globeMaximumZoomDistance,
+    globeMinimumZoomRate,
+    columbusViewMaximumZoomDistance,
+    columbusViewMinimumZoomDistance,
+    columbusViewMinimumZoomRate,
+    flatViewMaximumZoomDistance,
+    flatViewMinimumZoomDistance,
+    flatViewMinimumZoomRate
+} from '../earth';
 
 export default function configureControls(viewer, scene, satellite) {
     const flyToDurationGlobeView = 5;
@@ -17,8 +29,6 @@ export default function configureControls(viewer, scene, satellite) {
         style: Cesium.LabelStyle.FILL_AND_OUTLINE,
         scale: 0.5,
     }
-
-    console.log(Cesium.Color.WHITE)
 
     const cesiumContainer = document.querySelector('#cesiumContainer');
 
@@ -52,21 +62,24 @@ export default function configureControls(viewer, scene, satellite) {
                     if (selectedScene) {
                         const selectedSceneValue = selectedScene.value;
 
-                        //configure 3d globe buttons
+                        //configure view buttons
                         switch (selectedSceneValue) {
                             case '2d-globe':
                                 globe2dImage.classList.add('active');
                                 scene.mode = Cesium.SceneMode.SCENE2D;
+                                setZoomSettings(scene, flatViewMinimumZoomDistance, flatViewMaximumZoomDistance, flatViewMinimumZoomRate)
                                 pointCameraToSatellite(flyToDurationReset)
                                 break;
                             case 'columbus-view':
                                 columbusViewImage.classList.add('active');
                                 scene.mode = Cesium.SceneMode.COLUMBUS_VIEW;
+                                setZoomSettings(scene, columbusViewMinimumZoomDistance, columbusViewMaximumZoomDistance, columbusViewMinimumZoomRate);
                                 pointCameraToSatellite(flyToDurationReset)
                                 break;
                             default:
                                 globe3dImage.classList.add('active');
                                 scene.mode = Cesium.SceneMode.SCENE3D;
+                                setZoomSettings(scene, globeMinimumZoomDistance, globeMaximumZoomDistance, globeMinimumZoomRate)
                                 pointCameraToSatellite(flyToDurationReset)
                                 break;
                         }
@@ -102,7 +115,7 @@ export default function configureControls(viewer, scene, satellite) {
                     //configure city labels
                     if (showCityLabelsCheckbox.checked) {
                         labels.show = true;
-                        if (citiesData.cities == null) {
+                        if (!isCityDataRetrieved) {
                             api.makeApiCall("CityLocations", renderCityNames); //make api call for city data
                         }
                     } else {
@@ -128,8 +141,8 @@ export default function configureControls(viewer, scene, satellite) {
             //TODO: Break out into earth.js
             function renderCityNames(cities) {
 
-                if (cities && citiesData) {
-                    citiesData.cities = cities;
+                if (cities) {
+                    isCityDataRetrieved = true;
 
                     const highestCityLocations = cities.HighestCityLocations;
                     const medianCityLocations = cities.MedianCityLocations;
@@ -214,8 +227,9 @@ export default function configureControls(viewer, scene, satellite) {
                                 handleCameraGlobeView()
                                 break;
                         }
+
                     } else {
-                        showErrorNotification("Cannot click during animation", "animation", document.querySelector('#cesiumContainer'))
+                        showErrorNotification("Cannot click during animation", "animation", cesiumContainer)
                     }
                 })
             }
@@ -239,13 +253,15 @@ export default function configureControls(viewer, scene, satellite) {
             function handleCameraGlobeView() {
                 if (!viewer.trackedEntity) {
                     viewer.trackedEntity = satellite;
+                    showInfoNotification("fixedCamera", cesiumContainer)
                 } else {
                     followSatelliteButton.classList.add("js-disabled")
 
                     pointCameraToSatellite(flyToDurationGlobeView, function () {
                         followSatelliteButton.classList.remove("js-disabled")
+                        showInfoNotification("freeCamera", cesiumContainer)
                     });
-                    viewer.trackedEntity = null
+                    viewer.trackedEntity = null;
                 }
             }
         }

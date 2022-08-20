@@ -3,19 +3,30 @@ import configureControls from './ui-functionality/iss-space-viewer-controls'
 
 const heightBuffer = 1000;
 const cameraHeight = 20203203;
-const citiesData = {
-    cities: null,
-};
+
+/**
+ * Default values
+ * Minimum zoom distance = 1.0
+ * Maxiumum zoom distance = Infinity
+ * Minimum zoom rate = 20
+ */
+const globeMinimumZoomDistance = 250000;
+const globeMaximumZoomDistance = 20000000;
+const globeMinimumZoomRate = 350000;
+const columbusViewMinimumZoomDistance = 250000;
+const columbusViewMaximumZoomDistance = 40000000;
+const columbusViewMinimumZoomRate = 350000;
+const flatViewMinimumZoomDistance = 250000;
+const flatViewMaximumZoomDistance = Infinity;
+const flatViewMinimumZoomRate = 350000;
 
 api.makeApiCall("IssTles", renderEarthViewer);
-console.log(cityData)
 
 /**
  * 
  * @param {*} data 
  */
 function renderEarthViewer(data) {
-    console.log(cityData)
     Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1YjhlOGFjMC1hYjQwLTRkN2QtYmIwYy0wMTUxNDJiZjMxOGIiLCJpZCI6MTA0NjM4LCJpYXQiOjE2NjA0MTQwNTh9.2gD9ETM4SVSm4lHrS3jOA9E7DHRSQhYlqQAOBtTLy6U';
 
     // Initialize the Cesium viewer.
@@ -37,9 +48,6 @@ function renderEarthViewer(data) {
         viewer.animation.container.style.visibility = 'hidden';
         viewer.timeline.container.style.visibility = 'hidden';
         viewer.useBrowserRecommendedResolution = false;
-        scene.screenSpaceCameraController.minimumZoomDistance = 250000;
-        scene.screenSpaceCameraController.maximumZoomDistance = 20000000;
-        scene.screenSpaceCameraController._minimumZoomRate = 350000;
         viewer.forceResize();
     }
 
@@ -105,8 +113,21 @@ function renderEarthViewer(data) {
     setGlobeTextureSettings()
     setCameraView(position)
     setTileProgressEvent()
+    setZoomSettings(scene, globeMinimumZoomDistance, globeMaximumZoomDistance, globeMinimumZoomRate)
     setSatellitePositionInterval()
     configureControls(viewer, scene, satellite);
+}
+
+/**
+ * 
+ * @param {*} minimumZoomDistance 
+ * @param {*} maximumZoomDistance 
+ * @param {*} minimumZoomRate 
+ */
+function setZoomSettings(scene, minimumZoomDistance, maximumZoomDistance, minimumZoomRate) {
+    scene.screenSpaceCameraController.minimumZoomDistance = minimumZoomDistance;
+    scene.screenSpaceCameraController.maximumZoomDistance = maximumZoomDistance;
+    scene.screenSpaceCameraController._minimumZoomRate = minimumZoomRate;
 }
 
 /**
@@ -167,4 +188,16 @@ function removeLoadingSpinner() {
 
 }
 
-export { cameraHeight, citiesData };
+export {
+    setZoomSettings,
+    cameraHeight,
+    globeMinimumZoomDistance,
+    globeMaximumZoomDistance,
+    globeMinimumZoomRate,
+    columbusViewMaximumZoomDistance,
+    columbusViewMinimumZoomDistance,
+    columbusViewMinimumZoomRate,
+    flatViewMaximumZoomDistance,
+    flatViewMinimumZoomDistance,
+    flatViewMinimumZoomRate
+};

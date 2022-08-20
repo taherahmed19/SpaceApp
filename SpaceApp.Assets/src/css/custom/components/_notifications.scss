@@ -5,9 +5,10 @@
     notification--info
 */
 $error-color: #fa4d56;
+$info-color: #29B6F6;
 
 .notification {
-    position:relative;
+    position: relative;
     margin-bottom: 1rem;
     display: flex;
     width: 100%;
@@ -18,9 +19,16 @@ $error-color: #fa4d56;
     flex-wrap: wrap;
     color: #ffffff;
     z-index: 1;
-    border-left: 3px solid #fa4d56;
-    background: $error-color;
+    background: #ffffff;
     padding: 0.9375rem;
+
+    &--error {
+        background-color: $error-color;
+    }
+
+    &--info {
+        background-color: $info-color;
+    }
 
     &__text-wrapper {
         display: flex;
