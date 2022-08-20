@@ -77,7 +77,10 @@
     <Content Include="dist\images\feature-3.svg" />
     <Content Include="dist\images\hero-img.svg" />
     <Content Include="dist\images\logo.svg" />
+    <Content Include="dist\js\app.js" />
+    <Content Include="dist\js\asteroid.js" />
     <Content Include="dist\js\bootstrap.bundle-5.0.0.alpha-1-min.js" />
+    <Content Include="dist\js\earth.js" />
     <Content Include="dist\js\main.js" />
     <Content Include="dist\js\wow.min.js" />
     <Content Include="dist\layouts\dashboard\index.html" />
@@ -104,13 +107,17 @@
     <Content Include="src\images\2d.svg" />
     <Content Include="src\images\close.svg" />
     <Content Include="src\images\columbus-view.svg" />
+    <Content Include="src\images\earth-map-tiles.jpg" />
+    <Content Include="src\images\filter.svg" />
     <Content Include="src\images\fullscreen.svg" />
     <Content Include="src\images\globe.svg" />
+    <Content Include="src\images\location-pin.svg" />
     <Content Include="src\images\magnifying-glass.svg" />
     <Content Include="src\js\api\api-endpoints.js" />
     <Content Include="src\js\api\fetch-api.js" />
     <Content Include="src\js\app.js" />
     <Content Include="src\js\asteroid.js" />
+    <Content Include="src\js\data\notification-objects.js" />
     <Content Include="src\js\earth.js" />
     <Content Include="src\js\main.js" />
     <Content Include="src\js\data\milkyway.js" />
@@ -128,6 +135,7 @@
   <ItemGroup>
     <Content Include="dist\images\.DS_Store" />
     <Content Include="package.json" />
+    <Content Include="dist\models\ISS.glb" />
     <None Include="packages.config" />
     <Content Include="src\css\main.scss" />
     <Content Include="src\css\bootstrap\bootstrap-grid.scss" />
@@ -307,6 +315,7 @@
     <Content Include="src\css\custom\components\_space-viewer.scss" />
     <Content Include="src\models\ISS.glb" />
     <Content Include="src\css\custom\components\_notifications.scss" />
+    <Content Include="src\js\scene.gltf" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

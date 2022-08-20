@@ -47,6 +47,11 @@
                 display: block;
             }
         }
+
+        &--zoom-out, &--zoom-in{
+            height:1rem;
+            width: 1rem;
+        }
     }
 }
 

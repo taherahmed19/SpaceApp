@@ -16,10 +16,16 @@ import {
 } from '../earth';
 
 export default function configureControls(viewer, scene, satellite) {
+    const scenes = {
+        globe: 3,
+        flatView: 2,
+        columbusView: 1,
+    }
     const flyToDurationGlobeView = 5;
     const flyToDuration2DView = 2;
     const flyToDurationColumbusView = 2;
     const flyToDurationReset = 0;
+    const zoomAmount = 250000;
 
     const labelStyle = {
         font: '31px sans-serif',
@@ -33,6 +39,7 @@ export default function configureControls(viewer, scene, satellite) {
     const cesiumContainer = document.querySelector('#cesiumContainer');
 
     if (cesiumContainer && viewer) {
+
         function configureSceneModeButton() {
             const sceneModeButton = cesiumContainer.querySelector('.js-cesium-3d-globe');
             const scenesPanel = cesiumContainer.querySelector('.js-cesium-scenes-panel');
@@ -68,7 +75,7 @@ export default function configureControls(viewer, scene, satellite) {
                                 globe2dImage.classList.add('active');
                                 scene.mode = Cesium.SceneMode.SCENE2D;
                                 setZoomSettings(scene, flatViewMinimumZoomDistance, flatViewMaximumZoomDistance, flatViewMinimumZoomRate)
-                                pointCameraToSatellite(flyToDurationReset)
+                                pointCameraToSatellite(flyToDurationReset);
                                 break;
                             case 'columbus-view':
                                 columbusViewImage.classList.add('active');
@@ -266,6 +273,61 @@ export default function configureControls(viewer, scene, satellite) {
             }
         }
 
+        function configureZoomInButton() {
+            const zoomInButton = cesiumContainer.querySelector('.js-cesium-zoom-in');
+
+            if (zoomInButton) {
+                zoomInButton.addEventListener("click", () => {
+                    let minimumZoomDistance = 0;
+                    let currentCameraHeight = 0;
+
+                    if (viewer.trackedEntity) {
+                        currentCameraHeight = scene.camera.position.z //view from values
+                        minimumZoomDistance = 144472.18362793513;
+                    } else {
+                        switch (scene.mode) {
+                            case scenes.globe:
+                                minimumZoomDistance = globeMinimumZoomDistance
+                                currentCameraHeight = scene.globe.ellipsoid.cartesianToCartographic(scene.camera.position).height
+                                break;
+                            case scenes.flatView:
+                                minimumZoomDistance = flatViewMinimumZoomDistance
+                                currentCameraHeight = (scene.camera.frustum.right - scene.camera.frustum.left) * 0.5
+                                break;
+                            case scenes.columbusView:
+                                minimumZoomDistance = columbusViewMinimumZoomDistance
+                                currentCameraHeight = scene.camera.position.z
+                                break;
+                        }
+                    }
+
+                    if (currentCameraHeight - zoomAmount <= minimumZoomDistance) { //prevent zooming in past the minimum zoom distance on the scene
+                        let zoomDifference = currentCameraHeight - minimumZoomDistance
+
+                        if (zoomDifference >= 0) {
+                            viewer.scene.camera.zoomIn(zoomDifference)
+                        }
+                    } else {
+                        viewer.scene.camera.zoomIn(zoomAmount)
+                    }
+                })
+            }
+        }
+
+        function configureZoomOutButton() {
+            const zoomOutButton = cesiumContainer.querySelector('.js-cesium-zoom-out');
+
+            if (zoomOutButton) {
+                zoomOutButton.addEventListener("click", () => {
+                    const currentCameraHeight = scene.globe.ellipsoid.cartesianToCartographic(scene.camera.position).height
+
+                    if (!(currentCameraHeight + zoomAmount > globeMaximumZoomDistance)) { //prevent zooming out past the max zoom distance on the scene
+                        viewer.scene.camera.zoomOut(zoomAmount)
+                    }
+                })
+            }
+        }
+
         //TODO: Break out into earth.js
         function pointCameraToSatellite(duration, completeFunction) {
             let position = null;
@@ -291,5 +353,7 @@ export default function configureControls(viewer, scene, satellite) {
         configureSettingsButton()
         configureFullScreenButton()
         configureFollowSatelliteButton()
+        configureZoomInButton()
+        configureZoomOutButton()
     }
 }

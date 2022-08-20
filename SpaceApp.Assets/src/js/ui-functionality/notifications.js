@@ -61,9 +61,6 @@ export function showInfoNotification(property, container) {
         if (showOnce && displayed == false) {
             notificationData.displayed = true;
             renderNotification()
-            console.log(infoNotifications, property)
-        }else{
-            console.error("null")
         }
 
         function renderNotification() {

@@ -14,12 +14,13 @@
                     <!--Keep one element for info, error and success-->
                     <div class="notification-wrapper">
                     </div>
-
+                    
+                    <!--Buttons-->
                     <div class="space-viewer-controls">
-                        <button class="space-viewer-controls__item js-cesium-fullscreen" title="Toggle fullScreen">
+                        <button class="space-viewer-controls__item js-cesium-fullscreen" title="Toggle fullscreen">
                             <img class="space-viewer-controls__icon" src="/assets/images/fullscreen.svg" />
                         </button>
-                        <button class="space-viewer-controls__item js-cesium-3d-globe" title="3D Globe">
+                        <button class="space-viewer-controls__item js-cesium-3d-globe" title="Set scene mode">
                             <img class="space-viewer-controls__icon space-viewer-controls__icon--globe-icon space-viewer-controls__icon--3d-globe active" src="/assets/images/globe.svg" />
                             <img class="space-viewer-controls__icon space-viewer-controls__icon--globe-icon space-viewer-controls__icon--2d-globe" src="/assets/images/2d.svg" />
                             <img class="space-viewer-controls__icon space-viewer-controls__icon--globe-icon space-viewer-controls__icon--columbus-view" src="/assets/images/columbus-view.svg" />
@@ -30,7 +31,15 @@
                         <button class="space-viewer-controls__item js-cesium-settings" title="Settings">
                             <img class="space-viewer-controls__icon" src="/assets/images/filter.svg" />
                         </button>
+                        <button class="space-viewer-controls__item js-cesium-zoom-in" title="Zoom in">
+                            <img class="space-viewer-controls__icon space-viewer-controls__icon--zoom-in" src="/assets/images/plus.svg" />
+                        </button>
+                        <button class="space-viewer-controls__item js-cesium-zoom-out" title="Zoom out">
+                            <img class="space-viewer-controls__icon space-viewer-controls__icon--zoom-out" src="/assets/images/minus.svg" />
+                        </button>
                     </div>
+
+                    <!--Scenes panel-->
                     <div class="space-viewer-controls__layers js-cesium-scenes-panel">
                         <div class="space-viewer-controls__title">
                             <button class="space-viewer-controls__close">
@@ -62,6 +71,8 @@
                             </li>
                         </ul>
                     </div>
+                   
+                    <!--Settings panel-->
                     <div class="space-viewer-controls__layers js-cesium-settings-panel">
                         <div class="space-viewer-controls__title">
                             <button class="space-viewer-controls__close">

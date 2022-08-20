@@ -8535,6 +8535,9 @@ strong {
       display: none; }
       .space-viewer-controls__icon--globe-icon.active {
         display: block; }
+    .space-viewer-controls__icon--zoom-out, .space-viewer-controls__icon--zoom-in {
+      height: 1rem;
+      width: 1rem; }
 
 .space-viewer-controls__layers {
   display: none;
