@@ -8524,6 +8524,8 @@ strong {
       color: #c8c3bc; }
     .space-viewer-controls__item:hover i {
       color: #fff; }
+    .space-viewer-controls__item--separated {
+      margin-bottom: 1rem; }
   .space-viewer-controls__item.active {
     background-color: red; }
   .space-viewer-controls__item.hide {

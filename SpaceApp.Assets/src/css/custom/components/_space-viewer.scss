@@ -25,6 +25,10 @@
                 color: #fff
             }
         }
+
+        &--separated {
+            margin-bottom: 1rem;
+        }
     }
 
     &__item.active {
@@ -52,8 +56,9 @@
             }
         }
 
-        &--zoom-out, &--zoom-in{
-            height:1rem;
+        &--zoom-out,
+        &--zoom-in {
+            height: 1rem;
             width: 1rem;
         }
     }

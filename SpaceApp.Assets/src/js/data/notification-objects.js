@@ -15,6 +15,12 @@ const infoNotifications = {
 }
 
 const errorNotifications = {
+    trackedEntityAnimationInProgress: {
+        id: "trackedEntityAnimationInProgress",
+        showOnce: false,
+        displayed: false,
+        message: "Cannot click during animation",
+    },
     satelliteAnimationInProgress: {
         id: "satelliteAnimationInProgress",
         showOnce: false,

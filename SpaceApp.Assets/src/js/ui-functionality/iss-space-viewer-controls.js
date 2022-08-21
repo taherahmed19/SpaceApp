@@ -56,6 +56,7 @@ export default function configureControls(viewer, scene, satellite) {
             const globe2dImage = cesiumContainer.querySelector('.space-viewer-controls__icon--2d-globe');
             const columbusViewImage = cesiumContainer.querySelector('.space-viewer-controls__icon--columbus-view');
             const followSatelliteButton = cesiumContainer.querySelector('.js-cesium-follow-satellite');
+            const trackedEntityButton = cesiumContainer.querySelector('.js-cesium-tracked-entity');
 
             if (scenePanelCloseButton && controls && globeImages && globe3dImage && globe2dImage && columbusViewImage && followSatelliteButton) {
                 //configure scene panel close button
@@ -68,6 +69,7 @@ export default function configureControls(viewer, scene, satellite) {
                         const selectedSceneValue = Number(selectedScene.value);
 
                         if (selectedSceneValue !== scene.mode) {
+                            viewer.trackedEntity = null;
                             globeImages.forEach(globeImage => { globeImage.classList.remove('active'); })
                             followSatelliteButton.classList.remove("js-disabled")
 
@@ -75,18 +77,21 @@ export default function configureControls(viewer, scene, satellite) {
                             switch (selectedSceneValue) {
                                 case scenes.flatView:
                                     globe2dImage.classList.add('active');
+                                    trackedEntityButton.classList.add('hide')
                                     scene.mode = Cesium.SceneMode.SCENE2D;
                                     setZoomSettings(scene, flatViewMinimumZoomDistance, flatViewMaximumZoomDistance, flatViewMinimumZoomRate)
                                     pointCameraToSatellite(flyToDurationReset);
                                     break;
                                 case scenes.columbusView:
                                     columbusViewImage.classList.add('active');
+                                    trackedEntityButton.classList.add('hide')
                                     scene.mode = Cesium.SceneMode.COLUMBUS_VIEW;
                                     setZoomSettings(scene, columbusViewMinimumZoomDistance, columbusViewMaximumZoomDistance, columbusViewMinimumZoomRate);
                                     pointCameraToSatellite(flyToDurationReset)
                                     break;
                                 default:
                                     globe3dImage.classList.add('active');
+                                    trackedEntityButton.classList.remove('hide')
                                     scene.mode = Cesium.SceneMode.SCENE3D;
                                     setZoomSettings(scene, globeMinimumZoomDistance, globeMaximumZoomDistance, globeMinimumZoomRate)
                                     pointCameraToSatellite(flyToDurationReset)
@@ -220,6 +225,38 @@ export default function configureControls(viewer, scene, satellite) {
             }
         }
 
+        function configureTrackedEntity() {
+            const trackedEntityButton = cesiumContainer.querySelector('.js-cesium-tracked-entity');
+            const followSatelliteButton = cesiumContainer.querySelector('.js-cesium-follow-satellite');
+            const currentLocationButton = cesiumContainer.querySelector('.js-cesium-current-location');
+
+            if (trackedEntityButton) {
+                trackedEntityButton.addEventListener("click", () => {
+                    if (!trackedEntityButton.classList.contains("js-disabled")) {
+                        if (!viewer.trackedEntity) {
+                            viewer.trackedEntity = satellite;
+                            showInfoNotification("fixedCamera", cesiumContainer)
+                            trackedEntityButton.classList.remove("js-disabled")
+                        } else {
+                            followSatelliteButton.classList.add("js-disabled")
+                            currentLocationButton.classList.add("js-disabled")
+                            trackedEntityButton.classList.add("js-disabled")
+
+                            pointCameraToSatellite(flyToDurationGlobeView, function () {
+                                followSatelliteButton.classList.remove("js-disabled")
+                                currentLocationButton.classList.remove("js-disabled")
+                                trackedEntityButton.classList.remove("js-disabled")
+                                showInfoNotification("freeCamera", cesiumContainer)
+                                viewer.trackedEntity = null;
+                            });
+                        }
+                    } else {
+                        showErrorNotification("trackedEntityAnimationInProgress", cesiumContainer)
+                    }
+                })
+            }
+        }
+
         function configureFollowSatelliteButton() {
             const followSatelliteButton = cesiumContainer.querySelector('.js-cesium-follow-satellite');
             const currentLocationButton = cesiumContainer.querySelector('.js-cesium-current-location');
@@ -266,20 +303,15 @@ export default function configureControls(viewer, scene, satellite) {
             }
 
             function handleCameraGlobeView() {
-                if (!viewer.trackedEntity) {
-                    viewer.trackedEntity = satellite;
-                    showInfoNotification("fixedCamera", cesiumContainer)
-                } else {
-                    followSatelliteButton.classList.add("js-disabled")
-                    currentLocationButton.classList.add("js-disabled")
+                followSatelliteButton.classList.add("js-disabled")
+                currentLocationButton.classList.add("js-disabled")
 
-                    pointCameraToSatellite(flyToDurationGlobeView, function () {
-                        followSatelliteButton.classList.remove("js-disabled")
-                        currentLocationButton.classList.remove("js-disabled")
-                        showInfoNotification("freeCamera", cesiumContainer)
-                    });
-                    viewer.trackedEntity = null;
-                }
+                pointCameraToSatellite(flyToDurationGlobeView, function () {
+                    followSatelliteButton.classList.remove("js-disabled")
+                    currentLocationButton.classList.remove("js-disabled")
+                    showInfoNotification("freeCamera", cesiumContainer)
+                });
+                viewer.trackedEntity = null;
             }
         }
 
@@ -393,6 +425,7 @@ export default function configureControls(viewer, scene, satellite) {
         configureSceneModeButton()
         configureSettingsButton()
         configureFullScreenButton()
+        configureTrackedEntity()
         configureFollowSatelliteButton()
         configureCurrentLocationButton()
     }
