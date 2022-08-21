@@ -8507,7 +8507,7 @@ strong {
 .space-viewer-controls {
   width: auto;
   height: auto;
-  background-color: black;
+  background-color: none;
   display: flex;
   flex-direction: column;
   position: absolute;
@@ -8516,10 +8516,17 @@ strong {
   z-index: 1; }
   .space-viewer-controls__item {
     background: #181a1b;
+    background: #17191a;
     border: none;
     cursor: pointer;
     outline: none !important;
-    margin-bottom: .25rem; }
+    margin-bottom: .25rem;
+    padding: .35rem .35rem;
+    border-radius: 2px;
+    border: 3px solid transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center; }
     .space-viewer-controls__item i {
       color: #c8c3bc; }
     .space-viewer-controls__item:hover i {
@@ -8527,7 +8534,7 @@ strong {
     .space-viewer-controls__item--separated {
       margin-bottom: 1rem; }
   .space-viewer-controls__item.active {
-    background-color: red; }
+    border: 3px solid #326c8e; }
   .space-viewer-controls__item.hide {
     display: none; }
   .space-viewer-controls canvas {
