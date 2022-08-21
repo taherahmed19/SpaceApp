@@ -1,6 +1,8 @@
 ﻿import { applyFullscreen } from './utils';
 import { showErrorNotification, showInfoNotification } from './notifications';
 import api from '../api/fetch-api';
+import { requestGeolocation, geolocationApiBrowserSupport, handleErrorCallback } from './utils';
+import { scenes } from '../data/enums';
 import {
     setZoomSettings,
     cameraHeight,
@@ -16,16 +18,12 @@ import {
 } from '../earth';
 
 export default function configureControls(viewer, scene, satellite) {
-    const scenes = {
-        globe: 3,
-        flatView: 2,
-        columbusView: 1,
-    }
+    
     const flyToDurationGlobeView = 5;
     const flyToDuration2DView = 2;
     const flyToDurationColumbusView = 2;
     const flyToDurationReset = 0;
-    const zoomAmount = 250000;
+    const flyToDurationCurrentLocation = 3;
 
     const labelStyle = {
         font: '31px sans-serif',
@@ -279,61 +277,66 @@ export default function configureControls(viewer, scene, satellite) {
             }
         }
 
-        function configureZoomInButton() {
-            const zoomInButton = cesiumContainer.querySelector('.js-cesium-zoom-in');
+        function configureCurrentLocationButton() {
+            const currentLocationButton = cesiumContainer.querySelector('.js-cesium-current-location');
+            const billboardCollection = scene.primitives.add(new Cesium.BillboardCollection());
+            const billboard = billboardCollection.add({
+                image: 'assets/images/location-pin.svg',
+                scale: 0.1,
+                verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                show: false
+            });
+            const currentLocationMarkerHeight = 1000;
+            const currentLocationCameraHeight = 1000000
 
-            if (zoomInButton) {
-                zoomInButton.addEventListener("click", () => {
-                    let minimumZoomDistance = 0;
-                    let currentCameraHeight = 0;
+            let isPointingToCurrentLocation = false;
 
-                    if (viewer.trackedEntity) {
-                        currentCameraHeight = scene.camera.position.z //view from values
-                        minimumZoomDistance = 144472.18362793513;
-                    } else {
-                        switch (scene.mode) {
-                            case scenes.globe:
-                                minimumZoomDistance = globeMinimumZoomDistance
-                                currentCameraHeight = scene.globe.ellipsoid.cartesianToCartographic(scene.camera.position).height
-                                break;
-                            case scenes.flatView:
-                                minimumZoomDistance = flatViewMinimumZoomDistance
-                                currentCameraHeight = (scene.camera.frustum.right - scene.camera.frustum.left) * 0.5
-                                break;
-                            case scenes.columbusView:
-                                minimumZoomDistance = columbusViewMinimumZoomDistance
-                                currentCameraHeight = scene.camera.position.z
-                                break;
+            if (currentLocationButton) {
+                currentLocationButton.addEventListener("click", () => {
+                    if (!isPointingToCurrentLocation) {
+                        if (!geolocationApiBrowserSupport()) { //geolocation feature not supported by browser
+                            showErrorNotification("geolocationNotSupported", cesiumContainer)
+                            return;
                         }
+
+                        requestGeolocation(successCallback, errorCallback)
+                    } else {
+                        billboard.show = false;
+                        isPointingToCurrentLocation = false;
+                        pointCameraToSatellite(flyToDurationCurrentLocation)
                     }
 
-                    if (currentCameraHeight - zoomAmount <= minimumZoomDistance) { //prevent zooming in past the minimum zoom distance on the scene
-                        let zoomDifference = currentCameraHeight - minimumZoomDistance
-
-                        if (zoomDifference >= 0) {
-                            viewer.scene.camera.zoomIn(zoomDifference)
-                        }
-                    } else {
-                        viewer.scene.camera.zoomIn(zoomAmount)
-                    }
                 })
             }
-        }
 
-        function configureZoomOutButton() {
-            const zoomOutButton = cesiumContainer.querySelector('.js-cesium-zoom-out');
+            function successCallback(position) {
+                if (position && position.coords) {
+                    const coords = position.coords;
+                    const latitude = coords.latitude;
+                    const longitude = coords.longitude;
 
-            if (zoomOutButton) {
-                zoomOutButton.addEventListener("click", () => {
-                    const currentCameraHeight = scene.globe.ellipsoid.cartesianToCartographic(scene.camera.position).height
+                    if (latitude && longitude) {
+                        billboard.position = new Cesium.Cartesian3.fromDegrees(longitude, latitude, currentLocationMarkerHeight);
+                        billboard.show = true;
 
-                    if (!(currentCameraHeight + zoomAmount > globeMaximumZoomDistance)) { //prevent zooming out past the max zoom distance on the scene
-                        viewer.scene.camera.zoomOut(zoomAmount)
+                        viewer.camera.flyTo({
+                            destination: Cesium.Cartesian3.fromDegrees(
+                                longitude,
+                                latitude,
+                                currentLocationCameraHeight),
+                            duration: flyToDurationCurrentLocation,
+                            complete: () => { isPointingToCurrentLocation = true; }
+                        });
+
+                        isPointingToCurrentLocation = true;
                     }
-                })
+                }
+            }
+
+            function errorCallback(error) {
+                handleErrorCallback(error, showErrorNotification, cesiumContainer)
             }
         }
-
         //TODO: Break out into earth.js
         function pointCameraToSatellite(duration, completeFunction) {
             let position = null;
@@ -359,7 +362,6 @@ export default function configureControls(viewer, scene, satellite) {
         configureSettingsButton()
         configureFullScreenButton()
         configureFollowSatelliteButton()
-        configureZoomInButton()
-        configureZoomOutButton()
+        configureCurrentLocationButton()
     }
 }

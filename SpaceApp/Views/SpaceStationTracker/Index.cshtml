@@ -14,7 +14,7 @@
                     <!--Keep one element for info, error and success-->
                     <div class="notification-wrapper">
                     </div>
-                    
+
                     <!--Buttons-->
                     <div class="space-viewer-controls">
                         <button class="space-viewer-controls__item js-cesium-fullscreen" title="Toggle fullscreen">
@@ -31,12 +31,15 @@
                         <button class="space-viewer-controls__item js-cesium-settings" title="Settings">
                             <img class="space-viewer-controls__icon" src="/assets/images/filter.svg" />
                         </button>
-                        <button class="space-viewer-controls__item js-cesium-zoom-in" title="Zoom in">
-                            <img class="space-viewer-controls__icon space-viewer-controls__icon--zoom-in" src="/assets/images/plus.svg" />
+                        <button class="space-viewer-controls__item js-cesium-current-location" title="Settings">
+                            <img class="space-viewer-controls__icon" src="/assets/images/current-location.svg" />
                         </button>
-                        <button class="space-viewer-controls__item js-cesium-zoom-out" title="Zoom out">
-                            <img class="space-viewer-controls__icon space-viewer-controls__icon--zoom-out" src="/assets/images/minus.svg" />
-                        </button>
+                        @*<button class="space-viewer-controls__item js-cesium-zoom-in" title="Zoom in">
+                                <img class="space-viewer-controls__icon space-viewer-controls__icon--zoom-in" src="/assets/images/plus.svg" />
+                            </button>
+                            <button class="space-viewer-controls__item js-cesium-zoom-out" title="Zoom out">
+                                <img class="space-viewer-controls__icon space-viewer-controls__icon--zoom-out" src="/assets/images/minus.svg" />
+                            </button>*@
                     </div>
 
                     <!--Scenes panel-->
@@ -71,7 +74,7 @@
                             </li>
                         </ul>
                     </div>
-                   
+
                     <!--Settings panel-->
                     <div class="space-viewer-controls__layers js-cesium-settings-panel">
                         <div class="space-viewer-controls__title">

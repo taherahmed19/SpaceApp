@@ -1,3 +1,4 @@
+//TODO: Refactor to make object properties read-only
 const infoNotifications = {
     fixedCamera: {
         id: "fixedCamera",
@@ -19,6 +20,36 @@ const errorNotifications = {
         showOnce: false,
         displayed: false,
         message: "Cannot click during animation",
+    },
+    geolocationNotSupported: {
+        id: "geolocationNotSupported",
+        showOnce: false,
+        displayed: false,
+        message: "Geolocation is not supported. Change browsers.",
+    },
+    geolocationDisabled: {
+        id: "geolocationDisabled",
+        showOnce: false,
+        displayed: false,
+        message: "Geolocation is disabled. Please update browser settings.",
+    },
+    geolocationUnavailable: {
+        id: "geolocationUnavailable",
+        showOnce: false,
+        displayed: false,
+        message: "Geolocation is unavailable. Please try again.",
+    },
+    geolocationTimeout: {
+        id: "geolocationTimeout",
+        showOnce: false,
+        displayed: false,
+        message: "Geolocation request timed out. Please try again later.",
+    },
+    geolocationDefault: {
+        id: "geolocationDefault",
+        showOnce: false,
+        displayed: false,
+        message: "Geolocation error. Please try again later.",
     },
 }
 
