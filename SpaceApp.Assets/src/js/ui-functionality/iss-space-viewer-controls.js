@@ -18,7 +18,7 @@ import {
 } from '../earth';
 
 export default function configureControls(viewer, scene, satellite) {
-    
+
     const flyToDurationGlobeView = 5;
     const flyToDuration2DView = 2;
     const flyToDurationColumbusView = 2;
@@ -222,6 +222,7 @@ export default function configureControls(viewer, scene, satellite) {
 
         function configureFollowSatelliteButton() {
             const followSatelliteButton = cesiumContainer.querySelector('.js-cesium-follow-satellite');
+            const currentLocationButton = cesiumContainer.querySelector('.js-cesium-current-location');
 
             if (followSatelliteButton) {
                 followSatelliteButton.addEventListener("click", () => {
@@ -238,26 +239,29 @@ export default function configureControls(viewer, scene, satellite) {
                                 handleCameraGlobeView()
                                 break;
                         }
-
                     } else {
-                        showErrorNotification("animationInProgress", cesiumContainer)
+                        showErrorNotification("satelliteAnimationInProgress", cesiumContainer)
                     }
                 })
             }
 
             function handleCameraColumbusView() {
                 followSatelliteButton.classList.add("js-disabled")
+                currentLocationButton.classList.add("js-disabled")
 
                 pointCameraToSatellite(flyToDurationColumbusView, function () {
                     followSatelliteButton.classList.remove("js-disabled")
+                    currentLocationButton.classList.remove("js-disabled")
                 });
             }
 
             function handleCamera2DView() {
                 followSatelliteButton.classList.add("js-disabled")
+                currentLocationButton.classList.add("js-disabled")
 
                 pointCameraToSatellite(flyToDuration2DView, function () {
                     followSatelliteButton.classList.remove("js-disabled")
+                    currentLocationButton.classList.remove("js-disabled")
                 });
             }
 
@@ -267,9 +271,11 @@ export default function configureControls(viewer, scene, satellite) {
                     showInfoNotification("fixedCamera", cesiumContainer)
                 } else {
                     followSatelliteButton.classList.add("js-disabled")
+                    currentLocationButton.classList.add("js-disabled")
 
                     pointCameraToSatellite(flyToDurationGlobeView, function () {
                         followSatelliteButton.classList.remove("js-disabled")
+                        currentLocationButton.classList.remove("js-disabled")
                         showInfoNotification("freeCamera", cesiumContainer)
                     });
                     viewer.trackedEntity = null;
@@ -278,6 +284,7 @@ export default function configureControls(viewer, scene, satellite) {
         }
 
         function configureCurrentLocationButton() {
+            const followSatelliteButton = cesiumContainer.querySelector('.js-cesium-follow-satellite');
             const currentLocationButton = cesiumContainer.querySelector('.js-cesium-current-location');
             const billboardCollection = scene.primitives.add(new Cesium.BillboardCollection());
             const billboard = billboardCollection.add({
@@ -293,19 +300,35 @@ export default function configureControls(viewer, scene, satellite) {
 
             if (currentLocationButton) {
                 currentLocationButton.addEventListener("click", () => {
-                    if (!isPointingToCurrentLocation) {
-                        if (!geolocationApiBrowserSupport()) { //geolocation feature not supported by browser
-                            showErrorNotification("geolocationNotSupported", cesiumContainer)
-                            return;
+                    if (!currentLocationButton.classList.contains("js-disabled")) {
+                        if (!isPointingToCurrentLocation) {
+                            if (!geolocationApiBrowserSupport()) { //geolocation feature not supported by browser
+                                showErrorNotification("geolocationNotSupported", cesiumContainer)
+                                return;
+                            }
+
+                            requestGeolocation(successCallback, errorCallback)
+                        } else {
+                            //prevent buttons from being selected
+                            followSatelliteButton.classList.add("js-disabled")
+                            currentLocationButton.classList.add("js-disabled")
+
+                            //remove button selected highlight
+                            currentLocationButton.classList.remove("active");
+
+                            //reset value
+                            billboard.show = false;
+                            isPointingToCurrentLocation = false;
+                            viewer.trackedEntity = null
+
+                            pointCameraToSatellite(flyToDurationCurrentLocation, function () {
+                                followSatelliteButton.classList.remove("js-disabled")
+                                currentLocationButton.classList.remove("js-disabled");
+                            })
                         }
-
-                        requestGeolocation(successCallback, errorCallback)
                     } else {
-                        billboard.show = false;
-                        isPointingToCurrentLocation = false;
-                        pointCameraToSatellite(flyToDurationCurrentLocation)
+                        showErrorNotification("geolocationAnimationInProgress", cesiumContainer)
                     }
-
                 })
             }
 
@@ -316,6 +339,11 @@ export default function configureControls(viewer, scene, satellite) {
                     const longitude = coords.longitude;
 
                     if (latitude && longitude) {
+                        //Add active class to button
+                        viewer.trackedEntity = null;
+                        followSatelliteButton.classList.add("js-disabled")
+                        currentLocationButton.classList.add("js-disabled")
+                        currentLocationButton.classList.add("active")
                         billboard.position = new Cesium.Cartesian3.fromDegrees(longitude, latitude, currentLocationMarkerHeight);
                         billboard.show = true;
 
@@ -325,7 +353,11 @@ export default function configureControls(viewer, scene, satellite) {
                                 latitude,
                                 currentLocationCameraHeight),
                             duration: flyToDurationCurrentLocation,
-                            complete: () => { isPointingToCurrentLocation = true; }
+                            complete: function () {
+                                isPointingToCurrentLocation = true;
+                                followSatelliteButton.classList.remove("js-disabled");
+                                currentLocationButton.classList.remove("js-disabled");
+                            }
                         });
 
                         isPointingToCurrentLocation = true;

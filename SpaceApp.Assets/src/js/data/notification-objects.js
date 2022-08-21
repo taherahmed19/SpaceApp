@@ -15,8 +15,14 @@ const infoNotifications = {
 }
 
 const errorNotifications = {
-    animationInProgress: {
-        id: "animationInProgress",
+    satelliteAnimationInProgress: {
+        id: "satelliteAnimationInProgress",
+        showOnce: false,
+        displayed: false,
+        message: "Cannot click during animation",
+    },
+    geolocationAnimationInProgress: {
+        id: "geolocationAnimationInProgress",
         showOnce: false,
         displayed: false,
         message: "Cannot click during animation",
