@@ -4,13 +4,15 @@ const infoNotifications = {
         id: "fixedCamera",
         showOnce: true,
         displayed: false,
-        message: "Camera is fixed to ISS"
+        message: "Camera is fixed to ISS",
+        relatedNotification: null, //only show if a previous notification has been displayed
     },
     freeCamera: {
         id: "freeCamera",
         showOnce: true,
         displayed: false,
-        message: "Camera reset"
+        message: "Camera reset",
+        relatedNotification: "fixedCamera", //only show if a previous notification has been displayed
     },
 }
 

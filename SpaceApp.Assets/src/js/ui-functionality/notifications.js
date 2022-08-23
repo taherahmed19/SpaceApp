@@ -53,47 +53,52 @@ export function showErrorNotification(property, container) {
 export function showInfoNotification(property, container) {
     if (container && infoNotifications.hasOwnProperty(property)) {
         const notificationData = infoNotifications[property];
-        const id = notificationData.id;
-        const message = notificationData.message;
-        const showOnce = notificationData.showOnce;
-        const displayed = notificationData.displayed;
+        const relatedNotification = infoNotifications[notificationData.relatedNotification];
 
-        if (showOnce && displayed == false) {
-            notificationData.displayed = true;
-            renderNotification()
-        }
+        if (relatedNotification == null || relatedNotification.displayed) {
+            const id = notificationData.id;
+            const message = notificationData.message;
+            const showOnce = notificationData.showOnce;
+            const displayed = notificationData.displayed;
 
-        function renderNotification() {
-            const notificationWrapper = container.querySelector('.notification-wrapper');
+            if (showOnce && displayed == false) {
+                notificationData.displayed = true;
+                renderNotification()
+            }
 
-            if (id && message && notificationWrapper) {
-                const existingNotification = notificationWrapper.querySelector(`[data-notification-id='${id}']`);
+            function renderNotification() {
+                const notificationWrapper = container.querySelector('.notification-wrapper');
 
-                if (!existingNotification) {
-                    const template = `
-                        <div class="notification notification--info" data-notification-id="${id}">
-                            <div class="notification__text-wrapper">
-                                <p class="notification__title">${message}</p>
+                if (id && message && notificationWrapper) {
+                    const existingNotification = notificationWrapper.querySelector(`[data-notification-id='${id}']`);
+
+                    if (!existingNotification) {
+                        const template = `
+                            <div class="notification notification--info" data-notification-id="${id}">
+                                <div class="notification__text-wrapper">
+                                    <p class="notification__title">${message}</p>
+                                </div>
+                                <button class="notification__close-btn js-notification-close" type="button">
+                                    <img src="/assets/images/close.svg"/>
+                                </button>
                             </div>
-                            <button class="notification__close-btn js-notification-close" type="button">
-                                <img src="/assets/images/close.svg"/>
-                            </button>
-                        </div>
-                    `;
+                        `;
 
-                    notificationWrapper.insertAdjacentHTML("afterbegin", template);
+                        notificationWrapper.insertAdjacentHTML("afterbegin", template);
 
-                    const notificationTimeout = setTimeout(function () {
-                        const existingNotification = notificationWrapper.querySelector(`[data-notification-id='${id}']`);
-                        if (existingNotification) {
-                            existingNotification.remove();
-                        }
-                    }, notificationDisplayTime);
+                        const notificationTimeout = setTimeout(function () {
+                            const existingNotification = notificationWrapper.querySelector(`[data-notification-id='${id}']`);
+                            if (existingNotification) {
+                                existingNotification.remove();
+                            }
+                        }, notificationDisplayTime);
 
-                    configureCloseButton(id, notificationTimeout);
+                        configureCloseButton(id, notificationTimeout);
+                    }
                 }
             }
         }
+
 
     } else {
         console.error(`Property error: ${container}`);

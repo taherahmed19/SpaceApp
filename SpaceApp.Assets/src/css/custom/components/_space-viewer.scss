@@ -9,19 +9,22 @@
     bottom: 5rem;
     z-index: 1;
 
+    &__group {
+        margin-bottom: 1rem;
+    }
+
     &__item {
         background: #181a1b;
-        background: #17191a;
         border: none;
         cursor: pointer;
         outline: none !important;
-        margin-bottom: .25rem;
         padding: .35rem .35rem;
-        border-radius: 2px;
         border: 3px solid transparent;
+        border-radius: 100px;
         display: flex;
         align-items: center;
         justify-content: center;
+        margin-bottom: .25rem;
 
         i {
             color: #c8c3bc;
@@ -31,10 +34,6 @@
             i {
                 color: #fff
             }
-        }
-
-        &--separated {
-            margin-bottom: 1rem;
         }
     }
 

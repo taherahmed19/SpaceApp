@@ -17,26 +17,33 @@
 
                     <!--Buttons-->
                     <div class="space-viewer-controls">
-                        <button class="space-viewer-controls__item space-viewer-controls__item--separated js-cesium-tracked-entity" title="Toggle fullscreen">
-                            <img class="space-viewer-controls__icon" src="/assets/images/satellite.svg" />
-                        </button>
-                        <button class="space-viewer-controls__item js-cesium-fullscreen" title="Toggle fullscreen">
-                            <img class="space-viewer-controls__icon" src="/assets/images/fullscreen.svg" />
-                        </button>
-                        <button class="space-viewer-controls__item js-cesium-3d-globe" title="Set scene mode">
-                            <img class="space-viewer-controls__icon space-viewer-controls__icon--globe-icon space-viewer-controls__icon--3d-globe active" src="/assets/images/globe.svg" />
-                            <img class="space-viewer-controls__icon space-viewer-controls__icon--globe-icon space-viewer-controls__icon--2d-globe" src="/assets/images/2d.svg" />
-                            <img class="space-viewer-controls__icon space-viewer-controls__icon--globe-icon space-viewer-controls__icon--columbus-view" src="/assets/images/columbus-view.svg" />
-                        </button>
-                        <button class="space-viewer-controls__item js-cesium-follow-satellite" title="Follow Satellite">
-                            <img class="space-viewer-controls__icon" src="/assets/images/magnifying-glass.svg" />
-                        </button>
-                        <button class="space-viewer-controls__item js-cesium-settings" title="Settings">
-                            <img class="space-viewer-controls__icon" src="/assets/images/filter.svg" />
-                        </button>
-                        <button class="space-viewer-controls__item js-cesium-current-location" title="Settings">
-                            <img class="space-viewer-controls__icon" src="/assets/images/current-location.svg" />
-                        </button>
+                        <div class="space-viewer-controls__group">
+                            <button class="space-viewer-controls__item js-cesium-tracked-entity" title="Toggle fullscreen">
+                                <img class="space-viewer-controls__icon" src="/assets/images/satellite.svg" />
+                            </button>
+                            <button class="space-viewer-controls__item js-cesium-follow-satellite" title="Follow Satellite">
+                                <img class="space-viewer-controls__icon" src="/assets/images/magnifying-glass.svg" />
+                            </button>
+                            <button class="space-viewer-controls__item js-cesium-current-location" title="Current location">
+                                <img class="space-viewer-controls__icon" src="/assets/images/current-location.svg" />
+                            </button>
+                        </div>
+
+                        <div class="space-viewer-controls__group">
+                            <button class="space-viewer-controls__item js-cesium-3d-globe" title="Set scene mode">
+                                <img class="space-viewer-controls__icon space-viewer-controls__icon--globe-icon space-viewer-controls__icon--3d-globe active" src="/assets/images/globe.svg" />
+                                <img class="space-viewer-controls__icon space-viewer-controls__icon--globe-icon space-viewer-controls__icon--2d-globe" src="/assets/images/2d.svg" />
+                                <img class="space-viewer-controls__icon space-viewer-controls__icon--globe-icon space-viewer-controls__icon--columbus-view" src="/assets/images/columbus-view.svg" />
+                            </button>
+                            <button class="space-viewer-controls__item js-cesium-settings" title="Settings">
+                                <img class="space-viewer-controls__icon" src="/assets/images/filter.svg" />
+                            </button>
+                            <button class="space-viewer-controls__item js-cesium-fullscreen" title="Toggle fullscreen">
+                                <img class="space-viewer-controls__icon" src="/assets/images/fullscreen.svg" />
+                            </button>
+                        </div>
+
+
                         @*<button class="space-viewer-controls__item js-cesium-zoom-in" title="Zoom in">
                                 <img class="space-viewer-controls__icon space-viewer-controls__icon--zoom-in" src="/assets/images/plus.svg" />
                             </button>
