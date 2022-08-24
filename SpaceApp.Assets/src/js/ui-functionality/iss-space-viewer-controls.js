@@ -156,7 +156,6 @@ export default function configureControls(viewer, scene, satellite) {
 
             //TODO: Break out into earth.js
             function renderCityNames(cities) {
-
                 if (cities) {
                     isCityDataRetrieved = true;
 
@@ -233,10 +232,14 @@ export default function configureControls(viewer, scene, satellite) {
                     if (!trackedEntityButton.classList.contains("js-disabled")) {
                         if (!viewer.trackedEntity) {
                             viewer.trackedEntity = satellite;
+                            trackedEntityButton.classList.add("active")
+
                             showInfoNotification("fixedCamera", cesiumContainer)
                             enableButtonsDuringAnimation()
+
                         } else {
                             disableButtonsDuringAnimation()
+                            trackedEntityButton.classList.remove("active")
 
                             pointCameraToSatellite(flyToDurationGlobeView, function () {
                                 enableButtonsDuringAnimation()
@@ -303,6 +306,7 @@ export default function configureControls(viewer, scene, satellite) {
         }
 
         function configureCurrentLocationButton() {
+            const trackedEntityButton = cesiumContainer.querySelector('.js-cesium-tracked-entity');
             const currentLocationButton = cesiumContainer.querySelector('.js-cesium-current-location');
             const billboardCollection = scene.primitives.add(new Cesium.BillboardCollection());
             const billboard = billboardCollection.add({
@@ -316,7 +320,7 @@ export default function configureControls(viewer, scene, satellite) {
 
             let isPointingToCurrentLocation = false;
 
-            if (currentLocationButton) {
+            if (currentLocationButton && trackedEntityButton) {
                 currentLocationButton.addEventListener("click", () => {
                     if (!currentLocationButton.classList.contains("js-disabled")) {
                         if (!isPointingToCurrentLocation) {
@@ -329,11 +333,9 @@ export default function configureControls(viewer, scene, satellite) {
                         } else {
                             //prevent buttons from being selected
                             disableButtonsDuringAnimation()
-
-                            //remove button selected highlight
-                            currentLocationButton.classList.remove("active");
-
-                            //reset value
+                            currentLocationButton.classList.remove("active")
+                            
+                            //reset values
                             billboard.show = false;
                             isPointingToCurrentLocation = false;
                             viewer.trackedEntity = null
@@ -357,8 +359,9 @@ export default function configureControls(viewer, scene, satellite) {
                     if (latitude && longitude) {
                         //Add active class to button
                         viewer.trackedEntity = null;
-                        disableButtonsDuringAnimation()
                         currentLocationButton.classList.add("active")
+                        trackedEntityButton.classList.remove("active")
+                        disableButtonsDuringAnimation()
                         billboard.position = new Cesium.Cartesian3.fromDegrees(longitude, latitude, currentLocationMarkerHeight);
                         billboard.show = true;
 
