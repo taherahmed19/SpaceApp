@@ -92,6 +92,7 @@ export default function configureControls(viewer, scene, satellite) {
                                 default:
                                     globe3dImage.classList.add('active');
                                     trackedEntityButton.classList.remove('hide')
+                                    trackedEntityButton.classList.remove('active')
                                     scene.mode = Cesium.SceneMode.SCENE3D;
                                     setZoomSettings(scene, globeMinimumZoomDistance, globeMaximumZoomDistance, globeMinimumZoomRate)
                                     pointCameraToSatellite(flyToDurationReset)

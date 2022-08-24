@@ -8655,7 +8655,9 @@ strong {
     background-color: #29B6F6; }
   .notification__text-wrapper {
     display: flex;
-    flex-wrap: wrap; }
+    flex-wrap: wrap;
+    padding-right: 1.5rem;
+    width: 100%; }
   .notification__title {
     font-size: 0.875rem;
     font-weight: 600;

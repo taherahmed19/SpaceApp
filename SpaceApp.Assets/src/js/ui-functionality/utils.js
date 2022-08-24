@@ -23,8 +23,6 @@ export function requestGeolocation(successCallback, errorCallback) {
         timeout: 27000
     }
 
-    console.log(options.maximumAge)
-
     if (navigator && 'geolocation' in navigator && navigator.geolocation) {
         try {
             navigator.geolocation.getCurrentPosition(successCallback, errorCallback, options);
