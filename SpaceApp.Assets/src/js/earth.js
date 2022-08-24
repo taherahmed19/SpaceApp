@@ -48,6 +48,8 @@ function renderEarthViewer(data) {
         viewer.animation.container.style.visibility = 'hidden';
         viewer.timeline.container.style.visibility = 'hidden';
         viewer.useBrowserRecommendedResolution = false;
+        viewer.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+        viewer.selectionIndicator.viewModel.selectionIndicatorElement.style.visibility = 'hidden';
         viewer.forceResize();
     }
 
