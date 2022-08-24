@@ -8527,11 +8527,13 @@ strong {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: .25rem; }
+    margin-bottom: .25rem;
+    position: relative;
+    transition: 0.3s; }
     .space-viewer-controls__item i {
       color: #c8c3bc; }
-    .space-viewer-controls__item:hover i {
-      color: #fff; }
+    .space-viewer-controls__item:hover {
+      background-color: #326c8e; }
   .space-viewer-controls__item.active {
     border: 3px solid #326c8e; }
   .space-viewer-controls__item.hide {

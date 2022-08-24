@@ -25,16 +25,17 @@
         align-items: center;
         justify-content: center;
         margin-bottom: .25rem;
+        position: relative;
+        transition: 0.3s;
 
         i {
             color: #c8c3bc;
         }
 
-        &:hover {
-            i {
-                color: #fff
-            }
+        &:hover{
+            background-color:  #326c8e;
         }
+      
     }
 
     &__item.active {
