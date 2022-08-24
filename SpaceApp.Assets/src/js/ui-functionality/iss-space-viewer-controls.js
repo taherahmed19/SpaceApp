@@ -331,18 +331,11 @@ export default function configureControls(viewer, scene, satellite) {
 
                             requestGeolocation(successCallback, errorCallback)
                         } else {
-                            //prevent buttons from being selected
-                            disableButtonsDuringAnimation()
                             currentLocationButton.classList.remove("active")
                             
                             //reset values
                             billboard.show = false;
                             isPointingToCurrentLocation = false;
-                            viewer.trackedEntity = null
-
-                            pointCameraToSatellite(flyToDurationCurrentLocation, function () {
-                                enableButtonsDuringAnimation()
-                            })
                         }
                     } else {
                         showErrorNotification("geolocationAnimationInProgress", cesiumContainer)
