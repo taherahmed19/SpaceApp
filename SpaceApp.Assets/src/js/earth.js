@@ -27,6 +27,7 @@ api.makeApiCall("IssTles", renderEarthViewer);
  * @param {*} data 
  */
 function renderEarthViewer(data) {
+    console.log(data)
     Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1YjhlOGFjMC1hYjQwLTRkN2QtYmIwYy0wMTUxNDJiZjMxOGIiLCJpZCI6MTA0NjM4LCJpYXQiOjE2NjA0MTQwNTh9.2gD9ETM4SVSm4lHrS3jOA9E7DHRSQhYlqQAOBtTLy6U';
 
     // Initialize the Cesium viewer.
@@ -61,7 +62,7 @@ function renderEarthViewer(data) {
 
     function addSatelliteEntity(position) {
         const pointPosition = new Cesium.Cartesian3.fromRadians(
-            position.longitude, position.latitude, position.height * heightBuffer
+            position.current.longitude, position.current.latitude, position.current.height * heightBuffer
         );
 
         const xOffset = -1200000;
@@ -76,6 +77,17 @@ function renderEarthViewer(data) {
                 maximumScale: 8000,
             },
             viewFrom: new Cesium.Cartesian3(xOffset, yOffset, zOffset),
+            polyline: {
+                //use previous position and current position 
+                positions: Cesium.Cartesian3.fromRadiansArrayHeights([position.previous.longitude, position.previous.latitude, position.previous.height * heightBuffer,
+                position.current.longitude, position.current.latitude, position.current.height * heightBuffer]),
+                width: 10,
+                material: new Cesium.PolylineGlowMaterialProperty({
+                    glowPower: 0.2,
+                    taperPower: 0.5,
+                    color: Cesium.Color.CORNFLOWERBLUE,
+                }),
+            },
         });
 
         return satellite;
@@ -84,8 +96,8 @@ function renderEarthViewer(data) {
     function setCameraView(position) {
         viewer.camera.setView({
             destination: Cesium.Cartesian3.fromRadians(
-                position.longitude,
-                position.latitude,
+                position.current.longitude,
+                position.current.latitude,
                 cameraHeight
             )
         });
@@ -106,7 +118,7 @@ function renderEarthViewer(data) {
     function setSatellitePositionInterval() {
         window.setInterval(function () {
             updatePosition(satellite, data)
-        }, 100);
+        }, 2000); //100
     }
 
     const position = getPosition(data.line1.trim(), data.line2.trim())
@@ -137,12 +149,12 @@ function setZoomSettings(scene, minimumZoomDistance, maximumZoomDistance, minimu
  * @param {*} currentPoint 
  * @param {*} data 
  */
-function updatePosition(currentPoint, data) {
+function updatePosition(satellite, data) {
     var position = getPosition(data.line1.trim(), data.line2.trim())
     var pointPosition = new Cesium.Cartesian3.fromRadians(
-        position.longitude, position.latitude, position.height * heightBuffer
+        position.current.longitude, position.current.latitude, position.current.height * heightBuffer
     )
-    currentPoint.position = pointPosition;
+    satellite.position = pointPosition;
 
     try {
         sessionStorage.setItem("IssPosition", JSON.stringify({ longitude: position.longitude, latitude: position.latitude }));
@@ -165,14 +177,29 @@ function getPosition(tleLine1, tleLine2) {
         tleLine2
     );
 
-    const positionAndVelocity = satellite.propagate(satrec, new Date());
-    const gmst = satellite.gstime(new Date());
+    const previousDateTime = new Date();
+    previousDateTime.setMinutes(previousDateTime.getMinutes() - 30);
+
+    const previousPositionAndVelocity = satellite.propagate(satrec, previousDateTime); // Propagate satellite using time since epoch (in date).
+    const previousGmst = satellite.gstime(previousDateTime);
+    const previousPosition = satellite.eciToGeodetic(previousPositionAndVelocity.position, previousGmst);
+
+    const currentDateTime = new Date();
+    const positionAndVelocity = satellite.propagate(satrec, currentDateTime); // Propagate satellite using time since epoch (in date).
+    const gmst = satellite.gstime(currentDateTime);
     const position = satellite.eciToGeodetic(positionAndVelocity.position, gmst);
 
     return {
-        longitude: position.longitude,
-        latitude: position.latitude,
-        height: position.height,
+        current: {
+            longitude: position.longitude,
+            latitude: position.latitude,
+            height: position.height,
+        },
+        previous: {
+            longitude: previousPosition.longitude,
+            latitude: previousPosition.latitude,
+            height: previousPosition.height,
+        }
     }
 }
 
