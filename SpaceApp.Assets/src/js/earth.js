@@ -27,7 +27,6 @@ api.makeApiCall("IssTles", renderEarthViewer);
  * @param {*} data 
  */
 function renderEarthViewer(data) {
-    console.log(data)
     Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1YjhlOGFjMC1hYjQwLTRkN2QtYmIwYy0wMTUxNDJiZjMxOGIiLCJpZCI6MTA0NjM4LCJpYXQiOjE2NjA0MTQwNTh9.2gD9ETM4SVSm4lHrS3jOA9E7DHRSQhYlqQAOBtTLy6U';
 
     // Initialize the Cesium viewer.
@@ -69,6 +68,8 @@ function renderEarthViewer(data) {
         const yOffset = -600000;
         const zOffset = 950000;
 
+        const isPolylinePositionConstant = false;
+
         const satellite = viewer.entities.add({
             position: pointPosition,
             model: {
@@ -78,13 +79,23 @@ function renderEarthViewer(data) {
             },
             viewFrom: new Cesium.Cartesian3(xOffset, yOffset, zOffset),
             polyline: {
-                //use previous position and current position 
-                positions: Cesium.Cartesian3.fromRadiansArrayHeights([position.previous.longitude, position.previous.latitude, position.previous.height * heightBuffer,
-                position.current.longitude, position.current.latitude, position.current.height * heightBuffer]),
+                positions: new Cesium.CallbackProperty(() => {
+                    const cartographic = Cesium.Cartographic.fromCartesian(satellite.position._value); //value returned is in radians 
+
+                    return Cesium.Cartesian3.fromRadiansArrayHeights(
+                        [
+                            position.previous.longitude, position.previous.latitude, position.previous.height * heightBuffer,
+                            cartographic.longitude, cartographic.latitude, position.previous.height * heightBuffer
+                        ],
+                        // Cesium.Ellipsoid.WGS84,
+                        // result
+                    );
+                }, isPolylinePositionConstant),
                 width: 10,
+                loop: true,
                 material: new Cesium.PolylineGlowMaterialProperty({
                     glowPower: 0.2,
-                    taperPower: 0.5,
+                    taperPower: 0.95,
                     color: Cesium.Color.CORNFLOWERBLUE,
                 }),
             },
@@ -118,7 +129,7 @@ function renderEarthViewer(data) {
     function setSatellitePositionInterval() {
         window.setInterval(function () {
             updatePosition(satellite, data)
-        }, 2000); //100
+        }, 100); //100
     }
 
     const position = getPosition(data.line1.trim(), data.line2.trim())
@@ -157,7 +168,7 @@ function updatePosition(satellite, data) {
     satellite.position = pointPosition;
 
     try {
-        sessionStorage.setItem("IssPosition", JSON.stringify({ longitude: position.longitude, latitude: position.latitude }));
+        sessionStorage.setItem("IssPosition", JSON.stringify({ longitude: position.current.longitude, latitude: position.current.latitude }));
     } catch (err) {
         console.error(err)
     }
@@ -178,7 +189,8 @@ function getPosition(tleLine1, tleLine2) {
     );
 
     const previousDateTime = new Date();
-    previousDateTime.setMinutes(previousDateTime.getMinutes() - 30);
+    const timeOfPreviousOrbitPoint = 30;
+    previousDateTime.setMinutes(previousDateTime.getMinutes() - timeOfPreviousOrbitPoint);
 
     const previousPositionAndVelocity = satellite.propagate(satrec, previousDateTime); // Propagate satellite using time since epoch (in date).
     const previousGmst = satellite.gstime(previousDateTime);
