@@ -80,15 +80,13 @@ function renderEarthViewer(data) {
             viewFrom: new Cesium.Cartesian3(xOffset, yOffset, zOffset),
             polyline: {
                 positions: new Cesium.CallbackProperty(() => {
-                    const cartographic = Cesium.Cartographic.fromCartesian(satellite.position._value); //value returned is in radians 
+                    const currentPosition = Cesium.Cartographic.fromCartesian(satellite.position._value); //value returned is in radians 
 
                     return Cesium.Cartesian3.fromRadiansArrayHeights(
                         [
                             position.previous.longitude, position.previous.latitude, position.previous.height * heightBuffer,
-                            cartographic.longitude, cartographic.latitude, position.previous.height * heightBuffer
+                            currentPosition.longitude, currentPosition.latitude, position.previous.height * heightBuffer
                         ],
-                        // Cesium.Ellipsoid.WGS84,
-                        // result
                     );
                 }, isPolylinePositionConstant),
                 width: 10,
@@ -132,6 +130,27 @@ function renderEarthViewer(data) {
         }, 100); //100
     }
 
+    function renderAxis(show, position) {
+        if (show) {
+            /**
+             * Red = X
+             * Green = Y
+             * Blue = Z
+             */
+            const hpr = new Cesium.HeadingPitchRoll(0, 0, 0);
+            const pointPosition = new Cesium.Cartesian3.fromRadians(
+                position.current.longitude, position.current.latitude, position.current.height * heightBuffer
+            );
+
+            const frame = Cesium.Transforms.headingPitchRollToFixedFrame(pointPosition, hpr);
+            viewer.scene.primitives.add(new Cesium.DebugModelMatrixPrimitive({
+                modelMatrix: frame,
+                length: 800000,
+                width: 3.0
+            }));
+        }
+    }
+
     const position = getPosition(data.line1.trim(), data.line2.trim())
     const satellite = addSatelliteEntity(position);
     setViewerWindowSettings()
@@ -141,6 +160,7 @@ function renderEarthViewer(data) {
     setZoomSettings(scene, globeMinimumZoomDistance, globeMaximumZoomDistance, globeMinimumZoomRate)
     setSatellitePositionInterval()
     configureControls(viewer, scene, satellite);
+    renderAxis(false, position)
 }
 
 /**
@@ -165,6 +185,7 @@ function updatePosition(satellite, data) {
     var pointPosition = new Cesium.Cartesian3.fromRadians(
         position.current.longitude, position.current.latitude, position.current.height * heightBuffer
     )
+
     satellite.position = pointPosition;
 
     try {
