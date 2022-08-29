@@ -20,6 +20,9 @@ const flatViewMinimumZoomDistance = 250000;
 const flatViewMaximumZoomDistance = Infinity;
 const flatViewMinimumZoomRate = 350000;
 
+const debug = true;
+const showAxis = true;
+
 api.makeApiCall("IssTles", renderEarthViewer);
 
 /**
@@ -126,7 +129,7 @@ function renderEarthViewer(data) {
 
     function setSatellitePositionInterval() {
         window.setInterval(function () {
-            updatePosition(satellite, data)
+            updatePosition(viewer, satellite, data, debug)
         }, 100); //100
     }
 
@@ -160,7 +163,7 @@ function renderEarthViewer(data) {
     setZoomSettings(scene, globeMinimumZoomDistance, globeMaximumZoomDistance, globeMinimumZoomRate)
     setSatellitePositionInterval()
     configureControls(viewer, scene, satellite);
-    renderAxis(false, position)
+    renderAxis(showAxis, position)
 }
 
 /**
@@ -180,18 +183,107 @@ function setZoomSettings(scene, minimumZoomDistance, maximumZoomDistance, minimu
  * @param {*} currentPoint 
  * @param {*} data 
  */
-function updatePosition(satellite, data) {
-    var position = getPosition(data.line1.trim(), data.line2.trim())
-    var pointPosition = new Cesium.Cartesian3.fromRadians(
-        position.current.longitude, position.current.latitude, position.current.height * heightBuffer
-    )
+let hasPosition = false;
+function updatePosition(viewer, satellite, data, debug) {
+    if (!debug) {
+        var position = getPosition(data.line1.trim(), data.line2.trim())
+        var pointPosition = new Cesium.Cartesian3.fromRadians(
+            position.current.longitude, position.current.latitude, position.current.height * heightBuffer)
+        satellite.position = pointPosition;
 
-    satellite.position = pointPosition;
+        try {
+            sessionStorage.setItem("IssPosition", JSON.stringify({ longitude: position.current.longitude, latitude: position.current.latitude }));
+        } catch (err) {
+            console.error(err)
+        }
+    } else {
+        //rotateSatellite();
+        rotate()
+    }
 
-    try {
-        sessionStorage.setItem("IssPosition", JSON.stringify({ longitude: position.current.longitude, latitude: position.current.latitude }));
-    } catch (err) {
-        console.error(err)
+    function rotate() {
+        if (!hasPosition) {
+            hasPosition = true;
+            var position = getPosition(data.line1.trim(), data.line2.trim())
+            var pointPosition = new Cesium.Cartesian3.fromRadians(
+                position.current.longitude, position.current.latitude, position.current.height * heightBuffer)
+
+            const pointX = position.current.longitude - 0.2;
+            const pointY = position.current.latitude - 0.1;
+
+            var pointTwoPosition = new Cesium.Cartesian3.fromRadians(
+                pointX, pointY, position.current.height * heightBuffer)
+
+            viewer.entities.add({
+                position: pointTwoPosition,
+                point: {
+                    pixelSize: 10,
+                    color: Cesium.Color.YELLOW,
+                },
+            });
+
+            const posX = Cesium.Math.toDegrees(pointX)
+            const posY = Cesium.Math.toDegrees(pointY)
+            const satelliteX = Cesium.Math.toDegrees(position.current.longitude)
+            const satelliteY = Cesium.Math.toDegrees(position.current.latitude)
+
+            var angle = Math.atan2(posY - satelliteY, posX - satelliteX);
+            angle = angle * -1
+            console.log(Cesium.Math.toDegrees(angle))
+            // angle = angle * (180 / Math.PI); //convert to degree
+
+            // if (angle < 0) {
+            //     angle = 360 - (-angle);
+            // }
+
+            satellite.orientation = Cesium.Transforms.headingPitchRollQuaternion(pointPosition,
+                new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(Cesium.Math.toDegrees(angle)), 0, 0))
+        }
+    }
+
+    function rotateSatellite() {
+        if (!hasPosition) {
+            hasPosition = true;
+
+            var position = getPosition(data.line1.trim(), data.line2.trim())
+            var pointPosition = new Cesium.Cartesian3.fromRadians(
+                position.current.longitude, position.current.latitude, position.current.height * heightBuffer)
+
+            var pointOnePosition = new Cesium.Cartesian3.fromRadians(
+                position.current.longitude + 0.1, position.current.latitude, position.current.height * heightBuffer)
+
+            var pointTwoPosition = new Cesium.Cartesian3.fromRadians(
+                position.current.longitude, position.current.latitude - 0.09, position.current.height * heightBuffer)
+
+            var cartographic = Cesium.Cartographic.fromCartesian(pointOnePosition);
+            var cartographic2 = Cesium.Cartographic.fromCartesian(pointTwoPosition);
+            console.log(Cesium.Math.toDegrees(cartographic.latitude), Cesium.Math.toDegrees(cartographic.longitude))
+            console.log(Cesium.Math.toDegrees(cartographic2.latitude), Cesium.Math.toDegrees(cartographic2.longitude))
+
+            let x = Math.cos(cartographic2.latitude) * Math.sin(cartographic2.longitude - cartographic.longitude)//radians
+            let y = Math.cos(cartographic.latitude) * Math.sin(cartographic2.latitude) - Math.sin(cartographic.latitude) * Math.cos(cartographic2.latitude) * Math.cos(cartographic2.longitude - cartographic.longitude)
+            let angle = Math.atan2(x, y)
+            console.log(x, y, angle, Cesium.Math.toDegrees(angle))
+
+            viewer.entities.add({
+                position: pointOnePosition,
+                point: {
+                    pixelSize: 10,
+                    color: Cesium.Color.YELLOW,
+                },
+            });
+
+            viewer.entities.add({
+                position: pointTwoPosition,
+                point: {
+                    pixelSize: 10,
+                    color: Cesium.Color.PURPLE,
+                },
+            });
+
+            satellite.orientation = Cesium.Transforms.headingPitchRollQuaternion(pointOnePosition,
+                new Cesium.HeadingPitchRoll(angle, 0, 0))
+        }
     }
 }
 
