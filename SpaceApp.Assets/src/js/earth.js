@@ -208,7 +208,7 @@ function updatePosition(viewer, satellite, data, debug) {
             var pointPosition = new Cesium.Cartesian3.fromRadians(
                 position.current.longitude, position.current.latitude, position.current.height * heightBuffer)
 
-            const pointX = position.current.longitude - 0.2;
+            const pointX = position.current.longitude;
             const pointY = position.current.latitude - 0.1;
 
             var pointTwoPosition = new Cesium.Cartesian3.fromRadians(
@@ -229,15 +229,13 @@ function updatePosition(viewer, satellite, data, debug) {
 
             var angle = Math.atan2(posY - satelliteY, posX - satelliteX);
             angle = angle * -1
-            console.log(Cesium.Math.toDegrees(angle))
-            // angle = angle * (180 / Math.PI); //convert to degree
+            //angle = angle * (180 / Math.PI); //convert to degree
+            angle = Cesium.Math.toDegrees(angle) //convert from radians to degrees
 
-            // if (angle < 0) {
-            //     angle = 360 - (-angle);
-            // }
+            console.log(angle)
 
-            satellite.orientation = Cesium.Transforms.headingPitchRollQuaternion(pointPosition,
-                new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(Cesium.Math.toDegrees(angle)), 0, 0))
+            satellite.orientation = Cesium.Transforms.headingPitchRollQuaternion(pointTwoPosition,
+                new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(angle), 0, 0))
         }
     }
 
