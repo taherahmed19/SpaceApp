@@ -208,11 +208,13 @@ function updatePosition(viewer, satellite, data, debug) {
             var pointPosition = new Cesium.Cartesian3.fromRadians(
                 position.current.longitude, position.current.latitude, position.current.height * heightBuffer)
 
-            const pointX = position.current.longitude;
-            const pointY = position.current.latitude - 0.1;
+            const pointX = position.current.longitude + 0.07;
+            const pointY = position.current.latitude - 0.02;
+            const pointZ = 429448.62561365246; //position.current.height * heightBuffer
 
             var pointTwoPosition = new Cesium.Cartesian3.fromRadians(
-                pointX, pointY, position.current.height * heightBuffer)
+                pointX, pointY, pointZ
+            )
 
             viewer.entities.add({
                 position: pointTwoPosition,
@@ -230,12 +232,15 @@ function updatePosition(viewer, satellite, data, debug) {
             var angle = Math.atan2(posY - satelliteY, posX - satelliteX);
             angle = angle * -1
             //angle = angle * (180 / Math.PI); //convert to degree
-            angle = Cesium.Math.toDegrees(angle) //convert from radians to degrees
+            // angle = Cesium.Math.toDegrees(angle) //convert from radians to degrees
 
-            console.log(angle)
+            console.log(Cesium.Math.toDegrees(angle))
+            console.log(pointPosition)
+            console.log(pointTwoPosition)
 
-            satellite.orientation = Cesium.Transforms.headingPitchRollQuaternion(pointTwoPosition,
-                new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(angle), 0, 0))
+
+            satellite.orientation = Cesium.Transforms.headingPitchRollQuaternion(pointPosition,
+                new Cesium.HeadingPitchRoll(angle, 0, 0))
         }
     }
 
