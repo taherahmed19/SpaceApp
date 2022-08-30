@@ -197,7 +197,6 @@ function updatePosition(viewer, satellite, data, debug) {
             console.error(err)
         }
     } else {
-        //rotateSatellite();
         rotate()
     }
 
@@ -208,7 +207,7 @@ function updatePosition(viewer, satellite, data, debug) {
             var pointPosition = new Cesium.Cartesian3.fromRadians(
                 position.current.longitude, position.current.latitude, position.current.height * heightBuffer)
 
-            const pointX = position.current.longitude + 0.07;
+            const pointX = position.current.longitude - 0.2;
             const pointY = position.current.latitude - 0.02;
             const pointZ = 429448.62561365246; //position.current.height * heightBuffer
 
@@ -224,67 +223,19 @@ function updatePosition(viewer, satellite, data, debug) {
                 },
             });
 
-            const posX = Cesium.Math.toDegrees(pointX)
-            const posY = Cesium.Math.toDegrees(pointY)
-            const satelliteX = Cesium.Math.toDegrees(position.current.longitude)
-            const satelliteY = Cesium.Math.toDegrees(position.current.latitude)
+            let posX = Cesium.Math.toDegrees(pointX)
+            let posY = Cesium.Math.toDegrees(pointY)
+            let satelliteX = Cesium.Math.toDegrees(position.current.longitude)
+            let satelliteY = Cesium.Math.toDegrees(position.current.latitude)
 
             var angle = Math.atan2(posY - satelliteY, posX - satelliteX);
             angle = angle * -1
-            //angle = angle * (180 / Math.PI); //convert to degree
-            // angle = Cesium.Math.toDegrees(angle) //convert from radians to degrees
 
             console.log(Cesium.Math.toDegrees(angle))
-            console.log(pointPosition)
-            console.log(pointTwoPosition)
-
+            console.log(Cesium.Cartographic.fromCartesian(pointPosition))
+            console.log(Cesium.Cartographic.fromCartesian(pointTwoPosition))
 
             satellite.orientation = Cesium.Transforms.headingPitchRollQuaternion(pointPosition,
-                new Cesium.HeadingPitchRoll(angle, 0, 0))
-        }
-    }
-
-    function rotateSatellite() {
-        if (!hasPosition) {
-            hasPosition = true;
-
-            var position = getPosition(data.line1.trim(), data.line2.trim())
-            var pointPosition = new Cesium.Cartesian3.fromRadians(
-                position.current.longitude, position.current.latitude, position.current.height * heightBuffer)
-
-            var pointOnePosition = new Cesium.Cartesian3.fromRadians(
-                position.current.longitude + 0.1, position.current.latitude, position.current.height * heightBuffer)
-
-            var pointTwoPosition = new Cesium.Cartesian3.fromRadians(
-                position.current.longitude, position.current.latitude - 0.09, position.current.height * heightBuffer)
-
-            var cartographic = Cesium.Cartographic.fromCartesian(pointOnePosition);
-            var cartographic2 = Cesium.Cartographic.fromCartesian(pointTwoPosition);
-            console.log(Cesium.Math.toDegrees(cartographic.latitude), Cesium.Math.toDegrees(cartographic.longitude))
-            console.log(Cesium.Math.toDegrees(cartographic2.latitude), Cesium.Math.toDegrees(cartographic2.longitude))
-
-            let x = Math.cos(cartographic2.latitude) * Math.sin(cartographic2.longitude - cartographic.longitude)//radians
-            let y = Math.cos(cartographic.latitude) * Math.sin(cartographic2.latitude) - Math.sin(cartographic.latitude) * Math.cos(cartographic2.latitude) * Math.cos(cartographic2.longitude - cartographic.longitude)
-            let angle = Math.atan2(x, y)
-            console.log(x, y, angle, Cesium.Math.toDegrees(angle))
-
-            viewer.entities.add({
-                position: pointOnePosition,
-                point: {
-                    pixelSize: 10,
-                    color: Cesium.Color.YELLOW,
-                },
-            });
-
-            viewer.entities.add({
-                position: pointTwoPosition,
-                point: {
-                    pixelSize: 10,
-                    color: Cesium.Color.PURPLE,
-                },
-            });
-
-            satellite.orientation = Cesium.Transforms.headingPitchRollQuaternion(pointOnePosition,
                 new Cesium.HeadingPitchRoll(angle, 0, 0))
         }
     }
