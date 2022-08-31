@@ -21,8 +21,9 @@ const flatViewMinimumZoomDistance = 250000;
 const flatViewMaximumZoomDistance = Infinity;
 const flatViewMinimumZoomRate = 350000;
 
+const shouldAnimate = true;
 const debug = false;
-const showAxis = false;
+const showAxis = true;
 
 api.makeApiCall("IssTles", renderEarthViewer);
 
@@ -96,80 +97,87 @@ function renderEarthViewer(data) {
         return positionsOverTime
     }
 
-    function rotateSatellite(satelliteEntity) {
-        const listener = viewer.clock.onTick.addEventListener(function (clock) {
-            var currentTime = clock.currentTime;
+    function interpolatePositionsPoint(tleLine1, tleLine2, angle) {
+        const satrec = satellite.twoline2satrec(
+            tleLine1,
+            tleLine2
+        );
 
-            if (currentTime.equals(viewer.clock.stopTime)) {
-                listener()
-                viewer.entities.removeAll();
-                showInfoNotification("dataRefresh", cesiumContainer)
-            } else {
-                rotate(satelliteEntity)
-            }
-        });
+        const totalSeconds = 60 * 60 * 6; //6 hours of position data
+        const timestepInSeconds = 10;
+        const start = Cesium.JulianDate.fromDate(new Date());
+        const stop = Cesium.JulianDate.addSeconds(start, totalSeconds, new Cesium.JulianDate());
+        viewer.clock.startTime = start.clone();
+        viewer.clock.stopTime = stop.clone();
+        viewer.clock.currentTime = start.clone();
+        viewer.timeline.zoomTo(start, stop);
+        viewer.clock.clockRange = Cesium.ClockRange.LOOP_STOP;
+        viewer.clock.clockStep = Cesium.ClockStep.SYSTEM_CLOCK_MULTIPLIER; //set clock in real-time
 
-        function rotate() {
-            const newTime = Cesium.JulianDate.addSeconds(viewer.clock.currentTime, 1, new Cesium.JulianDate());
+        const positionsOverTime = new Cesium.SampledPositionProperty();
+        for (let i = 0; i < totalSeconds; i += timestepInSeconds) {
+            const time = Cesium.JulianDate.addSeconds(start, i, new Cesium.JulianDate());
+            const jsDate = Cesium.JulianDate.toDate(time);
 
-            if (satelliteEntity.position.getValue(viewer.clock.currentTime)) {
-                const currentSatellitePosition = Cesium.Cartographic.fromCartesian(satelliteEntity.position.getValue(viewer.clock.currentTime))
-                const pointPosition = new Cesium.Cartesian3.fromRadians(
-                    currentSatellitePosition.longitude, currentSatellitePosition.latitude,
-                    currentSatellitePosition.height * heightBuffer)
-                const newPosition = Cesium.Cartographic.fromCartesian(satelliteEntity.position.getValue(newTime))
+            const positionAndVelocity = satellite.propagate(satrec, jsDate);
+            const gmst = satellite.gstime(jsDate);
+            const p = satellite.eciToGeodetic(positionAndVelocity.position, gmst);
 
-                const pointX = newPosition.longitude;
-                const pointY = newPosition.latitude;
-                const pointZ = 318658; //use for debugging with point entity
+            const startPoint = { latitude: p.latitude, longitude: p.longitude };
 
-                //generatePathEntityPoint(pointX, pointY, pointZ)
+            const distanceMeters = 4500; //4000
+            const bearing = Cesium.Math.toDegrees((1.570795 + angle) - 3.14159);
 
-                let posX = Cesium.Math.toDegrees(pointX)
-                let posY = Cesium.Math.toDegrees(pointY)
-                let satelliteX = Cesium.Math.toDegrees(currentSatellitePosition.longitude)
-                let satelliteY = Cesium.Math.toDegrees(currentSatellitePosition.latitude)
+            const destination = geolib.computeDestinationPoint(
+                startPoint,
+                distanceMeters,
+                bearing
+            );
 
-                var angle = Math.atan2(posY - satelliteY, posX - satelliteX);
-                angle = angle * -1
-
-                satelliteEntity.orientation = Cesium.Transforms.headingPitchRollQuaternion(
-                    pointPosition,
-                    new Cesium.HeadingPitchRoll(angle, 0, 0))
-            }
+            const position = Cesium.Cartesian3.fromRadians(destination.longitude, destination.latitude, p.height * 1000);
+            positionsOverTime.addSample(time, position);
         }
 
-        function generatePathEntityPoint(pointX, pointY, pointZ) {
-            // var pointTwoPosition = new Cesium.Cartesian3.fromRadians(
-            //     pointX, pointY, pointZ
-            // )
-            // viewer.entities.add({
-            //     position: pointTwoPosition,
-            //     point: {
-            //         pixelSize: 10,
-            //         color: Cesium.Color.YELLOW,
-            //     },
-            // });
-        }
-
+        return positionsOverTime
     }
 
     function addSatelliteEntity() {
-        const pointPosition = interpolatePositions(data.line1.trim(), data.line2.trim())
+        const entityPosition = interpolatePositions(data.line1.trim(), data.line2.trim())
 
         const xOffset = -1200000;
         const yOffset = -600000;
         const zOffset = 950000;
 
-
         const satelliteEntity = viewer.entities.add({
-            position: pointPosition,
+            position: entityPosition,
             model: {
                 uri: '/assets/models/ISS.glb',
                 minimumPixelSize: 8000,
                 maximumScale: 8000,
             },
             viewFrom: new Cesium.Cartesian3(xOffset, yOffset, zOffset),
+            // path: {
+            //     leadTime: 0,
+            //     trailTime: 1000, //in seconds
+            //     width: 10,
+            //     material: new Cesium.PolylineGlowMaterialProperty({
+            //         glowPower: 0.2,
+            //         taperPower: 0.95,
+            //         color: Cesium.Color.CORNFLOWERBLUE,
+            //     }),
+            // },
+        });
+
+        const angle = rotateSatellite(satelliteEntity)
+
+        const pointPositions = interpolatePositionsPoint(data.line1.trim(), data.line2.trim(), angle)
+
+        viewer.entities.add({
+            position: pointPositions,
+            point: {
+                pixelSize: 20,
+                color: Cesium.Color.YELLOW,
+            },
             path: {
                 leadTime: 0,
                 trailTime: 1000, //in seconds
@@ -183,6 +191,50 @@ function renderEarthViewer(data) {
         });
 
         return satelliteEntity;
+    }
+
+    function subscribleOnTickListener(satelliteEntity) {
+        const onTickListener = viewer.clock.onTick.addEventListener(function (clock) {
+            const currentTime = clock.currentTime;
+
+            if (currentTime.equals(viewer.clock.stopTime)) {
+                onTickListener()
+                viewer.entities.removeAll();
+                showInfoNotification("dataRefresh", cesiumContainer)
+            } else {
+                rotateSatellite(satelliteEntity)
+            }
+        });
+    }
+
+    function rotateSatellite(satelliteEntity) {
+        const newTime = Cesium.JulianDate.addSeconds(viewer.clock.currentTime, 1, new Cesium.JulianDate());
+
+        if (satelliteEntity.position.getValue(viewer.clock.currentTime)) {
+            const currentSatellitePosition = Cesium.Cartographic.fromCartesian(satelliteEntity.position.getValue(viewer.clock.currentTime))
+            const pointPosition = new Cesium.Cartesian3.fromRadians(
+                currentSatellitePosition.longitude, currentSatellitePosition.latitude,
+                currentSatellitePosition.height * heightBuffer)
+
+            const newPosition = Cesium.Cartographic.fromCartesian(satelliteEntity.position.getValue(newTime))
+
+            const pointX = newPosition.longitude;
+            const pointY = newPosition.latitude;
+
+            let posX = Cesium.Math.toDegrees(pointX)
+            let posY = Cesium.Math.toDegrees(pointY)
+            let satelliteX = Cesium.Math.toDegrees(currentSatellitePosition.longitude)
+            let satelliteY = Cesium.Math.toDegrees(currentSatellitePosition.latitude)
+
+            var angle = Math.atan2(posY - satelliteY, posX - satelliteX);
+            angle = angle * -1
+
+            satelliteEntity.orientation = Cesium.Transforms.headingPitchRollQuaternion(
+                pointPosition,
+                new Cesium.HeadingPitchRoll(angle, 0, 0))
+
+            return angle;
+        }
     }
 
     function setCameraView(position) {
@@ -200,7 +252,7 @@ function renderEarthViewer(data) {
         let initialized = false;
         scene.globe.tileLoadProgressEvent.addEventListener(() => {
             if (!initialized && scene.globe.tilesLoaded === true) {
-                viewer.clock.shouldAnimate = true;
+                viewer.clock.shouldAnimate = shouldAnimate;
                 initialized = true;
                 removeLoadingSpinner()
             }
@@ -232,7 +284,7 @@ function renderEarthViewer(data) {
 
     const position = getPosition(data.line1.trim(), data.line2.trim())
     const satelliteEntity = addSatelliteEntity(position);
-    rotateSatellite(satelliteEntity)
+    subscribleOnTickListener(satelliteEntity)
     setViewerWindowSettings()
     setGlobeTextureSettings()
     setCameraView(position)
