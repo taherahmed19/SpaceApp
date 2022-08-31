@@ -21,7 +21,7 @@ const flatViewMaximumZoomDistance = Infinity;
 const flatViewMinimumZoomRate = 350000;
 
 const debug = false;
-const showAxis = true;
+const showAxis = false;
 
 api.makeApiCall("IssTles", renderEarthViewer);
 
@@ -49,7 +49,7 @@ function renderEarthViewer(data) {
         scene.skyAtmosphere.show = false;
         scene.globe.enableLighting = false;
         viewer.animation.container.style.visibility = 'hidden';
-        viewer.timeline.container.style.visibility = 'hidden';
+        //viewer.timeline.container.style.visibility = 'hidden';
         viewer.useBrowserRecommendedResolution = false;
         viewer.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
         viewer.selectionIndicator.viewModel.selectionIndicatorElement.style.visibility = 'hidden';
@@ -62,149 +62,49 @@ function renderEarthViewer(data) {
         imageLayer.brightness = 0.6;
     }
 
-    function addSatelliteEntity(position) {
-        const pointPosition = new Cesium.Cartesian3.fromRadians(
-            position.current.longitude, position.current.latitude, position.current.height * heightBuffer
+    function interpolatePositions(tleLine1, tleLine2) {
+        const satrec = satellite.twoline2satrec(
+            tleLine1,
+            tleLine2
         );
 
-        const xOffset = -1200000;
-        const yOffset = -600000;
-        const zOffset = 950000;
+        const totalSeconds = 60 * 60 * 6; //6 hours of position data
+        const timestepInSeconds = 10;
+        const start = Cesium.JulianDate.fromDate(new Date());
+        const stop = Cesium.JulianDate.addSeconds(start, totalSeconds, new Cesium.JulianDate());
+        viewer.clock.startTime = start.clone();
+        viewer.clock.stopTime = stop.clone();
+        viewer.clock.currentTime = start.clone();
+        viewer.timeline.zoomTo(start, stop);
+        viewer.clock.clockRange = Cesium.ClockRange.LOOP_STOP;
+        viewer.clock.clockStep = Cesium.ClockStep.SYSTEM_CLOCK_MULTIPLIER; //set clock in real-time
 
-        const isPolylinePositionConstant = false;
+        const positionsOverTime = new Cesium.SampledPositionProperty();
+        for (let i = 0; i < totalSeconds; i += timestepInSeconds) {
+            const time = Cesium.JulianDate.addSeconds(start, i, new Cesium.JulianDate());
+            const jsDate = Cesium.JulianDate.toDate(time);
 
-        const satellite = viewer.entities.add({
-            position: pointPosition,
-            model: {
-                uri: '/assets/models/ISS.glb',
-                minimumPixelSize: 8000,
-                maximumScale: 8000,
-            },
-            viewFrom: new Cesium.Cartesian3(xOffset, yOffset, zOffset),
-            // polyline: {
-            //     positions: new Cesium.CallbackProperty(() => {
-            //         const currentPosition = Cesium.Cartographic.fromCartesian(satellite.position._value); //value returned is in radians 
+            const positionAndVelocity = satellite.propagate(satrec, jsDate);
+            const gmst = satellite.gstime(jsDate);
+            const p = satellite.eciToGeodetic(positionAndVelocity.position, gmst);
 
-            //         return Cesium.Cartesian3.fromRadiansArrayHeights(
-            //             [
-            //                 position.previous.longitude, position.previous.latitude, position.previous.height * heightBuffer,
-            //                 currentPosition.longitude, currentPosition.latitude, position.previous.height * heightBuffer
-            //             ],
-            //         );
-            //     }, isPolylinePositionConstant),
-            //     width: 10,
-            //     loop: true,
-            //     material: new Cesium.PolylineGlowMaterialProperty({
-            //         glowPower: 0.2,
-            //         taperPower: 0.95,
-            //         color: Cesium.Color.CORNFLOWERBLUE,
-            //     }),
-            // },
-        });
-
-        return satellite;
-    }
-
-    function setCameraView(position) {
-        viewer.camera.setView({
-            destination: Cesium.Cartesian3.fromRadians(
-                position.current.longitude,
-                position.current.latitude,
-                cameraHeight
-            )
-        });
-    }
-
-
-    function setTileProgressEvent() {
-        // Wait for globe to load then zoom out     
-        let initialized = false;
-        scene.globe.tileLoadProgressEvent.addEventListener(() => {
-            if (!initialized && scene.globe.tilesLoaded === true) {
-                initialized = true;
-                removeLoadingSpinner()
-            }
-        });
-    }
-
-    function setSatellitePositionInterval() {
-        window.setInterval(function () {
-            updatePosition(viewer, satellite, data, debug)
-        }, 100); //100
-    }
-
-    function renderAxis(show, position) {
-        if (show) {
-            /**
-             * Red = X
-             * Green = Y
-             * Blue = Z
-             */
-            const hpr = new Cesium.HeadingPitchRoll(0, 0, 0);
-            const pointPosition = new Cesium.Cartesian3.fromRadians(
-                position.current.longitude, position.current.latitude, position.current.height * heightBuffer
-            );
-
-            const frame = Cesium.Transforms.headingPitchRollToFixedFrame(pointPosition, hpr);
-            viewer.scene.primitives.add(new Cesium.DebugModelMatrixPrimitive({
-                modelMatrix: frame,
-                length: 800000,
-                width: 3.0
-            }));
+            const position = Cesium.Cartesian3.fromRadians(p.longitude, p.latitude, p.height * 1000);
+            positionsOverTime.addSample(time, position);
         }
+
+        return positionsOverTime
     }
 
-    const position = getPosition(data.line1.trim(), data.line2.trim())
-    const satellite = addSatelliteEntity(position);
-    setViewerWindowSettings()
-    setGlobeTextureSettings()
-    setCameraView(position)
-    setTileProgressEvent()
-    setZoomSettings(scene, globeMinimumZoomDistance, globeMaximumZoomDistance, globeMinimumZoomRate)
-    setSatellitePositionInterval()
-    configureControls(viewer, scene, satellite);
-    renderAxis(showAxis, position)
-}
+    function rotateSatellite(/*newPosition*/ satelliteEntity) {
+        const newTime = Cesium.JulianDate.addSeconds(viewer.clock.currentTime, 1, new Cesium.JulianDate());
+        const currentSatellitePosition = Cesium.Cartographic.fromCartesian(satelliteEntity.position.getValue(viewer.clock.currentTime))
+        const pointPosition = new Cesium.Cartesian3.fromRadians(
+            currentSatellitePosition.longitude, currentSatellitePosition.latitude,
+            currentSatellitePosition.height * heightBuffer)
+        const newPosition = Cesium.Cartographic.fromCartesian(satelliteEntity.position.getValue(newTime))
 
-/**
- * 
- * @param {*} minimumZoomDistance 
- * @param {*} maximumZoomDistance 
- * @param {*} minimumZoomRate 
- */
-function setZoomSettings(scene, minimumZoomDistance, maximumZoomDistance, minimumZoomRate) {
-    scene.screenSpaceCameraController.minimumZoomDistance = minimumZoomDistance;
-    scene.screenSpaceCameraController.maximumZoomDistance = maximumZoomDistance;
-    scene.screenSpaceCameraController._minimumZoomRate = minimumZoomRate;
-}
-
-/**
- * 
- * @param {*} currentPoint 
- * @param {*} data 
- */
-function updatePosition(viewer, satellite, data, debug) {
-    if (!debug) {
-        var position = getPosition(data.line1.trim(), data.line2.trim())
-        var pointPosition = new Cesium.Cartesian3.fromRadians(
-            position.current.longitude, position.current.latitude, position.current.height * heightBuffer)
-
-        rotateSatellite(position)
-        satellite.position = pointPosition;
-
-        try {
-            sessionStorage.setItem("IssPosition", JSON.stringify({ longitude: position.current.longitude, latitude: position.current.latitude }));
-        } catch (err) {
-            console.error(err)
-        }
-    } else {
-    }
-
-    function rotateSatellite(newPosition) {
-        const currentSatellitePosition = Cesium.Cartographic.fromCartesian(satellite.position._value)
-
-        const pointX = newPosition.current.longitude;
-        const pointY = newPosition.current.latitude;
+        const pointX = newPosition.longitude;
+        const pointY = newPosition.latitude;
         const pointZ = 318658; //use for debugging with point entity
 
         // var pointTwoPosition = new Cesium.Cartesian3.fromRadians(
@@ -227,9 +127,112 @@ function updatePosition(viewer, satellite, data, debug) {
         var angle = Math.atan2(posY - satelliteY, posX - satelliteX);
         angle = angle * -1
 
-        satellite.orientation = Cesium.Transforms.headingPitchRollQuaternion(pointPosition,
+        satelliteEntity.orientation = Cesium.Transforms.headingPitchRollQuaternion(
+            pointPosition,
             new Cesium.HeadingPitchRoll(angle, 0, 0))
+
     }
+
+    function addSatelliteEntity() {
+        const pointPosition = interpolatePositions(data.line1.trim(), data.line2.trim())
+
+        const xOffset = -1200000;
+        const yOffset = -600000;
+        const zOffset = 950000;
+
+
+        const satelliteEntity = viewer.entities.add({
+            position: pointPosition,
+            model: {
+                uri: '/assets/models/ISS.glb',
+                minimumPixelSize: 8000,
+                maximumScale: 8000,
+            },
+            viewFrom: new Cesium.Cartesian3(xOffset, yOffset, zOffset),
+            path: {
+                leadTime: 0,
+                trailTime: 1000, //in seconds
+                width: 10,
+                material: new Cesium.PolylineGlowMaterialProperty({
+                    glowPower: 0.2,
+                    taperPower: 0.95,
+                    color: Cesium.Color.CORNFLOWERBLUE,
+                }),
+            },
+        });
+
+        return satelliteEntity;
+    }
+
+    function setCameraView(position) {
+        viewer.camera.setView({
+            destination: Cesium.Cartesian3.fromRadians(
+                position.current.longitude,
+                position.current.latitude,
+                cameraHeight
+            )
+        });
+    }
+
+    function setTileProgressEvent() {
+        // Wait for globe to load then zoom out     
+        let initialized = false;
+        scene.globe.tileLoadProgressEvent.addEventListener(() => {
+            if (!initialized && scene.globe.tilesLoaded === true) {
+                viewer.clock.shouldAnimate = true;
+                initialized = true;
+                removeLoadingSpinner()
+            }
+        });
+    }
+
+    /**
+     * Red = X
+     * Green = Y
+     * Blue = Z
+     * @param {*} show 
+     * @param {*} position 
+     */
+    function renderAxis(show, position) {
+        if (show) {
+            const hpr = new Cesium.HeadingPitchRoll(0, 0, 0);
+            const pointPosition = new Cesium.Cartesian3.fromRadians(
+                position.current.longitude, position.current.latitude, position.current.height * heightBuffer
+            );
+
+            const frame = Cesium.Transforms.headingPitchRollToFixedFrame(pointPosition, hpr);
+            viewer.scene.primitives.add(new Cesium.DebugModelMatrixPrimitive({
+                modelMatrix: frame,
+                length: 800000,
+                width: 3.0
+            }));
+        }
+    }
+
+    const position = getPosition(data.line1.trim(), data.line2.trim())
+    const satelliteEntity = addSatelliteEntity(position);
+    window.setInterval(function () {
+        rotateSatellite(satelliteEntity)
+    }, 100); //100
+    setViewerWindowSettings()
+    setGlobeTextureSettings()
+    setCameraView(position)
+    setTileProgressEvent()
+    setZoomSettings(scene, globeMinimumZoomDistance, globeMaximumZoomDistance, globeMinimumZoomRate)
+    configureControls(viewer, scene, satelliteEntity);
+    renderAxis(showAxis, position)
+}
+
+/**
+ * 
+ * @param {*} minimumZoomDistance 
+ * @param {*} maximumZoomDistance 
+ * @param {*} minimumZoomRate 
+ */
+function setZoomSettings(scene, minimumZoomDistance, maximumZoomDistance, minimumZoomRate) {
+    scene.screenSpaceCameraController.minimumZoomDistance = minimumZoomDistance;
+    scene.screenSpaceCameraController.maximumZoomDistance = maximumZoomDistance;
+    scene.screenSpaceCameraController._minimumZoomRate = minimumZoomRate;
 }
 
 /**
