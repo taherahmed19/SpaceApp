@@ -1,5 +1,6 @@
 ﻿import api from './api/fetch-api';
 import configureControls from './ui-functionality/iss-space-viewer-controls'
+import { showInfoNotification } from './ui-functionality/notifications';
 
 const heightBuffer = 1000;
 const cameraHeight = 20203203;
@@ -96,35 +97,46 @@ function renderEarthViewer(data) {
     }
 
     function rotateSatellite(satelliteEntity) {
-        window.setInterval(function () {
-            rotate(satelliteEntity)
-        }, 10); //100
+        const listener = viewer.clock.onTick.addEventListener(function (clock) {
+            var currentTime = clock.currentTime;
+
+            if (currentTime.equals(viewer.clock.stopTime)) {
+                listener()
+                viewer.entities.removeAll();
+                showInfoNotification("dataRefresh", cesiumContainer)
+            } else {
+                rotate(satelliteEntity)
+            }
+        });
 
         function rotate() {
             const newTime = Cesium.JulianDate.addSeconds(viewer.clock.currentTime, 1, new Cesium.JulianDate());
-            const currentSatellitePosition = Cesium.Cartographic.fromCartesian(satelliteEntity.position.getValue(viewer.clock.currentTime))
-            const pointPosition = new Cesium.Cartesian3.fromRadians(
-                currentSatellitePosition.longitude, currentSatellitePosition.latitude,
-                currentSatellitePosition.height * heightBuffer)
-            const newPosition = Cesium.Cartographic.fromCartesian(satelliteEntity.position.getValue(newTime))
 
-            const pointX = newPosition.longitude;
-            const pointY = newPosition.latitude;
-            const pointZ = 318658; //use for debugging with point entity
+            if (satelliteEntity.position.getValue(viewer.clock.currentTime)) {
+                const currentSatellitePosition = Cesium.Cartographic.fromCartesian(satelliteEntity.position.getValue(viewer.clock.currentTime))
+                const pointPosition = new Cesium.Cartesian3.fromRadians(
+                    currentSatellitePosition.longitude, currentSatellitePosition.latitude,
+                    currentSatellitePosition.height * heightBuffer)
+                const newPosition = Cesium.Cartographic.fromCartesian(satelliteEntity.position.getValue(newTime))
 
-            //generatePathEntityPoint(pointX, pointY, pointZ)
+                const pointX = newPosition.longitude;
+                const pointY = newPosition.latitude;
+                const pointZ = 318658; //use for debugging with point entity
 
-            let posX = Cesium.Math.toDegrees(pointX)
-            let posY = Cesium.Math.toDegrees(pointY)
-            let satelliteX = Cesium.Math.toDegrees(currentSatellitePosition.longitude)
-            let satelliteY = Cesium.Math.toDegrees(currentSatellitePosition.latitude)
+                //generatePathEntityPoint(pointX, pointY, pointZ)
 
-            var angle = Math.atan2(posY - satelliteY, posX - satelliteX);
-            angle = angle * -1
+                let posX = Cesium.Math.toDegrees(pointX)
+                let posY = Cesium.Math.toDegrees(pointY)
+                let satelliteX = Cesium.Math.toDegrees(currentSatellitePosition.longitude)
+                let satelliteY = Cesium.Math.toDegrees(currentSatellitePosition.latitude)
 
-            satelliteEntity.orientation = Cesium.Transforms.headingPitchRollQuaternion(
-                pointPosition,
-                new Cesium.HeadingPitchRoll(angle, 0, 0))
+                var angle = Math.atan2(posY - satelliteY, posX - satelliteX);
+                angle = angle * -1
+
+                satelliteEntity.orientation = Cesium.Transforms.headingPitchRollQuaternion(
+                    pointPosition,
+                    new Cesium.HeadingPitchRoll(angle, 0, 0))
+            }
         }
 
         function generatePathEntityPoint(pointX, pointY, pointZ) {
@@ -294,7 +306,6 @@ function removeLoadingSpinner() {
         loadingSpinner.style.display = "none";
         cesiumContainer.style.display = "block"
     }
-
 }
 
 export {
