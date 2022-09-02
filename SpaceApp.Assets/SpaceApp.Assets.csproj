@@ -117,6 +117,8 @@
     <Content Include="src\js\api\fetch-api.js" />
     <Content Include="src\js\app.js" />
     <Content Include="src\js\asteroid.js" />
+    <Content Include="src\js\data\enums.js" />
+    <Content Include="src\js\data\iss-config.js" />
     <Content Include="src\js\data\notification-objects.js" />
     <Content Include="src\js\earth.js" />
     <Content Include="src\js\main.js" />
@@ -316,6 +318,7 @@
     <Content Include="src\models\ISS.glb" />
     <Content Include="src\css\custom\components\_notifications.scss" />
     <Content Include="src\js\scene.gltf" />
+    <Content Include="src\css\custom\components\_space-viewer-details.scss" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

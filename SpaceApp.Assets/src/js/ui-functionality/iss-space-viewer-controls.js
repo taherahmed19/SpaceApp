@@ -6,7 +6,7 @@ import { scenes } from '../data/enums';
 import { setZoomSettings } from '../earth';
 import { globeConfig, cityNamesLabelStyle } from '../data/iss-config';
 
-export default function configureControls(viewer, scene, satellite) {
+export default function configureControls(viewer, scene, clock, satellite) {
     const cesiumContainer = document.querySelector('#cesiumContainer');
 
     if (cesiumContainer && viewer) {

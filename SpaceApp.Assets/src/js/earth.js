@@ -26,8 +26,8 @@ function renderEarthViewer(data) {
     });
 
     const scene = viewer.scene;
+    const clock = viewer.clock;
     const heightBuffer = 1000;
-
 
     function setViewerWindowSettings() {
         scene.skyAtmosphere.show = viewerConfig.showSkyAtmosphere;
@@ -56,12 +56,12 @@ function renderEarthViewer(data) {
         const timestepInSeconds = 10;
         const start = Cesium.JulianDate.fromDate(new Date());
         const stop = Cesium.JulianDate.addSeconds(start, totalSeconds, new Cesium.JulianDate());
-        viewer.clock.startTime = start.clone();
-        viewer.clock.stopTime = stop.clone();
-        viewer.clock.currentTime = start.clone();
+        clock.startTime = start.clone();
+        clock.stopTime = stop.clone();
+        clock.currentTime = start.clone();
         viewer.timeline.zoomTo(start, stop);
-        viewer.clock.clockRange = Cesium.ClockRange.LOOP_STOP;
-        viewer.clock.clockStep = Cesium.ClockStep.SYSTEM_CLOCK_MULTIPLIER; //set clock in real-time
+        clock.clockRange = Cesium.ClockRange.LOOP_STOP;
+        clock.clockStep = Cesium.ClockStep.SYSTEM_CLOCK_MULTIPLIER; //set clock in real-time
 
         const positionsOverTime = new Cesium.SampledPositionProperty();
         for (let i = 0; i < totalSeconds; i += timestepInSeconds) {
@@ -111,10 +111,10 @@ function renderEarthViewer(data) {
     }
 
     function subscribleOnTickListener(satelliteEntity) {
-        const onTickListener = viewer.clock.onTick.addEventListener(function (clock) {
+        const onTickListener = clock.onTick.addEventListener(function (clock) {
             const currentTime = clock.currentTime;
 
-            if (currentTime.equals(viewer.clock.stopTime)) {
+            if (currentTime.equals(clock.stopTime)) {
                 onTickListener()
                 viewer.entities.removeAll();
                 showInfoNotification("dataRefresh", cesiumContainer)
@@ -125,10 +125,10 @@ function renderEarthViewer(data) {
     }
 
     function rotateSatellite(satelliteEntity) {
-        const newTime = Cesium.JulianDate.addSeconds(viewer.clock.currentTime, 1, new Cesium.JulianDate());
+        const newTime = Cesium.JulianDate.addSeconds(clock.currentTime, 1, new Cesium.JulianDate());
 
-        if (satelliteEntity.position.getValue(viewer.clock.currentTime)) {
-            const currentSatellitePosition = Cesium.Cartographic.fromCartesian(satelliteEntity.position.getValue(viewer.clock.currentTime))
+        if (satelliteEntity.position.getValue(clock.currentTime)) {
+            const currentSatellitePosition = Cesium.Cartographic.fromCartesian(satelliteEntity.position.getValue(clock.currentTime))
             const pointPosition = new Cesium.Cartesian3.fromRadians(
                 currentSatellitePosition.longitude, currentSatellitePosition.latitude,
                 currentSatellitePosition.height * heightBuffer)
@@ -167,7 +167,7 @@ function renderEarthViewer(data) {
         let initialized = false;
         scene.globe.tileLoadProgressEvent.addEventListener(() => {
             if (!initialized && scene.globe.tilesLoaded === true) {
-                viewer.clock.shouldAnimate = viewerConfig.shouldAnimate;
+                clock.shouldAnimate = viewerConfig.shouldAnimate;
                 initialized = true;
                 removeLoadingSpinner()
             }
@@ -205,7 +205,7 @@ function renderEarthViewer(data) {
     setCameraView(position)
     setTileProgressEvent()
     setZoomSettings(scene, globeConfig.globeMinimumZoomDistance, globeConfig.globeMaximumZoomDistance, globeConfig.globeMinimumZoomRate)
-    configureControls(viewer, scene, satelliteEntity);
+    configureControls(viewer, scene, clock, satelliteEntity);
     renderAxis(viewerConfig.showAxis, position)
 }
 
