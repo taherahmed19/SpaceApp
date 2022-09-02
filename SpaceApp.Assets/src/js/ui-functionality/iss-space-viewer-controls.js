@@ -3,37 +3,10 @@ import { showErrorNotification, showInfoNotification } from './notifications';
 import api from '../api/fetch-api';
 import { requestGeolocation, geolocationApiBrowserSupport, handleErrorCallback } from './utils';
 import { scenes } from '../data/enums';
-import {
-    setZoomSettings,
-    cameraHeight,
-    globeMinimumZoomDistance,
-    globeMaximumZoomDistance,
-    globeMinimumZoomRate,
-    columbusViewMaximumZoomDistance,
-    columbusViewMinimumZoomDistance,
-    columbusViewMinimumZoomRate,
-    flatViewMaximumZoomDistance,
-    flatViewMinimumZoomDistance,
-    flatViewMinimumZoomRate
-} from '../earth';
+import { setZoomSettings } from '../earth';
+import { globeConfig, cityNamesLabelStyle } from '../data/iss-config';
 
 export default function configureControls(viewer, scene, satellite) {
-
-    const flyToDurationGlobeView = 5;
-    const flyToDuration2DView = 2;
-    const flyToDurationColumbusView = 2;
-    const flyToDurationReset = 0;
-    const flyToDurationCurrentLocation = 3;
-
-    const labelStyle = {
-        font: '31px sans-serif',
-        fillColor: Cesium.Color.WHITE,
-        outlineWidth: 2,
-        outlineColor: Cesium.Color.BLACK,
-        style: Cesium.LabelStyle.FILL_AND_OUTLINE,
-        scale: 0.5,
-    }
-
     const cesiumContainer = document.querySelector('#cesiumContainer');
 
     if (cesiumContainer && viewer) {
@@ -79,23 +52,23 @@ export default function configureControls(viewer, scene, satellite) {
                                     globe2dImage.classList.add('active');
                                     trackedEntityButton.classList.add('hide')
                                     scene.mode = Cesium.SceneMode.SCENE2D;
-                                    setZoomSettings(scene, flatViewMinimumZoomDistance, flatViewMaximumZoomDistance, flatViewMinimumZoomRate)
-                                    pointCameraToSatellite(flyToDurationReset);
+                                    setZoomSettings(scene, globeConfig.flatViewMinimumZoomDistance, globeConfig.flatViewMaximumZoomDistance, globeConfig.flatViewMinimumZoomRate)
+                                    pointCameraToSatellite(globeConfig.flyToDurationReset);
                                     break;
                                 case scenes.columbusView:
                                     columbusViewImage.classList.add('active');
                                     trackedEntityButton.classList.add('hide')
                                     scene.mode = Cesium.SceneMode.COLUMBUS_VIEW;
-                                    setZoomSettings(scene, columbusViewMinimumZoomDistance, columbusViewMaximumZoomDistance, columbusViewMinimumZoomRate);
-                                    pointCameraToSatellite(flyToDurationReset)
+                                    setZoomSettings(scene, globeConfig.columbusViewMinimumZoomDistance, globeConfig.columbusViewMaximumZoomDistance, globeConfig.columbusViewMinimumZoomRate);
+                                    pointCameraToSatellite(globeConfig.flyToDurationReset)
                                     break;
                                 default:
                                     globe3dImage.classList.add('active');
                                     trackedEntityButton.classList.remove('hide')
                                     trackedEntityButton.classList.remove('active')
                                     scene.mode = Cesium.SceneMode.SCENE3D;
-                                    setZoomSettings(scene, globeMinimumZoomDistance, globeMaximumZoomDistance, globeMinimumZoomRate)
-                                    pointCameraToSatellite(flyToDurationReset)
+                                    setZoomSettings(scene, globeConfig.globeMinimumZoomDistance, globeConfig.globeMaximumZoomDistance, globeConfig.globeMinimumZoomRate)
+                                    pointCameraToSatellite(globeConfig.flyToDurationReset)
                                     break;
                             }
                         }
@@ -173,7 +146,7 @@ export default function configureControls(viewer, scene, satellite) {
                             labels.add({
                                 position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 0),
                                 text: name,
-                                ...labelStyle,
+                                ...cityNamesLabelStyle,
                                 translucencyByDistance: highestCitiesTranslucencyByDistance,
                             });
                         }
@@ -188,7 +161,7 @@ export default function configureControls(viewer, scene, satellite) {
                             labels.add({
                                 position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 10),
                                 text: name,
-                                ...labelStyle,
+                                ...cityNamesLabelStyle,
                                 translucencyByDistance: medianCitiesTranslucencyByDistance
                             });
                         }
@@ -203,7 +176,7 @@ export default function configureControls(viewer, scene, satellite) {
                             labels.add({
                                 position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 10),
                                 text: name,
-                                ...labelStyle,
+                                ...cityNamesLabelStyle,
                                 translucencyByDistance: lowestCitiesTranslucencyByDistance
                             });
                         }
@@ -238,7 +211,7 @@ export default function configureControls(viewer, scene, satellite) {
                             disableButtonsDuringAnimation()
                             trackedEntityButton.classList.remove("active")
 
-                            pointCameraToSatellite(flyToDurationGlobeView, function () {
+                            pointCameraToSatellite(globeConfig.flyToDurationGlobeView, function () {
                                 enableButtonsDuringAnimation()
                                 showInfoNotification("freeCamera", cesiumContainer)
                                 viewer.trackedEntity = null;
@@ -278,7 +251,7 @@ export default function configureControls(viewer, scene, satellite) {
             function handleCameraColumbusView() {
                 disableButtonsDuringAnimation()
 
-                pointCameraToSatellite(flyToDurationColumbusView, function () {
+                pointCameraToSatellite(globeConfig.flyToDurationColumbusView, function () {
                     enableButtonsDuringAnimation()
                 });
             }
@@ -286,7 +259,7 @@ export default function configureControls(viewer, scene, satellite) {
             function handleCamera2DView() {
                 disableButtonsDuringAnimation()
 
-                pointCameraToSatellite(flyToDuration2DView, function () {
+                pointCameraToSatellite(globeConfig.flyToDuration2DView, function () {
                     enableButtonsDuringAnimation()
                 });
             }
@@ -294,7 +267,7 @@ export default function configureControls(viewer, scene, satellite) {
             function handleCameraGlobeView() {
                 disableButtonsDuringAnimation()
 
-                pointCameraToSatellite(flyToDurationGlobeView, function () {
+                pointCameraToSatellite(globeConfig.flyToDurationGlobeView, function () {
                     enableButtonsDuringAnimation()
                     showInfoNotification("freeCamera", cesiumContainer)
                 });
@@ -360,7 +333,7 @@ export default function configureControls(viewer, scene, satellite) {
                                 longitude,
                                 latitude,
                                 currentLocationCameraHeight),
-                            duration: flyToDurationCurrentLocation,
+                            duration: globeConfig.flyToDurationCurrentLocation,
                             complete: function () {
                                 isPointingToCurrentLocation = true;
                                 enableButtonsDuringAnimation()
@@ -380,7 +353,8 @@ export default function configureControls(viewer, scene, satellite) {
         function pointCameraToSatellite(duration, completeFunction) {
             let position = null;
             try {
-                position = JSON.parse(sessionStorage.getItem("IssPosition"))
+                //position = JSON.parse(sessionStorage.getItem("IssPosition"))
+                position = Cesium.Cartographic.fromCartesian(satellite.position.getValue(viewer.clock.currentTime))
             } catch (err) {
                 console.error(err);
             }
@@ -390,7 +364,7 @@ export default function configureControls(viewer, scene, satellite) {
                     destination: Cesium.Cartesian3.fromRadians(
                         position.longitude,
                         position.latitude,
-                        cameraHeight),
+                        globeConfig.cameraHeight),
                     duration: duration,
                     complete: completeFunction
                 });

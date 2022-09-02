@@ -1,29 +1,10 @@
 ﻿import api from './api/fetch-api';
 import configureControls from './ui-functionality/iss-space-viewer-controls'
 import { showInfoNotification } from './ui-functionality/notifications';
-import { config } from './data/iss-config';
+import { viewerConfig } from './data/iss-config';
+import { globeConfig } from './data/iss-config';
 
 //move to iss-config
-const heightBuffer = 1000;
-const cameraHeight = 20203203;
-
-/**
- * Move to iss-config
- * Default values
- * Minimum zoom distance = 1.0
- * Maxiumum zoom distance = Infinity
- * Minimum zoom rate = 20
- */
-const globeMinimumZoomDistance = 250000;
-const globeMaximumZoomDistance = 20000000;
-const globeMinimumZoomRate = 350000;
-const columbusViewMinimumZoomDistance = 250000;
-const columbusViewMaximumZoomDistance = 40000000;
-const columbusViewMinimumZoomRate = 350000;
-const flatViewMinimumZoomDistance = 250000;
-const flatViewMaximumZoomDistance = Infinity;
-const flatViewMinimumZoomRate = 350000;
-
 api.makeApiCall("IssTles", renderEarthViewer);
 
 /**
@@ -45,15 +26,17 @@ function renderEarthViewer(data) {
     });
 
     const scene = viewer.scene;
+    const heightBuffer = 1000;
+
 
     function setViewerWindowSettings() {
-        scene.skyAtmosphere.show = config.showSkyAtmosphere;
-        scene.globe.enableLighting = config.enableLighting;
-        viewer.animation.container.style.visibility = config.showAnimationController;
-        viewer.timeline.container.style.visibility = config.showTimeline;
-        viewer.useBrowserRecommendedResolution = config.useBrowserRecommendedResolution;
+        scene.skyAtmosphere.show = viewerConfig.showSkyAtmosphere;
+        scene.globe.enableLighting = viewerConfig.enableLighting;
+        viewer.animation.container.style.visibility = viewerConfig.showAnimationController;
+        viewer.timeline.container.style.visibility = viewerConfig.showTimeline;
+        viewer.useBrowserRecommendedResolution = viewerConfig.useBrowserRecommendedResolution;
         viewer.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-        viewer.selectionIndicator.viewModel.selectionIndicatorElement.style.visibility = config.showSelectionIndicator;
+        viewer.selectionIndicator.viewModel.selectionIndicatorElement.style.visibility = viewerConfig.showSelectionIndicator;
         viewer.forceResize();
     }
 
@@ -174,7 +157,7 @@ function renderEarthViewer(data) {
             destination: Cesium.Cartesian3.fromRadians(
                 position.current.longitude,
                 position.current.latitude,
-                cameraHeight
+                globeConfig.cameraHeight
             )
         });
     }
@@ -184,7 +167,7 @@ function renderEarthViewer(data) {
         let initialized = false;
         scene.globe.tileLoadProgressEvent.addEventListener(() => {
             if (!initialized && scene.globe.tilesLoaded === true) {
-                viewer.clock.shouldAnimate = config.shouldAnimate;
+                viewer.clock.shouldAnimate = viewerConfig.shouldAnimate;
                 initialized = true;
                 removeLoadingSpinner()
             }
@@ -221,9 +204,9 @@ function renderEarthViewer(data) {
     setGlobeTextureSettings()
     setCameraView(position)
     setTileProgressEvent()
-    setZoomSettings(scene, globeMinimumZoomDistance, globeMaximumZoomDistance, globeMinimumZoomRate)
+    setZoomSettings(scene, globeConfig.globeMinimumZoomDistance, globeConfig.globeMaximumZoomDistance, globeConfig.globeMinimumZoomRate)
     configureControls(viewer, scene, satelliteEntity);
-    renderAxis(config.showAxis, position)
+    renderAxis(viewerConfig.showAxis, position)
 }
 
 /**
@@ -292,16 +275,4 @@ function removeLoadingSpinner() {
     }
 }
 
-export {
-    setZoomSettings,
-    cameraHeight,
-    globeMinimumZoomDistance,
-    globeMaximumZoomDistance,
-    globeMinimumZoomRate,
-    columbusViewMaximumZoomDistance,
-    columbusViewMinimumZoomDistance,
-    columbusViewMinimumZoomRate,
-    flatViewMaximumZoomDistance,
-    flatViewMinimumZoomDistance,
-    flatViewMinimumZoomRate
-};
+export { setZoomSettings };
