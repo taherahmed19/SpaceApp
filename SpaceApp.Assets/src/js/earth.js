@@ -1,8 +1,8 @@
 ﻿import api from './api/fetch-api';
 import configureControls from './ui-functionality/iss-space-viewer-controls'
 import { showInfoNotification } from './ui-functionality/notifications';
-import { viewerConfig } from './data/iss-config';
-import { globeConfig } from './data/iss-config';
+import { viewerConfig, globeConfig } from './data/iss-config';
+import { additionalDetails } from './ui-functionality/iss-space-viewer-details';
 
 //move to iss-config
 api.makeApiCall("IssTles", renderEarthViewer);
@@ -114,6 +114,8 @@ function renderEarthViewer(data) {
         const onTickListener = clock.onTick.addEventListener(function (clock) {
             const currentTime = clock.currentTime;
 
+            if (additionalDetails.hasOwnProperty('configureTime')) additionalDetails.configureTime(currentTime)
+
             if (currentTime.equals(clock.stopTime)) {
                 onTickListener()
                 viewer.entities.removeAll();
@@ -205,8 +207,12 @@ function renderEarthViewer(data) {
     setCameraView(position)
     setTileProgressEvent()
     setZoomSettings(scene, globeConfig.globeMinimumZoomDistance, globeConfig.globeMaximumZoomDistance, globeConfig.globeMinimumZoomRate)
-    configureControls(viewer, scene, clock, satelliteEntity);
     renderAxis(viewerConfig.showAxis, position)
+
+    //UI elements
+    configureControls(viewer, scene, clock, satelliteEntity);
+    if (additionalDetails.hasOwnProperty('configureCoordinates')) additionalDetails.configureCoordinates(clock, satelliteEntity)
+    if (additionalDetails.hasOwnProperty('configureDetails')) additionalDetails.configureDetails()
 }
 
 /**
@@ -276,3 +282,21 @@ function removeLoadingSpinner() {
 }
 
 export { setZoomSettings };
+
+var swiper = new Swiper(".mySwiper", {
+    loop: true,
+    spaceBetween: 30,
+    centeredSlides: true,
+    autoplay: {
+      delay: 2500,
+      disableOnInteraction: false,
+    },
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: true,
+    },
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+  });

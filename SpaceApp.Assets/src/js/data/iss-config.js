@@ -1,7 +1,7 @@
 const viewerConfig = {}
 Object.defineProperties(viewerConfig, {
     shouldAnimate: {
-        value: true,
+        value: false,
         writable: false,
     },
     debug: {

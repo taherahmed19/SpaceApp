@@ -1,30 +1,36 @@
 ﻿.space-viewer-details {
-    width: 300px;
-    padding: 0.5rem;
-    border: 1px solid red;
     position: absolute;
-    left: 1rem;
     bottom: 1rem;
     z-index: 1;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
+    overflow: hidden;
+    transition: visibility 0s, opacity 0.5s linear;
 
-    &__title {
-        text-transform: uppercase;
-        color: grey;
-        font-weight: 500;
-        font-size: 16px;
-        position: relative;
+    &.active {
+        //min-height: 70%;
+        height: auto;
         width: 100%;
+        background-color: #0b111d;
+        //opacity: 0.9;
+        z-index: 2;
+
+        .space-viewer-details__content {
+            width: 100%;
+        }
+    }
+
+    &__heading {
+        display: flex;
+        justify-content: flex-start;
+        width: 100%;
+        position: relative;
 
         span {
             background: #326c8e;
             border-radius: 100px;
-            position: absolute;
-            right: 0;
-            top: 0;
             padding: 0.25rem;
             height: 1.5rem;
             width: 1.5rem;
@@ -32,6 +38,7 @@
             justify-content: center;
             align-items: center;
             cursor: pointer;
+            margin-left: 1rem;
 
             img {
                 height: 0.7rem;
@@ -40,7 +47,99 @@
         }
     }
 
+    &__title {
+        text-transform: uppercase;
+        color: #a3c3e8;
+        font-weight: 700;
+        font-size: 16px;
+    }
+
+    &__content {
+        padding: 2rem 1.5rem;
+    }
+
     &__text {
         margin-bottom: .25rem;
+        color: #c8c3bc;
     }
+
+    &__inner {
+        height: 25rem;
+        width: 100%;
+        margin-top: 1rem;
+        display: flex;
+    }
+
+    &__info {
+        flex: 1 1 0px;
+        overflow-y: scroll;
+        padding-right: .75rem;
+
+        &::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        &::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            background: #272727;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            background: #4f515e;
+            -webkit-box-shadow: inset 0 0 1px white;
+        }
+
+        &::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(left, #888, #777);
+        }
+    }
+
+    &__info-heading {
+        color: #a3c3e8;
+        text-transform: uppercase;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    &__images {
+        flex: 1 1 0px;
+        height: 100%;
+        width: 50%;
+        padding-left: 1.5rem;
+    }
+}
+
+.swiper {
+    width: 100%;
+    height: 100%;
+}
+
+.swiper-slide {
+    text-align: center;
+    font-size: 18px;
+    background: #fff;
+
+    /* Center slide text vertically */
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+}
+
+.swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
