@@ -119,15 +119,19 @@ export default function configureControls(viewer, scene, satellite) {
             }
 
             const scenePanelCloseButton = cityLabelsPanel.querySelector('.space-viewer-controls__close');
+            const showOrbitCheckbox = cityLabelsPanel.querySelector('#filter-orbit');
             const showCityLabelsCheckbox = cityLabelsPanel.querySelector('#filter-city-labels');
             const showAtmosphereCheckbox = cityLabelsPanel.querySelector('#filter-atmopshere');
             const showLightingCheckbox = cityLabelsPanel.querySelector('#filter-lighting');
             const labels = scene.primitives.add(new Cesium.LabelCollection());
 
-            if (scenePanelCloseButton && showCityLabelsCheckbox && showAtmosphereCheckbox && showLightingCheckbox) {
+            if (scenePanelCloseButton && showOrbitCheckbox && showCityLabelsCheckbox && showAtmosphereCheckbox && showLightingCheckbox) {
                 scenePanelCloseButton.addEventListener("click", () => {
                     controls.style.display = "flex";
                     cityLabelsPanel.classList.toggle('active');
+
+                    //configure orbit 
+                    satellite.path.show = showOrbitCheckbox.checked
 
                     //configure city labels
                     if (showCityLabelsCheckbox.checked) {
@@ -140,18 +144,10 @@ export default function configureControls(viewer, scene, satellite) {
                     }
 
                     //configure atmosphere
-                    if (showAtmosphereCheckbox.checked) {
-                        scene.skyAtmosphere.show = true;
-                    } else {
-                        scene.skyAtmosphere.show = false;
-                    }
+                    scene.skyAtmosphere.show = showAtmosphereCheckbox.checked
 
                     //configure lighting
-                    if (showLightingCheckbox.checked) {
-                        scene.globe.enableLighting = true;
-                    } else {
-                        scene.globe.enableLighting = false;
-                    }
+                    scene.globe.enableLighting = showLightingCheckbox.checked
                 })
             }
 
@@ -333,7 +329,7 @@ export default function configureControls(viewer, scene, satellite) {
                             requestGeolocation(successCallback, errorCallback)
                         } else {
                             currentLocationButton.classList.remove("active")
-                            
+
                             //reset values
                             billboard.show = false;
                             isPointingToCurrentLocation = false;

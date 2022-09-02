@@ -1,11 +1,14 @@
 ﻿import api from './api/fetch-api';
 import configureControls from './ui-functionality/iss-space-viewer-controls'
 import { showInfoNotification } from './ui-functionality/notifications';
+import { config } from './data/iss-config';
 
+//move to iss-config
 const heightBuffer = 1000;
 const cameraHeight = 20203203;
 
 /**
+ * Move to iss-config
  * Default values
  * Minimum zoom distance = 1.0
  * Maxiumum zoom distance = Infinity
@@ -20,10 +23,6 @@ const columbusViewMinimumZoomRate = 350000;
 const flatViewMinimumZoomDistance = 250000;
 const flatViewMaximumZoomDistance = Infinity;
 const flatViewMinimumZoomRate = 350000;
-
-const shouldAnimate = true;
-const debug = false;
-const showAxis = true;
 
 api.makeApiCall("IssTles", renderEarthViewer);
 
@@ -48,13 +47,13 @@ function renderEarthViewer(data) {
     const scene = viewer.scene;
 
     function setViewerWindowSettings() {
-        scene.skyAtmosphere.show = false;
-        scene.globe.enableLighting = false;
-        viewer.animation.container.style.visibility = 'hidden';
-        //viewer.timeline.container.style.visibility = 'hidden';
-        viewer.useBrowserRecommendedResolution = false;
+        scene.skyAtmosphere.show = config.showSkyAtmosphere;
+        scene.globe.enableLighting = config.enableLighting;
+        viewer.animation.container.style.visibility = config.showAnimationController;
+        viewer.timeline.container.style.visibility = config.showTimeline;
+        viewer.useBrowserRecommendedResolution = config.useBrowserRecommendedResolution;
         viewer.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-        viewer.selectionIndicator.viewModel.selectionIndicatorElement.style.visibility = 'hidden';
+        viewer.selectionIndicator.viewModel.selectionIndicatorElement.style.visibility = config.showSelectionIndicator;
         viewer.forceResize();
     }
 
@@ -97,50 +96,6 @@ function renderEarthViewer(data) {
         return positionsOverTime
     }
 
-    function interpolatePositionsPoint(tleLine1, tleLine2, angle) {
-        const satrec = satellite.twoline2satrec(
-            tleLine1,
-            tleLine2
-        );
-
-        const totalSeconds = 60 * 60 * 6; //6 hours of position data
-        const timestepInSeconds = 10;
-        const start = Cesium.JulianDate.fromDate(new Date());
-        const stop = Cesium.JulianDate.addSeconds(start, totalSeconds, new Cesium.JulianDate());
-        viewer.clock.startTime = start.clone();
-        viewer.clock.stopTime = stop.clone();
-        viewer.clock.currentTime = start.clone();
-        viewer.timeline.zoomTo(start, stop);
-        viewer.clock.clockRange = Cesium.ClockRange.LOOP_STOP;
-        viewer.clock.clockStep = Cesium.ClockStep.SYSTEM_CLOCK_MULTIPLIER; //set clock in real-time
-
-        const positionsOverTime = new Cesium.SampledPositionProperty();
-        for (let i = 0; i < totalSeconds; i += timestepInSeconds) {
-            const time = Cesium.JulianDate.addSeconds(start, i, new Cesium.JulianDate());
-            const jsDate = Cesium.JulianDate.toDate(time);
-
-            const positionAndVelocity = satellite.propagate(satrec, jsDate);
-            const gmst = satellite.gstime(jsDate);
-            const p = satellite.eciToGeodetic(positionAndVelocity.position, gmst);
-
-            const startPoint = { latitude: p.latitude, longitude: p.longitude };
-
-            const distanceMeters = 4500; //4000
-            const bearing = Cesium.Math.toDegrees((1.570795 + angle) - 3.14159);
-
-            const destination = geolib.computeDestinationPoint(
-                startPoint,
-                distanceMeters,
-                bearing
-            );
-
-            const position = Cesium.Cartesian3.fromRadians(destination.longitude, destination.latitude, p.height * 1000);
-            positionsOverTime.addSample(time, position);
-        }
-
-        return positionsOverTime
-    }
-
     function addSatelliteEntity() {
         const entityPosition = interpolatePositions(data.line1.trim(), data.line2.trim())
 
@@ -156,28 +111,6 @@ function renderEarthViewer(data) {
                 maximumScale: 8000,
             },
             viewFrom: new Cesium.Cartesian3(xOffset, yOffset, zOffset),
-            // path: {
-            //     leadTime: 0,
-            //     trailTime: 1000, //in seconds
-            //     width: 10,
-            //     material: new Cesium.PolylineGlowMaterialProperty({
-            //         glowPower: 0.2,
-            //         taperPower: 0.95,
-            //         color: Cesium.Color.CORNFLOWERBLUE,
-            //     }),
-            // },
-        });
-
-        const angle = rotateSatellite(satelliteEntity)
-
-        const pointPositions = interpolatePositionsPoint(data.line1.trim(), data.line2.trim(), angle)
-
-        viewer.entities.add({
-            position: pointPositions,
-            point: {
-                pixelSize: 20,
-                color: Cesium.Color.YELLOW,
-            },
             path: {
                 leadTime: 0,
                 trailTime: 1000, //in seconds
@@ -187,6 +120,7 @@ function renderEarthViewer(data) {
                     taperPower: 0.95,
                     color: Cesium.Color.CORNFLOWERBLUE,
                 }),
+                show: false,
             },
         });
 
@@ -232,8 +166,6 @@ function renderEarthViewer(data) {
             satelliteEntity.orientation = Cesium.Transforms.headingPitchRollQuaternion(
                 pointPosition,
                 new Cesium.HeadingPitchRoll(angle, 0, 0))
-
-            return angle;
         }
     }
 
@@ -252,7 +184,7 @@ function renderEarthViewer(data) {
         let initialized = false;
         scene.globe.tileLoadProgressEvent.addEventListener(() => {
             if (!initialized && scene.globe.tilesLoaded === true) {
-                viewer.clock.shouldAnimate = shouldAnimate;
+                viewer.clock.shouldAnimate = config.shouldAnimate;
                 initialized = true;
                 removeLoadingSpinner()
             }
@@ -291,7 +223,7 @@ function renderEarthViewer(data) {
     setTileProgressEvent()
     setZoomSettings(scene, globeMinimumZoomDistance, globeMaximumZoomDistance, globeMinimumZoomRate)
     configureControls(viewer, scene, satelliteEntity);
-    renderAxis(showAxis, position)
+    renderAxis(config.showAxis, position)
 }
 
 /**
