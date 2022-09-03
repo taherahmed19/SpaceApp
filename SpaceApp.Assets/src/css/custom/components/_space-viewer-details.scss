@@ -10,15 +10,17 @@
     transition: visibility 0s, opacity 0.5s linear;
 
     &.active {
-        //min-height: 70%;
         height: auto;
         width: 100%;
-        background-color: #0b111d;
-        //opacity: 0.9;
+        background-color: #0b111de6;
         z-index: 2;
 
         .space-viewer-details__content {
             width: 100%;
+        }
+
+        .space-viewer-details__navigate{
+            transform: rotate(180deg);
         }
     }
 
@@ -60,7 +62,7 @@
 
     &__text {
         margin-bottom: .25rem;
-        color: #c8c3bc;
+        color: #e9e3dc;
     }
 
     &__inner {
@@ -74,6 +76,10 @@
         flex: 1 1 0px;
         overflow-y: scroll;
         padding-right: .75rem;
+
+        p, li {
+            color: #e9e3dc;
+        }
 
         &::-webkit-scrollbar {
             width: 8px;

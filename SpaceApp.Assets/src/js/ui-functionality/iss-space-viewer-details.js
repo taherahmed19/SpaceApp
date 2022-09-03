@@ -51,13 +51,31 @@ additionalDetails.configureDetails = function () {
     const spaceViewerDetails = document.querySelector('.space-viewer-details')
     const visbilityButton = document.querySelector('.js-details-visibility')
     const detailsContent = document.querySelector('.js-details-content')
-    
+
     if (visbilityButton && detailsContent) {
         visbilityButton.addEventListener("click", () => {
             detailsContent.classList.toggle("position-absolute")
             detailsContent.classList.toggle("invisible")
             spaceViewerDetails.classList.toggle("active")
         })
+    }
+
+    //time in orbit
+    const orbitTimeElement = document.querySelector('.js-orbit-time');
+
+    if (orbitTimeElement) {
+        const initialDate = new Date("1998-11-25")
+        const currentDate = new Date()
+
+        const dateDifferenceTime = currentDate.getTime() - initialDate.getTime();
+        const dateDifferenceDays = dateDifferenceTime / (1000 * 3600 * 24)
+
+        var years = Math.floor(dateDifferenceDays / 365);
+        var days = Math.floor(dateDifferenceDays % 365);
+
+        console.log(dateDifferenceDays)
+        console.log(years, days)
+        orbitTimeElement.textContent = `${years} years : ${days} days`
     }
 }
 

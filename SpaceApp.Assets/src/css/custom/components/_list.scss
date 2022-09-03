@@ -1,0 +1,13 @@
+.list {
+    padding-left: 1rem;
+    list-style: none;
+
+    li:before {
+        content: "\2022";
+        color: #e9e3dc;
+        font-weight: bold;
+        display: inline-block;
+        width: 1rem;
+        margin-left: -1em;
+    }
+}
