@@ -8821,6 +8821,14 @@ strong {
     width: 1rem;
     margin-left: -1em; }
 
+.metrics {
+  display: flex;
+  max-width: 30rem;
+  min-width: 30rem;
+  border: 1px solid red; }
+  .metrics__item {
+    width: 50%; }
+
 .sidebar-link i {
   height: 100% !important;
   display: flex !important;

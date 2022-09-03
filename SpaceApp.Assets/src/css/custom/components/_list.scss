@@ -11,3 +11,14 @@
         margin-left: -1em;
     }
 }
+
+.metrics {
+    display: flex;
+    max-width: 30rem;
+    min-width: 30rem;
+    border: 1px solid red;
+
+    &__item {
+        width: 50%;
+    }
+}

@@ -73,8 +73,6 @@ additionalDetails.configureDetails = function () {
         var years = Math.floor(dateDifferenceDays / 365);
         var days = Math.floor(dateDifferenceDays % 365);
 
-        console.log(dateDifferenceDays)
-        console.log(years, days)
         orbitTimeElement.textContent = `${years} years : ${days} days`
     }
 }

@@ -64,6 +64,7 @@ function renderEarthViewer(data) {
         clock.clockStep = Cesium.ClockStep.SYSTEM_CLOCK_MULTIPLIER; //set clock in real-time
 
         const positionsOverTime = new Cesium.SampledPositionProperty();
+
         for (let i = 0; i < totalSeconds; i += timestepInSeconds) {
             const time = Cesium.JulianDate.addSeconds(start, i, new Cesium.JulianDate());
             const jsDate = Cesium.JulianDate.toDate(time);
@@ -72,9 +73,20 @@ function renderEarthViewer(data) {
             const gmst = satellite.gstime(jsDate);
             const p = satellite.eciToGeodetic(positionAndVelocity.position, gmst);
 
+            console.log(positionAndVelocity.velocity)
+            //to convert to speed = pythag theorom: https://github.com/shashwatak/satellite-js/issues/29
+
             const position = Cesium.Cartesian3.fromRadians(p.longitude, p.latitude, p.height * 1000);
             positionsOverTime.addSample(time, position);
         }
+
+        // const velocityVectorProperty = new Cesium.VelocityVectorProperty(
+        //     positionsOverTime,
+        //     false
+        // );
+
+        // const velocity = velocityVectorProperty.getValue(currentTime);
+        // console.log(velocity)
 
         return positionsOverTime
     }
@@ -105,6 +117,7 @@ function renderEarthViewer(data) {
                 }),
                 show: false,
             },
+            orientation: new Cesium.VelocityOrientationProperty(entityPosition) //https://cesium.com/learn/cesiumjs/ref-doc/VelocityOrientationProperty.html
         });
 
         return satelliteEntity;
@@ -121,8 +134,12 @@ function renderEarthViewer(data) {
                 viewer.entities.removeAll();
                 showInfoNotification("dataRefresh", cesiumContainer)
             } else {
-                rotateSatellite(satelliteEntity)
+                //rotateSatellite(satelliteEntity)
             }
+
+
+
+
         });
     }
 
