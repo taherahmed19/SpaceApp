@@ -8633,7 +8633,7 @@ strong {
 
 .space-viewer-details {
   position: absolute;
-  bottom: 1rem;
+  bottom: 0;
   z-index: 1;
   display: flex;
   flex-direction: column;
@@ -8710,34 +8710,6 @@ strong {
     width: 50%;
     padding-left: 1.5rem; }
 
-.swiper {
-  width: 100%;
-  height: 100%; }
-
-.swiper-slide {
-  text-align: center;
-  font-size: 18px;
-  background: #fff;
-  /* Center slide text vertically */
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  -webkit-justify-content: center;
-  justify-content: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  -webkit-align-items: center;
-  align-items: center; }
-
-.swiper-slide img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover; }
-
 /**
     Overrides 
     notification--error
@@ -8802,6 +8774,37 @@ strong {
   top: 2rem;
   display: flex;
   flex-direction: column; }
+
+.swiper {
+  width: 100%;
+  height: 100%; }
+
+.swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: #fff;
+  /* Center slide text vertically */
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center; }
+
+.swiper-slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; }
+
+.swiper-pagination-bullet-active {
+  background-color: #c8c3bc; }
 
 .sidebar-link i {
   height: 100% !important;

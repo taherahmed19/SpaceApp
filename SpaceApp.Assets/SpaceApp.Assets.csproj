@@ -67,24 +67,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="dist\css\main.css" />
-    <Content Include="dist\images\about-img.svg" />
-    <Content Include="dist\images\common-bg.jpg" />
-    <Content Include="dist\images\countdown-img.svg" />
-    <Content Include="dist\images\favicon.png" />
-    <Content Include="dist\images\feature-1.svg" />
-    <Content Include="dist\images\feature-2.svg" />
-    <Content Include="dist\images\feature-3.svg" />
-    <Content Include="dist\images\hero-img.svg" />
-    <Content Include="dist\images\logo.svg" />
-    <Content Include="dist\js\app.js" />
-    <Content Include="dist\js\asteroid.js" />
-    <Content Include="dist\js\bootstrap.bundle-5.0.0.alpha-1-min.js" />
-    <Content Include="dist\js\earth.js" />
-    <Content Include="dist\js\main.js" />
-    <Content Include="dist\js\wow.min.js" />
-    <Content Include="dist\layouts\dashboard\index.html" />
-    <Content Include="dist\layouts\homepage\index.html" />
     <Content Include="src\css\icons\font-awesome\css\fa-brands.css" />
     <Content Include="src\css\icons\font-awesome\css\fa-brands.min.css" />
     <Content Include="src\css\icons\font-awesome\css\fa-regular.css" />
@@ -105,14 +87,19 @@
     <Content Include="src\css\icons\themify-icons\ie7\ie7.js" />
     <Content Include="src\css\icons\themify-icons\themify-icons.css" />
     <Content Include="src\images\2d.svg" />
+    <Content Include="src\images\chevron-up.svg" />
     <Content Include="src\images\close.svg" />
     <Content Include="src\images\columbus-view.svg" />
+    <Content Include="src\images\current-location.svg" />
     <Content Include="src\images\earth-map-tiles.jpg" />
     <Content Include="src\images\filter.svg" />
     <Content Include="src\images\fullscreen.svg" />
     <Content Include="src\images\globe.svg" />
     <Content Include="src\images\location-pin.svg" />
     <Content Include="src\images\magnifying-glass.svg" />
+    <Content Include="src\images\minus.svg" />
+    <Content Include="src\images\plus.svg" />
+    <Content Include="src\images\satellite.svg" />
     <Content Include="src\js\api\api-endpoints.js" />
     <Content Include="src\js\api\fetch-api.js" />
     <Content Include="src\js\app.js" />
@@ -124,8 +111,10 @@
     <Content Include="src\js\main.js" />
     <Content Include="src\js\data\milkyway.js" />
     <Content Include="src\js\ui-functionality\iss-space-viewer-controls.js" />
+    <Content Include="src\js\ui-functionality\iss-space-viewer-details.js" />
     <Content Include="src\js\ui-functionality\notifications.js" />
     <Content Include="src\js\ui-functionality\space-viewer-controls.js" />
+    <Content Include="src\js\ui-functionality\swipers.js" />
     <Content Include="src\js\ui-functionality\tabs.js" />
     <Content Include="src\js\ui-functionality\utils.js" />
     <Content Include="Web.config" />
@@ -135,9 +124,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="dist\images\.DS_Store" />
     <Content Include="package.json" />
-    <Content Include="dist\models\ISS.glb" />
     <None Include="packages.config" />
     <Content Include="src\css\main.scss" />
     <Content Include="src\css\bootstrap\bootstrap-grid.scss" />
@@ -319,6 +306,7 @@
     <Content Include="src\css\custom\components\_notifications.scss" />
     <Content Include="src\js\scene.gltf" />
     <Content Include="src\css\custom\components\_space-viewer-details.scss" />
+    <Content Include="src\css\custom\components\swiper.scss" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -326,7 +314,9 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="src\images\iss\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
