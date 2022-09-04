@@ -5,7 +5,6 @@ import { viewerConfig, globeConfig } from './data/iss-config';
 import additionalDetails from './ui-functionality/iss-space-viewer-details';
 import mathOperations from './utlis/math';
 
-//move to iss-config
 api.makeApiCall("IssTles", renderEarthViewer);
 
 /**
@@ -28,7 +27,6 @@ function renderEarthViewer(data) {
 
     const scene = viewer.scene;
     const clock = viewer.clock;
-    const heightBuffer = 1000;
 
     function setViewerWindowSettings() {
         scene.skyAtmosphere.show = viewerConfig.showSkyAtmosphere;
@@ -39,6 +37,7 @@ function renderEarthViewer(data) {
         viewer.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
         viewer.selectionIndicator.viewModel.selectionIndicatorElement.style.visibility = viewerConfig.showSelectionIndicator;
         viewer.forceResize();
+        clock.shouldAnimate = viewerConfig.shouldAnimate;
     }
 
     function setGlobeTextureSettings() {
@@ -81,7 +80,7 @@ function renderEarthViewer(data) {
                 positionAndVelocity.velocity.z)
 
             const position = Cesium.Cartesian3.fromRadians(p.longitude, p.latitude, p.height * 1000); //height in km
-            
+
             positionsOverTime.addSample(time, position);
             speedOverTime.addSample(time, speed)
         }
@@ -132,6 +131,7 @@ function renderEarthViewer(data) {
             }
         });
     }
+
     function setCameraView(position) {
         viewer.camera.setView({
             destination: Cesium.Cartesian3.fromRadians(
@@ -139,18 +139,6 @@ function renderEarthViewer(data) {
                 position.latitude,
                 globeConfig.cameraHeight
             )
-        });
-    }
-
-    function setTileProgressEvent() {
-        // Wait for globe to load then zoom out     
-        let initialized = false;
-        scene.globe.tileLoadProgressEvent.addEventListener(() => {
-            if (!initialized && scene.globe.tilesLoaded === true) {
-                clock.shouldAnimate = viewerConfig.shouldAnimate;
-                initialized = true;
-                removeLoadingSpinner()
-            }
         });
     }
 
@@ -177,29 +165,44 @@ function renderEarthViewer(data) {
         }
     }
 
-    const positionsAndVelocity = interpolatePositionsAndVelocity(data.line1.trim(), data.line2.trim())
+    function setTileLoadProgressEvent() {
+        // Wait for globe to load then execute function 
+        let initialized = false;
+        scene.globe.tileLoadProgressEvent.addEventListener(() => {
+            if (!initialized && scene.globe.tilesLoaded === true) {
+                initialized = true;
 
-    const positionsOvertime = positionsAndVelocity.positionsOverTime;
-    const speedOverTime = positionsAndVelocity.speedOverTime;
+                const positionsAndVelocity = interpolatePositionsAndVelocity(data.line1.trim(), data.line2.trim())
 
-    const satelliteEntity = addSatelliteEntity(positionsOvertime);
+                const positionsOvertime = positionsAndVelocity.positionsOverTime;
+                const speedOverTime = positionsAndVelocity.speedOverTime;
 
-    const currentTime = clock.currentTime;
-    const initialPosition = Cesium.Cartographic.fromCartesian(satelliteEntity.position.getValue(currentTime));
+                const satelliteEntity = addSatelliteEntity(positionsOvertime);
 
-    subscribleOnTickListener()
-    setViewerWindowSettings()
-    setGlobeTextureSettings()
-    setCameraView(initialPosition)
-    setTileProgressEvent()
-    setZoomSettings(scene, globeConfig.globeMinimumZoomDistance, globeConfig.globeMaximumZoomDistance, globeConfig.globeMinimumZoomRate)
-    renderAxis(viewerConfig.showAxis, initialPosition)
+                const currentTime = clock.currentTime;
+                const initialPosition = Cesium.Cartographic.fromCartesian(satelliteEntity.position.getValue(currentTime));
 
-    //UI elements
-    configureControls(viewer, scene, clock, satelliteEntity);
-    if (additionalDetails.hasOwnProperty('configureCoordinates')) additionalDetails.configureCoordinates(clock, satelliteEntity)
-    if (additionalDetails.hasOwnProperty('configureDetails')) additionalDetails.configureDetails()
-    if (additionalDetails.hasOwnProperty('configureVelocityAltitude')) additionalDetails.configureVelocityAltitude(clock, speedOverTime)
+                subscribleOnTickListener()
+                setViewerWindowSettings()
+                setGlobeTextureSettings()
+                setCameraView(initialPosition)
+
+                setZoomSettings(scene, globeConfig.globeMinimumZoomDistance, globeConfig.globeMaximumZoomDistance, globeConfig.globeMinimumZoomRate)
+                renderAxis(viewerConfig.showAxis, initialPosition)
+
+                //UI elements
+                configureControls(viewer, scene, clock, satelliteEntity);
+                if (additionalDetails.hasOwnProperty('configureCoordinates')) additionalDetails.configureCoordinates(clock, satelliteEntity)
+                if (additionalDetails.hasOwnProperty('configureDetails')) additionalDetails.configureDetails()
+                if (additionalDetails.hasOwnProperty('configureVelocityAltitude')) additionalDetails.configureVelocityAltitude(clock, speedOverTime)
+
+                removeLoadingSpinner()
+                showCesiumContainer()
+            }
+        });
+    }
+
+    setTileLoadProgressEvent()
 }
 
 /**
@@ -219,11 +222,19 @@ function setZoomSettings(scene, minimumZoomDistance, maximumZoomDistance, minimu
  */
 function removeLoadingSpinner() {
     const loadingSpinner = document.querySelector(".loading-spinner");
-    const cesiumContainer = document.querySelector("#cesiumContainer");
 
     if (loadingSpinner && cesiumContainer) {
         loadingSpinner.style.display = "none";
-        cesiumContainer.style.display = "block"
+    }
+}
+
+function showCesiumContainer(){
+    const cesiumContainerWrapper = document.querySelector(".cesiumContainer-wrapper");
+    const cesiumViewer = document.querySelector(".cesium-viewer");
+
+    if(cesiumContainerWrapper && cesiumViewer){
+        cesiumContainerWrapper.classList.remove("invisible")
+        cesiumViewer.style.visibility = "visible"
     }
 }
 

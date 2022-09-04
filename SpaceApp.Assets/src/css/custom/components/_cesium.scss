@@ -2,6 +2,10 @@
     position: relative;
 }
 
+.cesium-viewer{
+    visibility: hidden;
+}
+
 .loading-spinner {
     width: 100%;
     height: 100%;
