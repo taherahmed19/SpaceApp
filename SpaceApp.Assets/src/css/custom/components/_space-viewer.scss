@@ -1,4 +1,9 @@
-﻿.space-viewer-controls {
+﻿.space-viewer {
+    height: 100vh;
+    width: 100vw;
+}
+
+.space-viewer-controls {
     width: auto;
     height: auto;
     background-color: none;
@@ -32,10 +37,10 @@
             color: #c8c3bc;
         }
 
-        &:hover{
-            background-color:  #326c8e;
+        &:hover {
+            background-color: #326c8e;
         }
-      
+
     }
 
     &__item.active {

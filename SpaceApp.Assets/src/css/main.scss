@@ -13,13 +13,14 @@
 // Structure
 @import 'custom/structure/layout';
 @import 'custom/structure/preloader';
-@import 'custom/structure/navbar';
+//@import 'custom/structure/navbar';
 @import 'custom/structure/sidebar';
 
 // Theme Colors
 @import 'custom/theme-colors/theme-colors';
 
 // Components
+@import "custom/components/navbar";
 @import 'custom/components/tables';
 @import 'custom/components/breadcrumb';
 @import 'custom/components/buttons';

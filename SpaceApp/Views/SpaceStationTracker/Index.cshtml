@@ -1,4 +1,4 @@
-﻿<div class="page-wrapper">
+﻿@*<div class="page-wrapper">
     <div class="page-breadcrumb">
         <div class="row">
             <div class="col-12 align-self-center">
@@ -10,200 +10,204 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12 maxheight">
-                <div id="cesiumContainer">
-                    <div class="cesiumContainer-wrapper invisible">
-                        <!--Keep one element for info, error and success-->
-                        <div class="notification-wrapper">
-                        </div>
 
-                        <!--Buttons-->
-                        <div class="space-viewer-controls">
-                            <div class="space-viewer-controls__group">
-                                <button class="space-viewer-controls__item js-cesium-tracked-entity" title="Toggle fullscreen">
-                                    <img class="space-viewer-controls__icon" src="/assets/images/satellite.svg" />
-                                </button>
-                                <button class="space-viewer-controls__item js-cesium-current-location" title="Current location">
-                                    <img class="space-viewer-controls__icon" src="/assets/images/current-location.svg" />
-                                </button>
-                                <button class="space-viewer-controls__item js-cesium-follow-satellite" title="Follow Satellite">
-                                    <img class="space-viewer-controls__icon" src="/assets/images/magnifying-glass.svg" />
-                                </button>
-                            </div>
+            </div>
+        </div>
+    </div>
+</div>*@
 
-                            <div class="space-viewer-controls__group">
-                                <button class="space-viewer-controls__item js-cesium-3d-globe" title="Set scene mode">
-                                    <img class="space-viewer-controls__icon space-viewer-controls__icon--globe-icon space-viewer-controls__icon--3d-globe active" src="/assets/images/globe.svg" />
-                                    <img class="space-viewer-controls__icon space-viewer-controls__icon--globe-icon space-viewer-controls__icon--2d-globe" src="/assets/images/2d.svg" />
-                                    <img class="space-viewer-controls__icon space-viewer-controls__icon--globe-icon space-viewer-controls__icon--columbus-view" src="/assets/images/columbus-view.svg" />
-                                </button>
-                                <button class="space-viewer-controls__item js-cesium-settings" title="Settings">
-                                    <img class="space-viewer-controls__icon" src="/assets/images/filter.svg" />
-                                </button>
-                                <button class="space-viewer-controls__item js-cesium-fullscreen" title="Toggle fullscreen">
-                                    <img class="space-viewer-controls__icon" src="/assets/images/fullscreen.svg" />
-                                </button>
-                            </div>
+<div class="space-viewer">
+    <div id="cesiumContainer">
+        <div class="cesiumContainer-wrapper invisible">
+            <!--Keep one element for info, error and success-->
+            <div class="notification-wrapper">
+            </div>
+
+            <!--Buttons-->
+            <div class="space-viewer-controls">
+                <div class="space-viewer-controls__group">
+                    <button class="space-viewer-controls__item js-cesium-tracked-entity" title="Toggle fullscreen">
+                        <img class="space-viewer-controls__icon" src="/assets/images/satellite.svg" />
+                    </button>
+                    <button class="space-viewer-controls__item js-cesium-current-location" title="Current location">
+                        <img class="space-viewer-controls__icon" src="/assets/images/current-location.svg" />
+                    </button>
+                    <button class="space-viewer-controls__item js-cesium-follow-satellite" title="Follow Satellite">
+                        <img class="space-viewer-controls__icon" src="/assets/images/magnifying-glass.svg" />
+                    </button>
+                </div>
+
+                <div class="space-viewer-controls__group">
+                    <button class="space-viewer-controls__item js-cesium-3d-globe" title="Set scene mode">
+                        <img class="space-viewer-controls__icon space-viewer-controls__icon--globe-icon space-viewer-controls__icon--3d-globe active" src="/assets/images/globe.svg" />
+                        <img class="space-viewer-controls__icon space-viewer-controls__icon--globe-icon space-viewer-controls__icon--2d-globe" src="/assets/images/2d.svg" />
+                        <img class="space-viewer-controls__icon space-viewer-controls__icon--globe-icon space-viewer-controls__icon--columbus-view" src="/assets/images/columbus-view.svg" />
+                    </button>
+                    <button class="space-viewer-controls__item js-cesium-settings" title="Settings">
+                        <img class="space-viewer-controls__icon" src="/assets/images/filter.svg" />
+                    </button>
+                    <button class="space-viewer-controls__item js-cesium-fullscreen" title="Toggle fullscreen">
+                        <img class="space-viewer-controls__icon" src="/assets/images/fullscreen.svg" />
+                    </button>
+                </div>
 
 
-                            @*<button class="space-viewer-controls__item js-cesium-zoom-in" title="Zoom in">
+                @*<button class="space-viewer-controls__item js-cesium-zoom-in" title="Zoom in">
                         <img class="space-viewer-controls__icon space-viewer-controls__icon--zoom-in" src="/assets/images/plus.svg" />
                     </button>
                     <button class="space-viewer-controls__item js-cesium-zoom-out" title="Zoom out">
                         <img class="space-viewer-controls__icon space-viewer-controls__icon--zoom-out" src="/assets/images/minus.svg" />
                     </button>*@
-                        </div>
+            </div>
 
-                        <!--Scenes panel-->
-                        <div class="space-viewer-controls__layers js-cesium-scenes-panel">
-                            <div class="space-viewer-controls__title">
-                                <button class="space-viewer-controls__close">
-                                    Scene mode
-                                    <i class="fa-solid fa-chevron-right"></i>
-                                </button>
+            <!--Scenes panel-->
+            <div class="space-viewer-controls__layers js-cesium-scenes-panel">
+                <div class="space-viewer-controls__title">
+                    <button class="space-viewer-controls__close">
+                        Scene mode
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+                <ul class="space-viewer-controls__filter">
+                    <li class="space-viewer-controls__filter-item space-viewer-controls__filter-item--globe">
+                        <input id="filter-3d-globe" type="radio" name="scene-mode" value="3" checked />
+                        <label for="filter-3d-globe">
+                            <img class="space-viewer-controls__filter-icon" src="/assets/images/globe.svg" />
+                            <span>3D Globe</span>
+                        </label>
+                    </li>
+                    <li class="space-viewer-controls__filter-item space-viewer-controls__filter-item--globe">
+                        <input id="filter-2d-globe" type="radio" name="scene-mode" value="2" />
+                        <label for="filter-2d-globe">
+                            <img class="space-viewer-controls__filter-icon" src="/assets/images/2d.svg" />
+                            <span>2D Globe</span>
+                        </label>
+                    </li>
+                    <li class="space-viewer-controls__filter-item space-viewer-controls__filter-item--globe">
+                        <input id="filter-columbus-view" type="radio" name="scene-mode" value="1" />
+                        <label for="filter-columbus-view">
+                            <img class="space-viewer-controls__filter-icon" src="/assets/images/columbus-view.svg" />
+                            <span>Columbus View</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!--Settings panel-->
+            <div class="space-viewer-controls__layers js-cesium-settings-panel">
+                <div class="space-viewer-controls__title">
+                    <button class="space-viewer-controls__close">
+                        Settings
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+                <ul class="space-viewer-controls__filter">
+                    <li class="space-viewer-controls__filter-item space-viewer-controls__filter-item--checkbox">
+                        <input id="filter-orbit" type="checkbox" name="show-orbit" value="show-orbit" />
+                        <div class="checkbox-indicator"></div>
+                        <label for="filter-orbit">
+                            <span>Show Orbit</span>
+                        </label>
+                    </li>
+                    <li class="space-viewer-controls__filter-item space-viewer-controls__filter-item--checkbox">
+                        <input id="filter-city-labels" type="checkbox" name="show-city-labels" value="show-city-labels" />
+                        <div class="checkbox-indicator"></div>
+                        <label for="filter-city-labels">
+                            <span>Show City Labels</span>
+                        </label>
+                    </li>
+                    <li class="space-viewer-controls__filter-item space-viewer-controls__filter-item--checkbox">
+                        <input id="filter-atmopshere" type="checkbox" name="show-atmosphere" value="" />
+                        <div class="checkbox-indicator"></div>
+                        <label for="filter-atmopshere">
+                            <span>Enable Atmosphere</span>
+                        </label>
+                    </li>
+                    <li class="space-viewer-controls__filter-item space-viewer-controls__filter-item--checkbox">
+                        <input id="filter-lighting" type="checkbox" name="" value="show-lighting" />
+                        <div class="checkbox-indicator"></div>
+                        <label for="filter-lighting">
+                            <span>Enable lighting</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!--Additional details-->
+            <div class="space-viewer-details">
+                <div class="space-viewer-details__content">
+                    <div class="space-viewer-details__heading">
+                        <h2 class="space-viewer-details__title">Additional Details</h2>
+                        <span class="space-viewer-details__navigate js-details-visibility"><img src="/assets/images/chevron-up.svg" /></span>
+                    </div>
+                    <div class="space-viewer-details__overview">
+                        <p class="space-viewer-details__text js-details-time"></p>
+                        <div class="space-viewer-details__metrics">
+                            <div class="space-viewer-details__metric">
+                                <p class="space-viewer-details__text">Latitude: <span class="js-details-latitude"></span></p>
+                                <p class="space-viewer-details__text">Longitude: <span class="js-details-longitude"></span></p>
                             </div>
-                            <ul class="space-viewer-controls__filter">
-                                <li class="space-viewer-controls__filter-item space-viewer-controls__filter-item--globe">
-                                    <input id="filter-3d-globe" type="radio" name="scene-mode" value="3" checked />
-                                    <label for="filter-3d-globe">
-                                        <img class="space-viewer-controls__filter-icon" src="/assets/images/globe.svg" />
-                                        <span>3D Globe</span>
-                                    </label>
-                                </li>
-                                <li class="space-viewer-controls__filter-item space-viewer-controls__filter-item--globe">
-                                    <input id="filter-2d-globe" type="radio" name="scene-mode" value="2" />
-                                    <label for="filter-2d-globe">
-                                        <img class="space-viewer-controls__filter-icon" src="/assets/images/2d.svg" />
-                                        <span>2D Globe</span>
-                                    </label>
-                                </li>
-                                <li class="space-viewer-controls__filter-item space-viewer-controls__filter-item--globe">
-                                    <input id="filter-columbus-view" type="radio" name="scene-mode" value="1" />
-                                    <label for="filter-columbus-view">
-                                        <img class="space-viewer-controls__filter-icon" src="/assets/images/columbus-view.svg" />
-                                        <span>Columbus View</span>
-                                    </label>
-                                </li>
+                            <div class="space-viewer-details__metric invisible js-altitude-velocity">
+                                <p class="space-viewer-details__text">Altitude: <span class="js-details-altitude"></span></p>
+                                <p class="space-viewer-details__text">Velocity: <span class="js-details-velocity"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-viewer-details__inner position-absolute js-details-content invisible">
+                        <div class="space-viewer-details__info">
+                            <h3 class="space-viewer-details__info-heading">Time in Orbit</h3>
+                            <p class="js-orbit-time"></p>
+                            <h3 class="space-viewer-details__info-heading">Launch vehicle</h3>
+                            <p>Russian Proton rocket</p>
+                            <h3 class="space-viewer-details__info-heading">Launch location</h3>
+                            <p>Baikonur Cosmodrome, Kazhakstan</p>
+                            <h3 class="space-viewer-details__info-heading">About ISS</h3>
+                            <p>
+                                The International Space Station (ISS) is a space station, or a habitable artificial satellite, in low Earth orbit. The ISS program is a joint project between five participating space agencies: NASA (United States), Roscosmos (Russia), JAXA (Japan), ESA (Europe), and CSA (Canada). The ownership and use of the space station is established by intergovernmental treaties and agreements. The agencies comprise of 15 countries that operates the International Space Station. Learn more about <a href="https://www.nasa.gov/feature/visitors-to-the-station-by-country/" target="_blank">visitors to the space station by country</a>. The station travels at a speed of five miles per second, orbiting Earth about every 90 minutes. In 24 hours, the space station makes 16 orbits of Earth, travelling through 16 sunrises and sunsets. The station’s orbital path takes it over 90 percent of the Earth’s population. The ISS maintains an orbit with an altitude of between 330 and 435 km (205 and 270 mi) by means of reboost maneuvers using the engines of the Zvezda module or visiting spacecraft.
+                            </p>
+                            <h3 class="space-viewer-details__info-heading">Modules</h3>
+                            <p>Its first component was launched into orbit in 1998, with the first long-term residents arriving in November 2000. It has been inhabited continuously since that date. The last pressurized module was fitted in 2011, and an experimental inflatable space habitat was added in 2016. The station is expected to operate until 2030. The ISS is the largest human-made body in low Earth orbit and can often be seen with the naked eye from Earth. The ISS consists of pressurized habitation modules, structural trusses, solar arrays, radiators, docking ports, experiment bays and robotic arms. ISS components have been launched by Russian Proton and Soyuz rockets and American Space Shuttles.  The ISS serves as a microgravity and space environment research laboratory in which crew members conduct experiments in biology, human biology, physics, astronomy, meteorology and other fields. The station is suited for the testing of spacecraft systems and equipment required for missions to the Moon and Mars. The large modules and other pieces of the station were delivered on 42 assembly flights, 37 on the U.S. space shuttles and five on Russian Proton/Soyuz rockets. <a href="https://www.nasa.gov/feature/visiting-vehicle-launches-arrivals-and-departures" target="_blank">Eight spaceships</a> can be connected to the space station at once.  The Water Recovery System reduces crew dependence on water delivered by a cargo spacecraft by 65 percent – from about 1 gallon a day to a third of a gallon.</p>
+                            <h3 class="space-viewer-details__info-heading">Astronauts</h3>
+                            <p>An international crew of seven people live and work on the station. Once at the station, astronauts will typically spend a mission period of around six months conducting various science experiments and maintaining and repairing the ISS. The living and working space in the station is larger than a six-bedroom house (and has six sleeping quarters, two bathrooms, a gym, and a 360-degree view bay window). To mitigate the loss of muscle and bone mass in the human body in microgravity, the astronauts work out at least two hours a day.</p>
+                            <h3 class="space-viewer-details__info-heading">Size &#38; mass</h3>
+                            <ul class="list">
+                                <li>Pressurized Module Length: 218 feet along the major axis (67 meters)</li>
+                                <li>Truss Length: 310 feet (94 meters)</li>
+                                <li>Solar Array Length: 239 feet across both longitudinally aligned arrays (73 meters)</li>
+                                <li>Mass: 925,335 pounds (419,725 kilograms)</li>
+                                <li>Habitable Volume: 13,696 cubic feet (388 cubic meters) not including visiting vehicles</li>
+                                <li>Pressurized Volume: 32,333 cubic feet (916 cubic meters)</li>
+                                <li>With BEAM expanded: 32,898 cubic feet (932 cubic meters)</li>
+                                <li>Power Generation: 8 solar arrays provide 75 to 90 kilowatts of power</li>
+                            </ul>
+                            <h3 class="space-viewer-details__info-heading">Other facts</h3>
+                            <ul class="list">
+                                <li>The acre of solar panels that power the station means sometimes you can look up in the sky at dawn or dusk and see the spaceship flying over your home, even if you live in a big city. Find <a href="http://spotthestation.nasa.gov">sighting opportunities</a></li>
+                                <li>The space station has an internal pressurized volume equal that of a Boeing 747.</li>
+                                <li>The ISS cannot be separated into independent Russia and United States sections as the complex is interdependent. NASA has said (opens in new tab)the U.S. supplies power, while the Russians control major propulsion maneuvers. It may be possible to independently raise the orbit of the ISS through U.S. spacecraft, which NASA and its partners are testing.</li>
+                                <li>The International Space Station at night is highly visible from Earth, appearing as a luminous moving point of light and rivaling the brilliant planet Venus in brightness. It can be seen from Earth without the use of a telescope by night sky observers who know when and where to look.</li>
                             </ul>
                         </div>
-
-                        <!--Settings panel-->
-                        <div class="space-viewer-controls__layers js-cesium-settings-panel">
-                            <div class="space-viewer-controls__title">
-                                <button class="space-viewer-controls__close">
-                                    Settings
-                                    <i class="fa-solid fa-chevron-right"></i>
-                                </button>
+                        <div class="space-viewer-details__images">
+                            <div class="swiper auto-swiper">
+                                <div class="swiper-wrapper">
+                                    <div class="swiper-slide"><img src="/assets/images/iss/International_Space_Station_1.jpg" /></div>
+                                    <div class="swiper-slide"><img src="/assets/images/iss/International_Space_Station_2.jpg" /></div>
+                                    <div class="swiper-slide"><img src="/assets/images/iss/International_Space_Station_3.jpg" /></div>
+                                    <div class="swiper-slide"><img src="/assets/images/iss/International_Space_Station_4.jpg" /></div>
+                                    <div class="swiper-slide"><img src="/assets/images/iss/International_Space_Station_5.jpg" /></div>
+                                </div>
+                                <div class="swiper-pagination"></div>
                             </div>
-                            <ul class="space-viewer-controls__filter">
-                                <li class="space-viewer-controls__filter-item space-viewer-controls__filter-item--checkbox">
-                                    <input id="filter-orbit" type="checkbox" name="show-orbit" value="show-orbit" />
-                                    <div class="checkbox-indicator"></div>
-                                    <label for="filter-orbit">
-                                        <span>Show Orbit</span>
-                                    </label>
-                                </li>
-                                <li class="space-viewer-controls__filter-item space-viewer-controls__filter-item--checkbox">
-                                    <input id="filter-city-labels" type="checkbox" name="show-city-labels" value="show-city-labels" />
-                                    <div class="checkbox-indicator"></div>
-                                    <label for="filter-city-labels">
-                                        <span>Show City Labels</span>
-                                    </label>
-                                </li>
-                                <li class="space-viewer-controls__filter-item space-viewer-controls__filter-item--checkbox">
-                                    <input id="filter-atmopshere" type="checkbox" name="show-atmosphere" value="" />
-                                    <div class="checkbox-indicator"></div>
-                                    <label for="filter-atmopshere">
-                                        <span>Enable Atmosphere</span>
-                                    </label>
-                                </li>
-                                <li class="space-viewer-controls__filter-item space-viewer-controls__filter-item--checkbox">
-                                    <input id="filter-lighting" type="checkbox" name="" value="show-lighting" />
-                                    <div class="checkbox-indicator"></div>
-                                    <label for="filter-lighting">
-                                        <span>Enable lighting</span>
-                                    </label>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <!--Additional details-->
-                        <div class="space-viewer-details">
-                            <div class="space-viewer-details__content">
-                                <div class="space-viewer-details__heading">
-                                    <h2 class="space-viewer-details__title">Additional Details</h2>
-                                    <span class="space-viewer-details__navigate js-details-visibility"><img src="/assets/images/chevron-up.svg" /></span>
-                                </div>
-                                <div class="space-viewer-details__overview">
-                                    <p class="space-viewer-details__text js-details-time"></p>
-                                    <div class="space-viewer-details__metrics">
-                                        <div class="space-viewer-details__metric">
-                                            <p class="space-viewer-details__text">Latitude: <span class="js-details-latitude"></span></p>
-                                            <p class="space-viewer-details__text">Longitude: <span class="js-details-longitude"></span></p>
-                                        </div>
-                                        <div class="space-viewer-details__metric invisible js-altitude-velocity">
-                                            <p class="space-viewer-details__text">Altitude: <span class="js-details-altitude"></span></p>
-                                            <p class="space-viewer-details__text">Velocity: <span class="js-details-velocity"></span></p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="space-viewer-details__inner position-absolute js-details-content invisible">
-                                    <div class="space-viewer-details__info">
-                                        <h3 class="space-viewer-details__info-heading">Time in Orbit</h3>
-                                        <p class="js-orbit-time"></p>
-                                        <h3 class="space-viewer-details__info-heading">Launch vehicle</h3>
-                                        <p>Russian Proton rocket</p>
-                                        <h3 class="space-viewer-details__info-heading">Launch location</h3>
-                                        <p>Baikonur Cosmodrome, Kazhakstan</p>
-                                        <h3 class="space-viewer-details__info-heading">About ISS</h3>
-                                        <p>
-                                            The International Space Station (ISS) is a space station, or a habitable artificial satellite, in low Earth orbit. The ISS program is a joint project between five participating space agencies: NASA (United States), Roscosmos (Russia), JAXA (Japan), ESA (Europe), and CSA (Canada). The ownership and use of the space station is established by intergovernmental treaties and agreements. The agencies comprise of 15 countries that operates the International Space Station. Learn more about <a href="https://www.nasa.gov/feature/visitors-to-the-station-by-country/" target="_blank">visitors to the space station by country</a>. The station travels at a speed of five miles per second, orbiting Earth about every 90 minutes. In 24 hours, the space station makes 16 orbits of Earth, travelling through 16 sunrises and sunsets. The station’s orbital path takes it over 90 percent of the Earth’s population. The ISS maintains an orbit with an altitude of between 330 and 435 km (205 and 270 mi) by means of reboost maneuvers using the engines of the Zvezda module or visiting spacecraft.
-                                        </p>
-                                        <h3 class="space-viewer-details__info-heading">Modules</h3>
-                                        <p>Its first component was launched into orbit in 1998, with the first long-term residents arriving in November 2000. It has been inhabited continuously since that date. The last pressurized module was fitted in 2011, and an experimental inflatable space habitat was added in 2016. The station is expected to operate until 2030. The ISS is the largest human-made body in low Earth orbit and can often be seen with the naked eye from Earth. The ISS consists of pressurized habitation modules, structural trusses, solar arrays, radiators, docking ports, experiment bays and robotic arms. ISS components have been launched by Russian Proton and Soyuz rockets and American Space Shuttles.  The ISS serves as a microgravity and space environment research laboratory in which crew members conduct experiments in biology, human biology, physics, astronomy, meteorology and other fields. The station is suited for the testing of spacecraft systems and equipment required for missions to the Moon and Mars. The large modules and other pieces of the station were delivered on 42 assembly flights, 37 on the U.S. space shuttles and five on Russian Proton/Soyuz rockets. <a href="https://www.nasa.gov/feature/visiting-vehicle-launches-arrivals-and-departures" target="_blank">Eight spaceships</a> can be connected to the space station at once.  The Water Recovery System reduces crew dependence on water delivered by a cargo spacecraft by 65 percent – from about 1 gallon a day to a third of a gallon.</p>
-                                        <h3 class="space-viewer-details__info-heading">Astronauts</h3>
-                                        <p>An international crew of seven people live and work on the station. Once at the station, astronauts will typically spend a mission period of around six months conducting various science experiments and maintaining and repairing the ISS. The living and working space in the station is larger than a six-bedroom house (and has six sleeping quarters, two bathrooms, a gym, and a 360-degree view bay window). To mitigate the loss of muscle and bone mass in the human body in microgravity, the astronauts work out at least two hours a day.</p>
-                                        <h3 class="space-viewer-details__info-heading">Size &#38; mass</h3>
-                                        <ul class="list">
-                                            <li>Pressurized Module Length: 218 feet along the major axis (67 meters)</li>
-                                            <li>Truss Length: 310 feet (94 meters)</li>
-                                            <li>Solar Array Length: 239 feet across both longitudinally aligned arrays (73 meters)</li>
-                                            <li>Mass: 925,335 pounds (419,725 kilograms)</li>
-                                            <li>Habitable Volume: 13,696 cubic feet (388 cubic meters) not including visiting vehicles</li>
-                                            <li>Pressurized Volume: 32,333 cubic feet (916 cubic meters)</li>
-                                            <li>With BEAM expanded: 32,898 cubic feet (932 cubic meters)</li>
-                                            <li>Power Generation: 8 solar arrays provide 75 to 90 kilowatts of power</li>
-                                        </ul>
-                                        <h3 class="space-viewer-details__info-heading">Other facts</h3>
-                                        <ul class="list">
-                                            <li>The acre of solar panels that power the station means sometimes you can look up in the sky at dawn or dusk and see the spaceship flying over your home, even if you live in a big city. Find <a href="http://spotthestation.nasa.gov">sighting opportunities</a></li>
-                                            <li>The space station has an internal pressurized volume equal that of a Boeing 747.</li>
-                                            <li>The ISS cannot be separated into independent Russia and United States sections as the complex is interdependent. NASA has said (opens in new tab)the U.S. supplies power, while the Russians control major propulsion maneuvers. It may be possible to independently raise the orbit of the ISS through U.S. spacecraft, which NASA and its partners are testing.</li>
-                                            <li>The International Space Station at night is highly visible from Earth, appearing as a luminous moving point of light and rivaling the brilliant planet Venus in brightness. It can be seen from Earth without the use of a telescope by night sky observers who know when and where to look.</li>
-                                        </ul>
-                                    </div>
-                                    <div class="space-viewer-details__images">
-                                        <div class="swiper auto-swiper">
-                                            <div class="swiper-wrapper">
-                                                <div class="swiper-slide"><img src="/assets/images/iss/International_Space_Station_1.jpg" /></div>
-                                                <div class="swiper-slide"><img src="/assets/images/iss/International_Space_Station_2.jpg" /></div>
-                                                <div class="swiper-slide"><img src="/assets/images/iss/International_Space_Station_3.jpg" /></div>
-                                                <div class="swiper-slide"><img src="/assets/images/iss/International_Space_Station_4.jpg" /></div>
-                                                <div class="swiper-slide"><img src="/assets/images/iss/International_Space_Station_5.jpg" /></div>
-                                            </div>
-                                            <div class="swiper-pagination"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
                     </div>
                 </div>
-                <div class="loading-spinner">
-                    <h1>Loading...</h1>
-                </div>
+
             </div>
         </div>
+    </div>
+    <div class="loading-spinner">
+        <h1>Loading...</h1>
     </div>
 </div>
 

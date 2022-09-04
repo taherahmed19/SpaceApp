@@ -4,13 +4,6 @@
     Tablet - 768px,
     Mobile Large - 425px
 */
-.topbar .dropdown-menu .with-arrow > span {
-  transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
-  -o-transform: rotate(45deg);
-  -moz-transform: rotate(45deg); }
-
 /*!
  * Bootstrap v4.3.1 (https://getbootstrap.com/)
  * Copyright 2011-2019 The Bootstrap Authors
@@ -7761,137 +7754,6 @@ Preloader
     opacity: 0; } }
 
 /*******************
- General Topbar
-*******************/
-.topbar {
-  position: relative;
-  z-index: 50;
-  transition: 0.2s ease-in;
-  background: transparent; }
-  .topbar .navbar-collapse {
-    padding: 0px 10px 0 0;
-    border-bottom: 1px solid #edf2f9; }
-  .topbar .top-navbar {
-    padding: 0px;
-    min-height: 80px; }
-    .topbar .top-navbar .navbar-header {
-      line-height: 80px;
-      background: transparent;
-      box-shadow: 0 -7px 9px 0 rgba(169, 184, 200, 0.15);
-      -webkit-box-shadow: 0 -7px 9px 0 rgba(169, 184, 200, 0.15);
-      -moz-box-shadow: 0 -7px 9px 0 rgba(169, 184, 200, 0.15); }
-      .topbar .top-navbar .navbar-header .navbar-brand {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin: 0px;
-        padding: 0 30px 0 30px;
-        height: 80px; }
-        .topbar .top-navbar .navbar-header .navbar-brand .dark-logo {
-          display: none; }
-        .topbar .top-navbar .navbar-header .navbar-brand .logo-icon {
-          margin-right: 5px; }
-    .topbar .top-navbar .navbar-nav > .nav-item > .nav-link {
-      padding: 0px 15px;
-      font-size: 1rem;
-      line-height: 80px; }
-      .topbar .top-navbar .navbar-nav > .nav-item > .nav-link .notify-no {
-        position: absolute;
-        top: 17px;
-        right: 4px;
-        line-height: 11px;
-        padding: 4px 6px; }
-    .topbar .top-navbar .navbar-nav > .nav-item {
-      transition: 0.2s ease-in; }
-  .topbar .mailbox .message-center .message-item:hover {
-    background: #e8eaec; }
-  .topbar .mailbox .message-center .message-item .message-title {
-    color: #212529; }
-  .topbar .user-dd {
-    min-width: 280px; }
-  .topbar .nav-toggler,
-  .topbar .topbartoggler {
-    color: #fff;
-    padding: 0 15px; }
-  .topbar .customize-input {
-    position: relative; }
-    .topbar .customize-input .form-control {
-      padding: 13px 43px 13px 28px;
-      color: #b8c3d5;
-      display: inline-block;
-      line-height: 13px; }
-    .topbar .customize-input .form-control-icon {
-      position: absolute;
-      top: 30px;
-      right: 14px;
-      height: 20px;
-      width: 20px; }
-
-/*******************
-Designed dropdown
-******************/
-.topbar .dropdown-menu {
-  padding-top: 0px;
-  border: 0px;
-  box-shadow: 1px 1px 15px rgba(0, 0, 0, 0.1);
-  -webkit-box-shadow: 1px 1px 15px rgba(0, 0, 0, 0.1);
-  -moz-box-shadow: 1px 1px 15px rgba(0, 0, 0, 0.1); }
-  .topbar .dropdown-menu .with-arrow {
-    position: absolute;
-    height: 10px;
-    overflow: hidden;
-    width: 40px;
-    top: -10px; }
-    .topbar .dropdown-menu .with-arrow > span {
-      background-color: #fff;
-      width: 15px;
-      height: 15px;
-      top: 3px;
-      left: 15px;
-      position: absolute;
-      content: "";
-      -moz-border-radius: 6px 0 0 0;
-      border-radius: 6px 0 0 0; }
-  .topbar .dropdown-menu.dropdown-menu-right .with-arrow {
-    right: 0px; }
-    .topbar .dropdown-menu.dropdown-menu-right .with-arrow > span {
-      right: 20px;
-      left: auto; }
-
-.topbar .dropdown-toggle::after {
-  display: none; }
-
-/*******************
-Topbar Responsive
-******************/
-@media (max-width: 767.98px) {
-  .topbar .top-navbar .navbar-collapse.show,
-  .topbar .top-navbar .navbar-collapse.collapsing {
-    display: block;
-    width: 100%;
-    border-top: 1px solid rgba(0, 0, 0, 0.1); }
-  .topbar .top-navbar .navbar-nav {
-    flex-direction: row; }
-    .topbar .top-navbar .navbar-nav .dropdown {
-      position: static; }
-  .topbar .top-navbar .navbar-nav > .nav-item > .nav-link {
-    padding: 0 10px; }
-  .topbar .top-navbar .navbar-header {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    justify-content: space-between; }
-  .topbar .top-navbar .dropdown-menu {
-    position: absolute;
-    width: 100%; }
-    .topbar .top-navbar .dropdown-menu .with-arrow {
-      display: none; } }
-
-@media only screen and (max-width: 767px) and (orientation: landscape) {
-  .mailbox .message-center {
-    height: 145px !important; } }
-
-/*******************
 Main sidebar
 ******************/
 .left-sidebar {
@@ -8153,6 +8015,44 @@ User Profile
     #main-wrapper[data-layout="vertical"] .left-sidebar[data-sidebarbg="skin6"] .sidebar-nav li.selected > .has-arrow.active::after, #main-wrapper[data-layout="horizontal"] .left-sidebar[data-sidebarbg="skin6"] .sidebar-nav li.selected > .has-arrow::after,
     #main-wrapper[data-layout="horizontal"] .left-sidebar[data-sidebarbg="skin6"] .sidebar-nav li.selected > .has-arrow.active::after {
       border-color: #fff; }
+
+.nav-bar {
+  height: auto;
+  position: absolute;
+  z-index: 10;
+  width: 100%;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center; }
+  .nav-bar__heading {
+    display: flex;
+    align-items: center; }
+  .nav-bar__title {
+    padding: 0 0 0 2rem;
+    margin: 0 0 0 2rem;
+    border-left: 1px solid #4f515e;
+    color: #d3d6dd; }
+  .nav-bar__logo {
+    height: 2.85rem;
+    width: 3.5rem; }
+  .nav-bar__items {
+    display: flex;
+    list-style: none;
+    justify-self: end;
+    padding: 1rem 0;
+    margin: 0; }
+  .nav-bar__item {
+    padding-right: 1rem; }
+    .nav-bar__item:last-of-type {
+      padding: 0; }
+    .nav-bar__item a {
+      color: #d3d6dd;
+      font-size: 1rem;
+      font-weight: 400;
+      text-decoration: none; }
+      .nav-bar__item a:hover {
+        color: #a3c3e8; }
 
 /*******************
 Table Cell
@@ -8479,10 +8379,14 @@ strong {
     right: 1rem; }
 
 #cesiumContainer {
-  position: relative; }
+  position: relative;
+  width: 100%;
+  height: 100%; }
 
 .cesium-viewer {
-  visibility: hidden; }
+  visibility: hidden;
+  width: 100%;
+  height: 100%; }
 
 .loading-spinner {
   width: 100%;
@@ -8506,6 +8410,10 @@ strong {
 
 .cesium-viewer-bottom {
   display: none !important; }
+
+.space-viewer {
+  height: 100vh;
+  width: 100vw; }
 
 .space-viewer-controls {
   width: auto;
