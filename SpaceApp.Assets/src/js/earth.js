@@ -3,6 +3,7 @@ import configureControls from './ui-functionality/iss-space-viewer-controls'
 import { showInfoNotification } from './ui-functionality/notifications';
 import { viewerConfig, globeConfig } from './data/iss-config';
 import { additionalDetails } from './ui-functionality/iss-space-viewer-details';
+import { mathOperation } from './utlis/math';
 
 //move to iss-config
 api.makeApiCall("IssTles", renderEarthViewer);
@@ -64,6 +65,7 @@ function renderEarthViewer(data) {
         clock.clockStep = Cesium.ClockStep.SYSTEM_CLOCK_MULTIPLIER; //set clock in real-time
 
         const positionsOverTime = new Cesium.SampledPositionProperty();
+        const speedOverTime = new Cesium.SampledProperty(Number);
 
         for (let i = 0; i < totalSeconds; i += timestepInSeconds) {
             const time = Cesium.JulianDate.addSeconds(start, i, new Cesium.JulianDate());
@@ -73,27 +75,23 @@ function renderEarthViewer(data) {
             const gmst = satellite.gstime(jsDate);
             const p = satellite.eciToGeodetic(positionAndVelocity.position, gmst);
 
-            console.log(positionAndVelocity.velocity)
-            //to convert to speed = pythag theorom: https://github.com/shashwatak/satellite-js/issues/29
+            // const km = Math.sqrt(Math.pow(positionAndVelocity.velocity.x, 2) + Math.pow(positionAndVelocity.velocity.y, 2) + Math.pow(positionAndVelocity.velocity.z, 2))
+            // const speed = km * 2236.9362920544
+
+            const speed = mathOperation.convertVectorToSpeed(
+                positionAndVelocity.velocity.x,
+                positionAndVelocity.velocity.y,
+                positionAndVelocity.velocity.z)
 
             const position = Cesium.Cartesian3.fromRadians(p.longitude, p.latitude, p.height * 1000);
             positionsOverTime.addSample(time, position);
+            speedOverTime.addSample(time, speed)
         }
 
-        // const velocityVectorProperty = new Cesium.VelocityVectorProperty(
-        //     positionsOverTime,
-        //     false
-        // );
-
-        // const velocity = velocityVectorProperty.getValue(currentTime);
-        // console.log(velocity)
-
-        return positionsOverTime
+        return { positionsOverTime: positionsOverTime, speedOverTime: speedOverTime }
     }
 
-    function addSatelliteEntity() {
-        const entityPosition = interpolatePositions(data.line1.trim(), data.line2.trim())
-
+    function addSatelliteEntity(entityPosition) {
         const xOffset = -1200000;
         const yOffset = -600000;
         const zOffset = 950000;
@@ -123,7 +121,7 @@ function renderEarthViewer(data) {
         return satelliteEntity;
     }
 
-    function subscribleOnTickListener(satelliteEntity) {
+    function subscribleOnTickListener(speedOverTime) {
         const onTickListener = clock.onTick.addEventListener(function (clock) {
             const currentTime = clock.currentTime;
 
@@ -133,44 +131,12 @@ function renderEarthViewer(data) {
                 onTickListener()
                 viewer.entities.removeAll();
                 showInfoNotification("dataRefresh", cesiumContainer)
-            } else {
-                //rotateSatellite(satelliteEntity)
             }
 
-
-
-
+            const speed = speedOverTime.getValue(currentTime);
+            console.log(speed)
         });
     }
-
-    function rotateSatellite(satelliteEntity) {
-        const newTime = Cesium.JulianDate.addSeconds(clock.currentTime, 1, new Cesium.JulianDate());
-
-        if (satelliteEntity.position.getValue(clock.currentTime)) {
-            const currentSatellitePosition = Cesium.Cartographic.fromCartesian(satelliteEntity.position.getValue(clock.currentTime))
-            const pointPosition = new Cesium.Cartesian3.fromRadians(
-                currentSatellitePosition.longitude, currentSatellitePosition.latitude,
-                currentSatellitePosition.height * heightBuffer)
-
-            const newPosition = Cesium.Cartographic.fromCartesian(satelliteEntity.position.getValue(newTime))
-
-            const pointX = newPosition.longitude;
-            const pointY = newPosition.latitude;
-
-            let posX = Cesium.Math.toDegrees(pointX)
-            let posY = Cesium.Math.toDegrees(pointY)
-            let satelliteX = Cesium.Math.toDegrees(currentSatellitePosition.longitude)
-            let satelliteY = Cesium.Math.toDegrees(currentSatellitePosition.latitude)
-
-            var angle = Math.atan2(posY - satelliteY, posX - satelliteX);
-            angle = angle * -1
-
-            satelliteEntity.orientation = Cesium.Transforms.headingPitchRollQuaternion(
-                pointPosition,
-                new Cesium.HeadingPitchRoll(angle, 0, 0))
-        }
-    }
-
     function setCameraView(position) {
         viewer.camera.setView({
             destination: Cesium.Cartesian3.fromRadians(
@@ -217,8 +183,11 @@ function renderEarthViewer(data) {
     }
 
     const position = getPosition(data.line1.trim(), data.line2.trim())
-    const satelliteEntity = addSatelliteEntity(position);
-    subscribleOnTickListener(satelliteEntity)
+
+    const entityPosition = interpolatePositions(data.line1.trim(), data.line2.trim())
+    const satelliteEntity = addSatelliteEntity(entityPosition.positionsOverTime);
+
+    subscribleOnTickListener(entityPosition.speedOverTime)
     setViewerWindowSettings()
     setGlobeTextureSettings()
     setCameraView(position)

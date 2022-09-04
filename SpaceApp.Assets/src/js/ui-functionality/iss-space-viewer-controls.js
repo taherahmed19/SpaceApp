@@ -1,7 +1,7 @@
-﻿import { applyFullscreen } from './utils';
+﻿import { applyFullscreen } from '../utlis/utils';
 import { showErrorNotification, showInfoNotification } from './notifications';
 import api from '../api/fetch-api';
-import { requestGeolocation, geolocationApiBrowserSupport, handleErrorCallback } from './utils';
+import { requestGeolocation, geolocationApiBrowserSupport, handleErrorCallback } from '../utlis/utils';
 import { scenes } from '../data/enums';
 import { setZoomSettings } from '../earth';
 import { globeConfig, cityNamesLabelStyle } from '../data/iss-config';
