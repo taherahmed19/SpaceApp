@@ -2,8 +2,8 @@
 import configureControls from './ui-functionality/iss-space-viewer-controls'
 import { showInfoNotification } from './ui-functionality/notifications';
 import { viewerConfig, globeConfig } from './data/iss-config';
-import { additionalDetails } from './ui-functionality/iss-space-viewer-details';
-import { mathOperation } from './utlis/math';
+import additionalDetails from './ui-functionality/iss-space-viewer-details';
+import mathOperations from './utlis/math';
 
 //move to iss-config
 api.makeApiCall("IssTles", renderEarthViewer);
@@ -47,7 +47,7 @@ function renderEarthViewer(data) {
         imageLayer.brightness = 0.6;
     }
 
-    function interpolatePositions(tleLine1, tleLine2) {
+    function interpolatePositionsAndVelocity(tleLine1, tleLine2) {
         const satrec = satellite.twoline2satrec(
             tleLine1,
             tleLine2
@@ -75,15 +75,13 @@ function renderEarthViewer(data) {
             const gmst = satellite.gstime(jsDate);
             const p = satellite.eciToGeodetic(positionAndVelocity.position, gmst);
 
-            // const km = Math.sqrt(Math.pow(positionAndVelocity.velocity.x, 2) + Math.pow(positionAndVelocity.velocity.y, 2) + Math.pow(positionAndVelocity.velocity.z, 2))
-            // const speed = km * 2236.9362920544
-
-            const speed = mathOperation.convertVectorToSpeed(
+            const speed = mathOperations.convertVectorToSpeed(
                 positionAndVelocity.velocity.x,
                 positionAndVelocity.velocity.y,
                 positionAndVelocity.velocity.z)
 
-            const position = Cesium.Cartesian3.fromRadians(p.longitude, p.latitude, p.height * 1000);
+            const position = Cesium.Cartesian3.fromRadians(p.longitude, p.latitude, p.height * 1000); //height in km
+            
             positionsOverTime.addSample(time, position);
             speedOverTime.addSample(time, speed)
         }
@@ -121,7 +119,7 @@ function renderEarthViewer(data) {
         return satelliteEntity;
     }
 
-    function subscribleOnTickListener(speedOverTime) {
+    function subscribleOnTickListener() {
         const onTickListener = clock.onTick.addEventListener(function (clock) {
             const currentTime = clock.currentTime;
 
@@ -132,16 +130,13 @@ function renderEarthViewer(data) {
                 viewer.entities.removeAll();
                 showInfoNotification("dataRefresh", cesiumContainer)
             }
-
-            const speed = speedOverTime.getValue(currentTime);
-            console.log(speed)
         });
     }
     function setCameraView(position) {
         viewer.camera.setView({
             destination: Cesium.Cartesian3.fromRadians(
-                position.current.longitude,
-                position.current.latitude,
+                position.longitude,
+                position.latitude,
                 globeConfig.cameraHeight
             )
         });
@@ -170,7 +165,7 @@ function renderEarthViewer(data) {
         if (show) {
             const hpr = new Cesium.HeadingPitchRoll(0, 0, 0);
             const pointPosition = new Cesium.Cartesian3.fromRadians(
-                position.current.longitude, position.current.latitude, position.current.height * heightBuffer
+                position.longitude, position.latitude, globeConfig.height
             );
 
             const frame = Cesium.Transforms.headingPitchRollToFixedFrame(pointPosition, hpr);
@@ -182,23 +177,29 @@ function renderEarthViewer(data) {
         }
     }
 
-    const position = getPosition(data.line1.trim(), data.line2.trim())
+    const positionsAndVelocity = interpolatePositionsAndVelocity(data.line1.trim(), data.line2.trim())
 
-    const entityPosition = interpolatePositions(data.line1.trim(), data.line2.trim())
-    const satelliteEntity = addSatelliteEntity(entityPosition.positionsOverTime);
+    const positionsOvertime = positionsAndVelocity.positionsOverTime;
+    const speedOverTime = positionsAndVelocity.speedOverTime;
 
-    subscribleOnTickListener(entityPosition.speedOverTime)
+    const satelliteEntity = addSatelliteEntity(positionsOvertime);
+
+    const currentTime = clock.currentTime;
+    const initialPosition = Cesium.Cartographic.fromCartesian(satelliteEntity.position.getValue(currentTime));
+
+    subscribleOnTickListener()
     setViewerWindowSettings()
     setGlobeTextureSettings()
-    setCameraView(position)
+    setCameraView(initialPosition)
     setTileProgressEvent()
     setZoomSettings(scene, globeConfig.globeMinimumZoomDistance, globeConfig.globeMaximumZoomDistance, globeConfig.globeMinimumZoomRate)
-    renderAxis(viewerConfig.showAxis, position)
+    renderAxis(viewerConfig.showAxis, initialPosition)
 
     //UI elements
     configureControls(viewer, scene, clock, satelliteEntity);
     if (additionalDetails.hasOwnProperty('configureCoordinates')) additionalDetails.configureCoordinates(clock, satelliteEntity)
     if (additionalDetails.hasOwnProperty('configureDetails')) additionalDetails.configureDetails()
+    if (additionalDetails.hasOwnProperty('configureVelocityAltitude')) additionalDetails.configureVelocityAltitude(clock, speedOverTime)
 }
 
 /**
@@ -211,47 +212,6 @@ function setZoomSettings(scene, minimumZoomDistance, maximumZoomDistance, minimu
     scene.screenSpaceCameraController.minimumZoomDistance = minimumZoomDistance;
     scene.screenSpaceCameraController.maximumZoomDistance = maximumZoomDistance;
     scene.screenSpaceCameraController._minimumZoomRate = minimumZoomRate;
-}
-
-/**
- * 
- * @param {*} tleLine1 
- * @param {*} tleLine2 
- * @returns 
- */
-function getPosition(tleLine1, tleLine2) {
-    // These 2 lines are published by NORAD and allow us to predict where the ISS is at any given moment. They are regularly updated.
-    // Get the latest from: https://celestrak.com/satcat/tle.php?CATNR=25544.
-    const satrec = satellite.twoline2satrec(
-        tleLine1,
-        tleLine2
-    );
-
-    const previousDateTime = new Date();
-    const timeOfPreviousOrbitPoint = 2;
-    previousDateTime.setMinutes(previousDateTime.getMinutes() - timeOfPreviousOrbitPoint);
-
-    const previousPositionAndVelocity = satellite.propagate(satrec, previousDateTime); // Propagate satellite using time since epoch (in date).
-    const previousGmst = satellite.gstime(previousDateTime);
-    const previousPosition = satellite.eciToGeodetic(previousPositionAndVelocity.position, previousGmst);
-
-    const currentDateTime = new Date();
-    const positionAndVelocity = satellite.propagate(satrec, currentDateTime); // Propagate satellite using time since epoch (in date).
-    const gmst = satellite.gstime(currentDateTime);
-    const position = satellite.eciToGeodetic(positionAndVelocity.position, gmst);
-
-    return {
-        current: {
-            longitude: position.longitude,
-            latitude: position.latitude,
-            height: position.height,
-        },
-        previous: {
-            longitude: previousPosition.longitude,
-            latitude: previousPosition.latitude,
-            height: previousPosition.height,
-        }
-    }
 }
 
 /**
