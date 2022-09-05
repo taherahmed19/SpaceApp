@@ -230,6 +230,7 @@ export default function configureControls(viewer, scene, clock, satellite) {
             if (followSatelliteButton) {
                 followSatelliteButton.addEventListener("click", () => {
                     if (!followSatelliteButton.classList.contains('js-disabled')) {
+                        disableButtonsDuringAnimation()
 
                         switch (scene.mode) {
                             case 1: //columbus view
@@ -242,6 +243,7 @@ export default function configureControls(viewer, scene, clock, satellite) {
                                 handleCameraGlobeView()
                                 break;
                         }
+
                     } else {
                         showErrorNotification("satelliteAnimationInProgress", cesiumContainer)
                     }
@@ -249,7 +251,7 @@ export default function configureControls(viewer, scene, clock, satellite) {
             }
 
             function handleCameraColumbusView() {
-                disableButtonsDuringAnimation()
+                //disableButtonsDuringAnimation()
 
                 pointCameraToSatellite(globeConfig.flyToDurationColumbusView, function () {
                     enableButtonsDuringAnimation()
@@ -257,7 +259,7 @@ export default function configureControls(viewer, scene, clock, satellite) {
             }
 
             function handleCamera2DView() {
-                disableButtonsDuringAnimation()
+                //disableButtonsDuringAnimation()
 
                 pointCameraToSatellite(globeConfig.flyToDuration2DView, function () {
                     enableButtonsDuringAnimation()
@@ -265,7 +267,9 @@ export default function configureControls(viewer, scene, clock, satellite) {
             }
 
             function handleCameraGlobeView() {
-                disableButtonsDuringAnimation()
+                //disableButtonsDuringAnimation()
+                const trackedEntityButton = cesiumContainer.querySelector('.js-cesium-tracked-entity');
+                trackedEntityButton.classList.remove("active")
 
                 pointCameraToSatellite(globeConfig.flyToDurationGlobeView, function () {
                     enableButtonsDuringAnimation()

@@ -13,7 +13,7 @@ Object.defineProperties(viewerConfig, {
         writable: false,
     },
     showTimeline: {
-        value: 'block',
+        value: 'hidden',
         writable: false,
     },
     showAnimationController: {
