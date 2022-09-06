@@ -169,6 +169,7 @@
     <Content Include="Views\SpaceStationTracker\Index.cshtml" />
     <Content Include="Views\NearbyAsteroids\Index.cshtml" />
     <Content Include="Views\NearbyAsteroids\Asteroid.cshtml" />
+    <Content Include="Views\Partials\LoadingSpinner.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

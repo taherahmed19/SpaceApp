@@ -192,9 +192,9 @@
             </div>
         </div>
     </div>
-    <div class="loading-spinner">
-        <h1>Loading...</h1>
-    </div>
+    @{ 
+        Html.RenderPartial("~/Views/Partials/LoadingSpinner.cshtml");
+    }
 </div>
 
 <script src="http://spaceappassets-local.co.uk/js/earth.js" defer></script>
