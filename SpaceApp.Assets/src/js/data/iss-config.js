@@ -99,6 +99,11 @@ Object.defineProperties(globeConfig, {
         value: 20203203,
         writable: false,
     },
+    //refresh
+    reloadTimeout: {
+        value: 6000,
+        writable: false,
+    },
 });
 
 const cityNamesLabelStyle = {}

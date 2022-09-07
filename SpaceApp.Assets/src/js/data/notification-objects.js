@@ -18,7 +18,7 @@ const infoNotifications = {
         id: "dataRefresh",
         showOnce: true,
         displayed: false,
-        message: "Refresh the page to get accurate position data",
+        message: "The page will be refreshed to get accurate position data",
         relatedNotification: null, //only show if a previous notification has been displayed
     },
 }

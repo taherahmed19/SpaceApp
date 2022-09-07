@@ -62,7 +62,6 @@ function renderEarthViewer(data) {
         viewer.timeline.zoomTo(start, stop);
         clock.clockRange = Cesium.ClockRange.LOOP_STOP;
         clock.clockStep = Cesium.ClockStep.SYSTEM_CLOCK_MULTIPLIER; //set clock in real-time
-
         const positionsOverTime = new Cesium.SampledPositionProperty();
         const speedOverTime = new Cesium.SampledProperty(Number);
 
@@ -128,6 +127,10 @@ function renderEarthViewer(data) {
                 onTickListener()
                 viewer.entities.removeAll();
                 showInfoNotification("dataRefresh", cesiumContainer)
+
+                setTimeout(() => {
+                    location.reload();
+                }, globeConfig.reloadTimeout);
             }
         });
     }
@@ -228,11 +231,11 @@ function removeLoadingSpinner() {
     }
 }
 
-function showCesiumContainer(){
+function showCesiumContainer() {
     const cesiumContainerWrapper = document.querySelector(".cesiumContainer-wrapper");
     const cesiumViewer = document.querySelector(".cesium-viewer");
 
-    if(cesiumContainerWrapper && cesiumViewer){
+    if (cesiumContainerWrapper && cesiumViewer) {
         cesiumContainerWrapper.classList.remove("invisible")
         cesiumViewer.style.visibility = "visible"
     }
